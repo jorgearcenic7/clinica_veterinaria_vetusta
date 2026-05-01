@@ -1,0 +1,82 @@
+# Clinica Veterinaria Vetusta
+
+Web dinamica con Express. Ahora usa resenas locales para no depender de pago en Google Cloud, y queda preparada para activar Google Places API (New) en el futuro.
+
+## Configuracion
+
+1. Instala Node.js 18 o superior.
+2. Crea un archivo `.env`.
+3. Deja `GOOGLE_ENABLE_LIVE_REVIEWS=false` para usar `reviews.local.json` sin llamadas a Google.
+
+Las coordenadas de la clinica ya estan configuradas:
+
+```text
+GOOGLE_PLACE_LATITUDE=43.36443719850797
+GOOGLE_PLACE_LONGITUDE=-5.833903884657452
+```
+
+Con esas coordenadas, cuando actives Google en el futuro, el backend buscara automaticamente el negocio cercano de tipo `veterinary_care` y usara su Place ID para pedir las resenas. Si prefieres fijarlo manualmente, anade `GOOGLE_PLACE_ID` en `.env` y se saltara la busqueda por coordenadas.
+
+## Seguridad y limites de demo
+
+`.env` esta ignorado por Git y no debe subirse nunca. No se incluye `.env.example` para evitar publicar plantillas de configuracion.
+
+La clave de demostracion de Maps no esta pensada para produccion. Ahora las llamadas reales a Google estan apagadas:
+
+```env
+REVIEWS_CACHE_TTL_SECONDS=21600
+GOOGLE_DAILY_REQUEST_LIMIT=25
+GOOGLE_ENABLE_LIVE_REVIEWS=false
+```
+
+- `REVIEWS_CACHE_TTL_SECONDS`: guarda la respuesta en memoria durante 6 horas.
+- `GOOGLE_DAILY_REQUEST_LIMIT`: limite local de llamadas reales a Google por dia.
+- `GOOGLE_ENABLE_LIVE_REVIEWS=false`: corta todas las llamadas reales a Google y usa `reviews.local.json`.
+
+El contador local se guarda en `.google-usage.json`, tambien ignorado por Git.
+
+## Activar Google Places en el futuro
+
+1. Activa facturacion en Google Cloud.
+2. Habilita Places API (New).
+3. Pon una API key restringida en `.env`.
+4. Cambia:
+
+```env
+GOOGLE_ENABLE_LIVE_REVIEWS=true
+```
+
+5. Reinicia el servidor.
+
+## Ejecutar en localhost
+
+```bash
+npm install
+npm run dev
+```
+
+Abre:
+
+```text
+http://127.0.0.1:3000
+```
+
+El endpoint dinamico queda disponible en:
+
+```text
+http://127.0.0.1:3000/api/google-reviews
+```
+
+La API key se lee solo desde `.env` en el backend. No se inyecta en el HTML.
+
+## Reservas online
+
+El formulario de reserva usa un calendario real:
+
+- Lunes a viernes: 10:30-13:30 y 17:00-20:00.
+- Sabados: 11:00-13:30.
+- Domingos: cerrado.
+- Huecos de 30 minutos.
+- Los horarios reservados aparecen en rojo y no se pueden elegir.
+
+Las reservas se guardan en `reservations.json`, que esta ignorado por Git porque puede contener datos personales.

@@ -1,0 +1,32 @@
+{
+  "source": "local",
+  "rating": 4.9,
+  "reviewCount": 560,
+  "googleMapsUri": "https://www.google.com/maps/search/?api=1&query=Cl%C3%ADnica%20Veterinaria%20Vetusta%20Oviedo",
+  "reviews": [
+    {
+      "author": "María Fernández",
+      "authorUrl": null,
+      "rating": 5,
+      "text": "Víctor es un veterinario de verdad, se nota la vocación y el cariño que le pone. Llevamos a nuestro perro desde cachorro y siempre ha sido un acierto.",
+      "relativeTime": "Reseña destacada",
+      "publishedAt": null
+    },
+    {
+      "author": "Carlos García",
+      "authorUrl": null,
+      "rating": 5,
+      "text": "Trato inigualable. Tuvimos una urgencia un sábado y nos atendieron con muchísima empatía y profesionalidad. Salvaron a nuestra gata.",
+      "relativeTime": "Reseña destacada",
+      "publishedAt": null
+    },
+    {
+      "author": "Laura Rodríguez",
+      "authorUrl": null,
+      "rating": 5,
+      "text": "La mejor clínica de Oviedo. Precios muy razonables y no te intentan vender cosas que no necesitas. Transparencia total.",
+      "relativeTime": "Reseña destacada",
+      "publishedAt": null
+    }
+  ]
+}
