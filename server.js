@@ -24,6 +24,7 @@ const reservationsFilePath = process.env.VERCEL
   : path.join(__dirname, "reservations.json");
 const supabaseUrl = cleanEnvValue(process.env.SUPABASE_URL);
 const supabaseKey = cleanEnvValue(process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY);
+const gaId = cleanEnvValue(process.env.NEXT_PUBLIC_GA_ID || process.env.VITE_GA_ID);
 let supabaseConfigError = null;
 const supabase = supabaseUrl && supabaseKey
   ? createSupabaseClient()
@@ -51,8 +52,11 @@ app.use(express.json());
 const publicFiles = {
   "/": "code.html",
   "/code.html": "code.html",
+  "/servicios": "code.html",
+  "/contacto": "code.html",
   "/auth": "auth.html",
   "/auth.html": "auth.html",
+  "/area-privada": "auth.html",
   "/dashboard": "dashboard.html",
   "/dashboard.html": "dashboard.html",
   "/pet-detail.html": "pet-detail.html",
@@ -78,11 +82,15 @@ const publicFiles = {
   "/admin.js": "admin.js",
   "/client-area.css": "client-area.css",
   "/screen.png": "screen.png",
+  "/robots.txt": "robots.txt",
+  "/sitemap.xml": "sitemap.xml",
+  "/favicon.svg": "favicon.svg",
+  "/favicon.ico": "favicon.svg",
 };
 
 Object.entries(publicFiles).forEach(([route, filename]) => {
   app.get(route, (request, response, next) => {
-    if (["/auth", "/auth.html", "/dashboard", "/dashboard.html", "/admin", "/admin.html", "/pet-detail.html"].includes(route)) {
+    if (["/auth", "/auth.html", "/area-privada", "/dashboard", "/dashboard.html", "/admin", "/admin.html", "/pet-detail.html"].includes(route)) {
       response.set("Cache-Control", "no-store");
     }
 
@@ -92,6 +100,29 @@ Object.entries(publicFiles).forEach(([route, filename]) => {
       }
     });
   });
+});
+
+app.get("/analytics.js", (_request, response) => {
+  response.type("application/javascript");
+  response.set("Cache-Control", "public, max-age=300");
+
+  if (!gaId) {
+    response.send("");
+    return;
+  }
+
+  response.send(`
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${escapeJavaScript(gaId)}');
+(function(){
+  var script = document.createElement('script');
+  script.async = true;
+  script.src = 'https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(gaId)}';
+  document.head.appendChild(script);
+})();
+`);
 });
 
 app.get("/dashboard/pets/:id", (_request, response, next) => {
@@ -607,6 +638,10 @@ function fromMinutes(totalMinutes) {
 
 function cleanEnvValue(value) {
   return String(value || "").trim().replace(/^["']|["']$/g, "");
+}
+
+function escapeJavaScript(value) {
+  return String(value).replace(/\\/g, "\\\\").replace(/'/g, "\\'");
 }
 
 function validateSupabaseUrl(value) {

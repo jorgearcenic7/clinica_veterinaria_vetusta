@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://clinica-veterinaria-vetusta.vercel.app/sitemap.xml

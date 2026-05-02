@@ -28,6 +28,9 @@
           "admin.js",
           "client-area.css",
           "screen.png",
+          "robots.txt",
+          "sitemap.xml",
+          "favicon.svg",
           "reviews.local.json"
         ]
       }
