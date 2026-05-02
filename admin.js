@@ -52,7 +52,7 @@ async function loadAll() {
   setStatus(statusEl, "Cargando datos...");
 
   const [clientsResult, petsResult, recordsResult, documentsResult] = await Promise.all([
-    supabase.from("profiles").select("id,full_name,phone,role,created_at").order("created_at", { ascending: false }),
+    supabase.from("profiles").select("id,full_name,phone,role,created_at").eq("role", "client").order("created_at", { ascending: false }),
     supabase.from("pets").select("id,owner_id,name,species,breed,birth_date,image_url,created_at").order("name", { ascending: true }),
     supabase.from("pet_records").select("id,pet_id,title,record_type,record_date,notes,next_due_date,created_at").order("record_date", { ascending: false }),
     supabase.from("pet_documents").select("id,pet_id,uploaded_by,title,description,file_url,file_name,file_type,source,created_at").order("created_at", { ascending: false }),
@@ -68,8 +68,10 @@ async function loadAll() {
   pets = petsResult.data || [];
   records = recordsResult.data || [];
   documents = documentsResult.data || [];
-  selectedClientId = selectedClientId || clients[0]?.id || null;
-  selectedPetId = selectedPetId || pets.find((pet) => pet.owner_id === selectedClientId)?.id || null;
+  selectedClientId = clients.some((client) => client.id === selectedClientId) ? selectedClientId : clients[0]?.id || null;
+  selectedPetId = pets.some((pet) => pet.id === selectedPetId && pet.owner_id === selectedClientId)
+    ? selectedPetId
+    : pets.find((pet) => pet.owner_id === selectedClientId)?.id || null;
   await render();
 }
 
@@ -262,7 +264,9 @@ async function renderDocuments() {
 async function savePet(event) {
   event.preventDefault();
 
-  if (!selectedClientId) {
+  const selectedClient = getSelectedClient();
+
+  if (!selectedClient) {
     setStatus(statusEl, "Selecciona un cliente antes de guardar una mascota.", true);
     return;
   }
@@ -270,7 +274,7 @@ async function savePet(event) {
   const values = normalizeEmptyDates(formToObject(petForm));
   const imageFile = petForm.image_file.files?.[0];
   const payload = {
-    owner_id: selectedClientId,
+    owner_id: selectedClient.id,
     name: values.name,
     species: values.species || null,
     breed: values.breed || null,
@@ -460,6 +464,10 @@ async function deleteDocument(id) {
   } catch (error) {
     setStatus(statusEl, friendlyError(error) || "No se pudo eliminar el documento.", true);
   }
+}
+
+function getSelectedClient() {
+  return clients.find((client) => client.id === selectedClientId && client.role === "client") || null;
 }
 
 function fillPetForm(id) {

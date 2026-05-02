@@ -190,6 +190,7 @@ Puedes encontrar el UUID en Supabase > Authentication > Users.
 - Los clientes pueden subir documentos a `pet_documents` solo para sus mascotas y borrar solo los documentos que hayan subido.
 - Los clientes no pueden editar datos medicos oficiales ni `pet_records`.
 - Los admins pueden leer, crear, editar y borrar mascotas, historiales y documentos.
+- En `/admin`, las mascotas se crean para el cliente seleccionado: `pets.owner_id` es el `id` del cliente, no el `auth.uid()` del veterinario/admin.
 - Los buckets `pet-images` y `pet-documents` son privados y se consultan con URLs firmadas.
 - La subida de archivos esta limitada a JPG, PNG, WEBP y PDF, con un maximo de 10MB.
 - Las imagenes de mascota solo aceptan JPG, PNG o WEBP.
