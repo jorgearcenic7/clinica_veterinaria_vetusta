@@ -22,16 +22,26 @@ const localReviewsFilePath = path.join(__dirname, "reviews.local.json");
 const reservationsFilePath = process.env.VERCEL
   ? path.join(os.tmpdir(), "reservations.json")
   : path.join(__dirname, "reservations.json");
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+const supabaseUrl = cleanEnvValue(process.env.SUPABASE_URL);
+const supabaseKey = cleanEnvValue(process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY);
+let supabaseConfigError = null;
 const supabase = supabaseUrl && supabaseKey
-  ? createClient(supabaseUrl, supabaseKey, {
+  ? createSupabaseClient()
+  : null;
+
+function createSupabaseClient() {
+  try {
+    return createClient(validateSupabaseUrl(supabaseUrl), supabaseKey, {
       auth: {
         persistSession: false,
         autoRefreshToken: false,
       },
-    })
-  : null;
+    });
+  } catch (error) {
+    supabaseConfigError = error;
+    return null;
+  }
+}
 
 let reviewsCache = null;
 let resolvedPlaceCache = null;
@@ -318,6 +328,10 @@ async function readUsage() {
 }
 
 async function readReservations(month) {
+  if (supabaseConfigError) {
+    throw supabaseConfigError;
+  }
+
   if (supabase) {
     return readSupabaseReservations(month);
   }
@@ -366,6 +380,10 @@ async function readSupabaseReservations(month) {
 }
 
 async function saveReservation(reservation) {
+  if (supabaseConfigError) {
+    throw supabaseConfigError;
+  }
+
   if (supabase) {
     return saveSupabaseReservation(reservation);
   }
@@ -531,6 +549,24 @@ function fromMinutes(totalMinutes) {
   const hours = String(Math.floor(totalMinutes / 60)).padStart(2, "0");
   const minutes = String(totalMinutes % 60).padStart(2, "0");
   return `${hours}:${minutes}`;
+}
+
+function cleanEnvValue(value) {
+  return String(value || "").trim().replace(/^["']|["']$/g, "");
+}
+
+function validateSupabaseUrl(value) {
+  try {
+    const url = new URL(value);
+
+    if (url.protocol !== "https:") {
+      throw new Error("SUPABASE_URL debe empezar por https://");
+    }
+
+    return url.toString().replace(/\/$/, "");
+  } catch (error) {
+    throw new Error("SUPABASE_URL no es valida. Debe tener formato https://TU-PROYECTO.supabase.co");
+  }
 }
 
 if (!process.env.VERCEL) {
