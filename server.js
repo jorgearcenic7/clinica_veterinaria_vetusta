@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import fs from "node:fs/promises";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -16,19 +17,39 @@ const defaultLatitude = 43.36443719850797;
 const defaultLongitude = -5.833903884657452;
 const usageFilePath = path.join(__dirname, ".google-usage.json");
 const localReviewsFilePath = path.join(__dirname, "reviews.local.json");
-const reservationsFilePath = path.join(__dirname, "reservations.json");
+const reservationsFilePath = process.env.VERCEL
+  ? path.join(os.tmpdir(), "reservations.json")
+  : path.join(__dirname, "reservations.json");
 
 let reviewsCache = null;
 let resolvedPlaceCache = null;
 
-app.use(express.static(__dirname, {
-  extensions: ["html"],
-  index: false,
-}));
 app.use(express.json());
+
+const publicFiles = new Set([
+  "aviso-legal.html",
+  "booking.js",
+  "code.html",
+  "cookies.html",
+  "privacidad.html",
+  "reviews.js",
+  "screen.png",
+  "sitemap.html",
+]);
 
 app.get("/", (_request, response) => {
   response.sendFile(path.join(__dirname, "code.html"));
+});
+
+app.get("/:filename", (request, response, next) => {
+  const filename = request.params.filename;
+
+  if (!publicFiles.has(filename)) {
+    next();
+    return;
+  }
+
+  response.sendFile(path.join(__dirname, filename));
 });
 
 app.get("/api/google-reviews", async (_request, response) => {
@@ -425,6 +446,10 @@ function fromMinutes(totalMinutes) {
   return `${hours}:${minutes}`;
 }
 
-app.listen(port, () => {
-  console.log(`Vetusta web running at http://127.0.0.1:${port}`);
-});
+if (!process.env.VERCEL) {
+  app.listen(port, () => {
+    console.log(`Vetusta web running at http://127.0.0.1:${port}`);
+  });
+}
+
+export default app;
