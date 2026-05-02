@@ -126,6 +126,7 @@ async function changeImage(input) {
       throw error;
     }
 
+    console.log("saved image_url", imagePath);
     await loadPets();
     setStatus(statusEl, "Imagen actualizada.");
   } catch (error) {

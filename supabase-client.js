@@ -116,14 +116,17 @@ export function calculateAge(birthDate) {
 }
 
 export async function uploadPetImage(supabase, ownerId, petId, file) {
+  console.log("selected file", file);
   validateUploadFile(file, "image");
   const safeName = safeFileName(file.name);
   const filePath = `${ownerId}/${petId}/${Date.now()}-${safeName}`;
-  const { error } = await supabase.storage.from("pet-images").upload(filePath, file, {
+  console.log("upload path", filePath);
+  const { data, error } = await supabase.storage.from("pet-images").upload(filePath, file, {
     cacheControl: "3600",
     contentType: file.type,
     upsert: true,
   });
+  console.log("upload result", data, error);
 
   if (error) {
     console.error("upload error", error);
@@ -190,7 +193,8 @@ export async function signedPetImageUrl(supabase, imagePath) {
   }
 
   if (imagePath.startsWith("http")) {
-    return imagePath;
+    console.error("signed url error", new Error("pets.image_url debe ser un path relativo del bucket pet-images, no una URL publica."));
+    return "";
   }
 
   const candidates = candidatePetImagePaths(imagePath);

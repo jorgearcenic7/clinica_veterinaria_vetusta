@@ -288,7 +288,7 @@ async function savePet(event) {
   }
 
   const values = normalizeEmptyDates(formToObject(petForm));
-  const imageFile = petForm.image_file.files?.[0];
+  const imageFile = petForm.elements.image_file.files?.[0] || null;
   const payload = {
     owner_id: selectedClient.id,
     name: values.name,
@@ -321,6 +321,9 @@ async function savePet(event) {
         console.error("update pet image error", imageError);
         throw imageError;
       }
+
+      console.log("saved image_url", imagePath);
+      selectedPetId = petId;
     }
 
     resetPetForm();
