@@ -98,7 +98,10 @@ app.get("/api/availability", async (request, response) => {
     response.json(buildMonthAvailability(month, reservations));
   } catch (error) {
     console.error("Availability error:", error);
-    response.status(500).json({ error: "No se pudo cargar la disponibilidad." });
+    response.status(error.statusCode || 500).json({
+      error: "No se pudo cargar la disponibilidad.",
+      detail: error.message,
+    });
   }
 });
 

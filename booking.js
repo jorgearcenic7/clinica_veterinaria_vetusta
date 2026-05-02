@@ -47,7 +47,7 @@ async function loadAvailability() {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || `Error ${response.status}`);
+      throw new Error(errorData.detail || errorData.error || `Error ${response.status}`);
     }
 
     bookingState.availability = await response.json();
