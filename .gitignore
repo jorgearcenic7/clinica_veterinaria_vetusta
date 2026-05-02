@@ -4,3 +4,4 @@ node_modules/
 .google-usage.json
 reservations.json
 *.log
+reviews.local.json
