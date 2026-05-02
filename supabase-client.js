@@ -1,6 +1,9 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 let cachedClient = null;
+const maxUploadSize = 10 * 1024 * 1024;
+const allowedImageTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
+const allowedDocumentTypes = new Set([...allowedImageTypes, "application/pdf"]);
 
 export async function getSupabase() {
   if (cachedClient) {
@@ -32,6 +35,23 @@ export async function requireSession() {
   }
 
   return { supabase, session: data.session };
+}
+
+export async function requireAdmin() {
+  const auth = await requireSession();
+
+  if (!auth) {
+    return null;
+  }
+
+  const profile = await getProfile(auth.supabase, auth.session.user.id);
+
+  if (profile.role !== "admin") {
+    window.location.replace("/dashboard");
+    return null;
+  }
+
+  return { ...auth, profile };
 }
 
 export async function getProfile(supabase, userId) {
@@ -95,10 +115,12 @@ export function calculateAge(birthDate) {
 }
 
 export async function uploadPetImage(supabase, petId, file) {
+  validateUploadFile(file, "image");
   const extension = getFileExtension(file.name);
   const filePath = `${petId}/photo-${Date.now()}.${extension}`;
   const { error } = await supabase.storage.from("pet-images").upload(filePath, file, {
     cacheControl: "3600",
+    contentType: file.type,
     upsert: true,
   });
 
@@ -110,10 +132,12 @@ export async function uploadPetImage(supabase, petId, file) {
 }
 
 export async function uploadPetDocumentFile(supabase, petId, file) {
+  validateUploadFile(file, "document");
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "-");
   const filePath = `${petId}/${Date.now()}-${safeName}`;
   const { error } = await supabase.storage.from("pet-documents").upload(filePath, file, {
     cacheControl: "3600",
+    contentType: file.type,
     upsert: false,
   });
 
@@ -122,6 +146,34 @@ export async function uploadPetDocumentFile(supabase, petId, file) {
   }
 
   return { fileUrl: filePath, filePath };
+}
+
+export async function logDocumentUpload(supabase, documentItem, file) {
+  const { error } = await supabase.from("document_upload_logs").insert({
+    document_id: documentItem.id,
+    pet_id: documentItem.pet_id,
+    uploaded_by: documentItem.uploaded_by,
+    source: documentItem.source,
+    file_name: file.name,
+    file_type: file.type || null,
+    file_size: file.size,
+  });
+
+  if (error) {
+    console.warn("Document upload log error:", error.message);
+  }
+}
+
+export async function removePetDocumentFile(supabase, filePath) {
+  if (!filePath || filePath.startsWith("http")) {
+    return;
+  }
+
+  const { error } = await supabase.storage.from("pet-documents").remove([filePath]);
+
+  if (error) {
+    console.warn("Document file delete error:", error.message);
+  }
 }
 
 export async function signedPetImageUrl(supabase, imagePath) {
@@ -167,6 +219,71 @@ export function formToObject(form) {
 export function setStatus(element, message, isError = false) {
   element.textContent = message || "";
   element.classList.toggle("error", Boolean(isError));
+}
+
+export function validateStrongPassword(password) {
+  const value = String(password || "");
+
+  if (value.length < 12) {
+    return "La contraseña debe tener al menos 12 caracteres.";
+  }
+
+  if (!/[a-z]/.test(value)) {
+    return "La contraseña debe incluir al menos una letra minúscula.";
+  }
+
+  if (!/[A-Z]/.test(value)) {
+    return "La contraseña debe incluir al menos una letra mayúscula.";
+  }
+
+  if (!/[0-9]/.test(value)) {
+    return "La contraseña debe incluir al menos un número.";
+  }
+
+  if (!/[^A-Za-z0-9]/.test(value)) {
+    return "La contraseña debe incluir al menos un símbolo.";
+  }
+
+  return "";
+}
+
+export function validateUploadFile(file, kind = "document") {
+  if (!file) {
+    throw new Error("Selecciona un archivo.");
+  }
+
+  if (file.size > maxUploadSize) {
+    throw new Error("El archivo supera el tamaño máximo de 10MB.");
+  }
+
+  const allowedTypes = kind === "image" ? allowedImageTypes : allowedDocumentTypes;
+  const allowedLabel = kind === "image" ? "JPG, PNG o WEBP" : "JPG, PNG, WEBP o PDF";
+
+  if (!allowedTypes.has(file.type)) {
+    throw new Error(`Formato no permitido. Sube un archivo ${allowedLabel}.`);
+  }
+}
+
+export function friendlyError(error) {
+  const message = error?.message || "No se pudo completar la operación.";
+
+  if (message.includes("row-level security")) {
+    return "No tienes permisos para realizar esta acción.";
+  }
+
+  if (message.includes("new row violates row-level security policy")) {
+    return "No tienes permisos para guardar esta información.";
+  }
+
+  if (message.includes("The resource already exists")) {
+    return "Ese archivo ya existe. Cambia el nombre o vuelve a intentarlo.";
+  }
+
+  if (message.includes("JWT") || message.includes("session")) {
+    return "Tu sesión ha caducado. Vuelve a iniciar sesión.";
+  }
+
+  return message;
 }
 
 export function escapeHtml(value) {

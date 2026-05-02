@@ -1,4 +1,4 @@
-import { formToObject, getSupabase, setStatus } from "./supabase-client.js";
+import { formToObject, friendlyError, getSupabase, setStatus, validateStrongPassword } from "./supabase-client.js";
 
 const statusEl = document.querySelector("[data-auth-status]");
 const tabButtons = [...document.querySelectorAll("[data-tab]")];
@@ -7,7 +7,8 @@ const loginForm = document.querySelector("[data-login-form]");
 const registerForm = document.querySelector("[data-register-form]");
 const resetForm = document.querySelector("[data-reset-form]");
 const updatePasswordForm = document.querySelector("[data-update-password-form]");
-const redirectTo = new URLSearchParams(window.location.search).get("redirect") || "/dashboard";
+const redirectParam = new URLSearchParams(window.location.search).get("redirect") || "/dashboard";
+const redirectTo = redirectParam.startsWith("/") && !redirectParam.startsWith("//") ? redirectParam : "/dashboard";
 
 initAuth();
 
@@ -63,6 +64,12 @@ registerForm.addEventListener("submit", async (event) => {
   try {
     const supabase = await getSupabase();
     const values = formToObject(registerForm);
+    const passwordError = validateStrongPassword(values.password);
+
+    if (passwordError) {
+      throw new Error(passwordError);
+    }
+
     const { error } = await supabase.auth.signUp({
       email: values.email,
       password: values.password,
@@ -115,6 +122,12 @@ updatePasswordForm.addEventListener("submit", async (event) => {
   try {
     const supabase = await getSupabase();
     const values = formToObject(updatePasswordForm);
+    const passwordError = validateStrongPassword(values.password);
+
+    if (passwordError) {
+      throw new Error(passwordError);
+    }
+
     const { error } = await supabase.auth.updateUser({ password: values.password });
 
     if (error) {
@@ -154,5 +167,9 @@ function friendlyAuthError(error) {
     return "Email o contrasena incorrectos.";
   }
 
-  return message;
+  if (message.includes("email rate limit exceeded")) {
+    return "Se han enviado demasiados emails en poco tiempo. Espera unos minutos antes de intentarlo de nuevo.";
+  }
+
+  return friendlyError(error);
 }

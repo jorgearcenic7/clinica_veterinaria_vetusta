@@ -1,4 +1,4 @@
-import { calculateAge, escapeHtml, getProfile, requireSession, setStatus, signedPetImageUrl, signOut, uploadPetImage } from "./supabase-client.js";
+import { calculateAge, escapeHtml, friendlyError, getProfile, requireSession, setStatus, signedPetImageUrl, signOut, uploadPetImage, validateUploadFile } from "./supabase-client.js";
 
 const statusEl = document.querySelector("[data-status]");
 const welcomeEl = document.querySelector("[data-welcome]");
@@ -72,7 +72,7 @@ async function renderPets() {
       <div class="row">
         <label class="button secondary">
           Cambiar foto
-          <input class="hidden" type="file" accept="image/*" data-image-input="${pet.id}">
+          <input class="hidden" type="file" accept="image/jpeg,image/png,image/webp" data-image-input="${pet.id}">
         </label>
         <a class="button" href="/dashboard/pets/${pet.id}">Ver historial</a>
       </div>
@@ -93,6 +93,7 @@ async function changeImage(input) {
   }
 
   try {
+    validateUploadFile(file, "image");
     setStatus(statusEl, "Subiendo foto...");
     const imageUrl = await uploadPetImage(supabase, input.dataset.imageInput, file);
     const { error } = await supabase.rpc("set_pet_image", {
@@ -107,7 +108,7 @@ async function changeImage(input) {
     await loadPets();
     setStatus(statusEl, "Foto actualizada.");
   } catch (error) {
-    setStatus(statusEl, error.message || "No se pudo subir la foto.", true);
+    setStatus(statusEl, friendlyError(error) || "No se pudo subir la foto.", true);
   } finally {
     input.value = "";
   }

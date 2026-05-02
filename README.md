@@ -184,14 +184,22 @@ Puedes encontrar el UUID en Supabase > Authentication > Users.
 
 ### Seguridad incluida
 
-- `profiles`, `pets` y `pet_records` tienen RLS activo.
+- `profiles`, `pets`, `pet_records`, `pet_documents` y `document_upload_logs` tienen RLS activo.
 - Los clientes autenticados solo leen su perfil, sus mascotas y los registros de sus mascotas.
 - Los clientes pueden cambiar la imagen de sus propias mascotas mediante una funcion limitada a `image_url`.
 - Los clientes pueden subir documentos a `pet_documents` solo para sus mascotas y borrar solo los documentos que hayan subido.
 - Los clientes no pueden editar datos medicos oficiales ni `pet_records`.
 - Los admins pueden leer, crear, editar y borrar mascotas, historiales y documentos.
 - Los buckets `pet-images` y `pet-documents` son privados y se consultan con URLs firmadas.
+- La subida de archivos esta limitada a JPG, PNG, WEBP y PDF, con un maximo de 10MB.
+- Las imagenes de mascota solo aceptan JPG, PNG o WEBP.
+- El registro y cambio de contrasena exigen contrasena fuerte: minimo 12 caracteres, mayuscula, minuscula, numero y simbolo.
+- Los cambios de `role` quedan bloqueados para usuarios que no sean admin mediante trigger en Supabase.
+- Las paginas privadas se sirven con `Cache-Control: no-store`.
+- El frontend usa solo `SUPABASE_ANON_KEY`; no uses `SUPABASE_SERVICE_ROLE_KEY` en HTML ni JavaScript del navegador.
 - El perfil se crea automaticamente al registrarse mediante trigger sobre `auth.users`.
+
+Si ya ejecutaste una version anterior de `supabase-client-area.sql`, vuelve a ejecutarlo completo para aplicar `document_upload_logs`, validaciones de Storage, trigger de rol y politicas actualizadas.
 
 ### Ejecutar
 

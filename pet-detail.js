@@ -1,4 +1,4 @@
-import { calculateAge, escapeHtml, formatDate, formToObject, requireSession, setStatus, signedPetDocumentUrl, signedPetImageUrl, signOut, todayKey, uploadPetDocumentFile } from "./supabase-client.js";
+import { calculateAge, escapeHtml, formatDate, formToObject, friendlyError, logDocumentUpload, removePetDocumentFile, requireSession, setStatus, signedPetDocumentUrl, signedPetImageUrl, signOut, todayKey, uploadPetDocumentFile, validateUploadFile } from "./supabase-client.js";
 
 const statusEl = document.querySelector("[data-status]");
 const petCardEl = document.querySelector("[data-pet-card]");
@@ -150,9 +150,10 @@ async function uploadDocument(event) {
   }
 
   try {
+    validateUploadFile(file, "document");
     setStatus(statusEl, "Subiendo documento...");
     const uploaded = await uploadPetDocumentFile(supabase, petId, file);
-    const { error } = await supabase.from("pet_documents").insert({
+    const { data, error } = await supabase.from("pet_documents").insert({
       pet_id: petId,
       uploaded_by: session.user.id,
       title: values.title,
@@ -161,17 +162,19 @@ async function uploadDocument(event) {
       file_name: file.name,
       file_type: file.type || null,
       source: "client",
-    });
+    }).select("id,pet_id,uploaded_by,source").single();
 
     if (error) {
       throw error;
     }
 
+    await logDocumentUpload(supabase, data, file);
+
     documentForm.reset();
     await loadPetData();
     setStatus(statusEl, "Documento subido.");
   } catch (error) {
-    setStatus(statusEl, error.message || "No se pudo subir el documento.", true);
+    setStatus(statusEl, friendlyError(error) || "No se pudo subir el documento.", true);
   }
 }
 
@@ -182,16 +185,19 @@ async function deleteDocument(documentId) {
 
   try {
     setStatus(statusEl, "Eliminando documento...");
+    const documentItem = documents.find((item) => item.id === documentId);
     const { error } = await supabase.from("pet_documents").delete().eq("id", documentId);
 
     if (error) {
       throw error;
     }
 
+    await removePetDocumentFile(supabase, documentItem?.file_url);
+
     await loadPetData();
     setStatus(statusEl, "Documento eliminado.");
   } catch (error) {
-    setStatus(statusEl, error.message || "No se pudo eliminar el documento.", true);
+    setStatus(statusEl, friendlyError(error) || "No se pudo eliminar el documento.", true);
   }
 }
 

@@ -44,16 +44,31 @@ create table if not exists public.pet_documents (
   created_at timestamptz not null default now()
 );
 
+create table if not exists public.document_upload_logs (
+  id uuid primary key default gen_random_uuid(),
+  document_id uuid references public.pet_documents(id) on delete set null,
+  pet_id uuid references public.pets(id) on delete cascade,
+  uploaded_by uuid references public.profiles(id) on delete set null,
+  source text not null check (source in ('client', 'clinic')),
+  file_name text,
+  file_type text,
+  file_size bigint,
+  created_at timestamptz not null default now()
+);
+
 create index if not exists pets_owner_id_idx on public.pets(owner_id);
 create index if not exists pet_records_pet_id_idx on public.pet_records(pet_id);
 create index if not exists pet_records_next_due_date_idx on public.pet_records(next_due_date);
 create index if not exists pet_documents_pet_id_idx on public.pet_documents(pet_id);
 create index if not exists pet_documents_uploaded_by_idx on public.pet_documents(uploaded_by);
+create index if not exists document_upload_logs_pet_id_idx on public.document_upload_logs(pet_id);
+create index if not exists document_upload_logs_uploaded_by_idx on public.document_upload_logs(uploaded_by);
 
 alter table public.profiles enable row level security;
 alter table public.pets enable row level security;
 alter table public.pet_records enable row level security;
 alter table public.pet_documents enable row level security;
+alter table public.document_upload_logs enable row level security;
 
 insert into storage.buckets (id, name, public)
 values
@@ -122,16 +137,58 @@ begin
 end;
 $$;
 
+create or replace function public.prevent_client_role_change()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if new.role is distinct from old.role and not public.is_admin() then
+    raise exception 'No tienes permiso para modificar el rol de usuario.';
+  end if;
+
+  return new;
+end;
+$$;
+
+create or replace function public.is_allowed_storage_file(bucket text, metadata jsonb)
+returns boolean
+language sql
+stable
+as $$
+  select
+    coalesce(
+      case
+        when coalesce(metadata ->> 'size', '') ~ '^[0-9]+$'
+        then (metadata ->> 'size')::bigint
+        else 0
+      end,
+      0
+    ) between 1 and 10485760
+    and (
+      (bucket = 'pet-images' and lower(coalesce(metadata ->> 'mimetype', '')) in ('image/jpeg', 'image/png', 'image/webp'))
+      or
+      (bucket = 'pet-documents' and lower(coalesce(metadata ->> 'mimetype', '')) in ('image/jpeg', 'image/png', 'image/webp', 'application/pdf'))
+    );
+$$;
+
 drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
+
+drop trigger if exists prevent_client_role_change_trigger on public.profiles;
+create trigger prevent_client_role_change_trigger
+  before update of role on public.profiles
+  for each row execute function public.prevent_client_role_change();
 
 grant usage on schema public to anon, authenticated;
 grant select, insert, update, delete on public.profiles to authenticated;
 grant select, insert, update, delete on public.pets to authenticated;
 grant select, insert, update, delete on public.pet_records to authenticated;
 grant select, insert, update, delete on public.pet_documents to authenticated;
+grant select, insert on public.document_upload_logs to authenticated;
 grant execute on function public.set_pet_image(uuid, text) to authenticated;
 
 drop policy if exists "Clients read own profile" on public.profiles;
@@ -144,6 +201,9 @@ drop policy if exists "Clients read own pet documents" on public.pet_documents;
 drop policy if exists "Clients upload own pet documents" on public.pet_documents;
 drop policy if exists "Clients delete own uploaded pet documents" on public.pet_documents;
 drop policy if exists "Admins manage pet documents" on public.pet_documents;
+drop policy if exists "Clients insert own document upload logs" on public.document_upload_logs;
+drop policy if exists "Admins read document upload logs" on public.document_upload_logs;
+drop policy if exists "Admins insert document upload logs" on public.document_upload_logs;
 drop policy if exists "Clients upload own pet images" on storage.objects;
 drop policy if exists "Clients update own pet images" on storage.objects;
 drop policy if exists "Admins manage pet images" on storage.objects;
@@ -249,6 +309,33 @@ create policy "Admins manage pet documents"
   using (public.is_admin())
   with check (public.is_admin());
 
+create policy "Clients insert own document upload logs"
+  on public.document_upload_logs
+  for insert
+  to authenticated
+  with check (
+    source = 'client'
+    and uploaded_by = auth.uid()
+    and exists (
+      select 1
+      from public.pets
+      where pets.id = document_upload_logs.pet_id
+        and pets.owner_id = auth.uid()
+    )
+  );
+
+create policy "Admins read document upload logs"
+  on public.document_upload_logs
+  for select
+  to authenticated
+  using (public.is_admin());
+
+create policy "Admins insert document upload logs"
+  on public.document_upload_logs
+  for insert
+  to authenticated
+  with check (public.is_admin());
+
 create policy "Authenticated read pet images"
   on storage.objects
   for select
@@ -272,6 +359,7 @@ create policy "Clients upload own pet images"
   to authenticated
   with check (
     bucket_id = 'pet-images'
+    and public.is_allowed_storage_file(bucket_id, metadata)
     and exists (
       select 1
       from public.pets
@@ -286,6 +374,7 @@ create policy "Clients update own pet images"
   to authenticated
   using (
     bucket_id = 'pet-images'
+    and public.is_allowed_storage_file(bucket_id, metadata)
     and exists (
       select 1
       from public.pets
@@ -295,6 +384,7 @@ create policy "Clients update own pet images"
   )
   with check (
     bucket_id = 'pet-images'
+    and public.is_allowed_storage_file(bucket_id, metadata)
     and exists (
       select 1
       from public.pets
@@ -308,7 +398,11 @@ create policy "Admins manage pet images"
   for all
   to authenticated
   using (bucket_id = 'pet-images' and public.is_admin())
-  with check (bucket_id = 'pet-images' and public.is_admin());
+  with check (
+    bucket_id = 'pet-images'
+    and public.is_admin()
+    and public.is_allowed_storage_file(bucket_id, metadata)
+  );
 
 create policy "Authenticated read pet document files"
   on storage.objects
@@ -333,6 +427,7 @@ create policy "Clients upload own pet document files"
   to authenticated
   with check (
     bucket_id = 'pet-documents'
+    and public.is_allowed_storage_file(bucket_id, metadata)
     and exists (
       select 1
       from public.pets
@@ -361,7 +456,11 @@ create policy "Admins manage pet document files"
   for all
   to authenticated
   using (bucket_id = 'pet-documents' and public.is_admin())
-  with check (bucket_id = 'pet-documents' and public.is_admin());
+  with check (
+    bucket_id = 'pet-documents'
+    and public.is_admin()
+    and public.is_allowed_storage_file(bucket_id, metadata)
+  );
 
 -- Para convertir una cuenta existente en veterinario/admin:
 -- update public.profiles set role = 'admin' where id = 'UUID_DEL_USUARIO';

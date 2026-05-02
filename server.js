@@ -81,6 +81,10 @@ const publicFiles = {
 
 Object.entries(publicFiles).forEach(([route, filename]) => {
   app.get(route, (request, response, next) => {
+    if (["/auth", "/auth.html", "/dashboard", "/dashboard.html", "/admin", "/admin.html", "/pet-detail.html"].includes(route)) {
+      response.set("Cache-Control", "no-store");
+    }
+
     response.sendFile(filename, { root: publicRoot }, (error) => {
       if (error) {
         next(error);
@@ -90,6 +94,7 @@ Object.entries(publicFiles).forEach(([route, filename]) => {
 });
 
 app.get("/dashboard/pets/:id", (_request, response, next) => {
+  response.set("Cache-Control", "no-store");
   response.sendFile("pet-detail.html", { root: publicRoot }, (error) => {
     if (error) {
       next(error);
