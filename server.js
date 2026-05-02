@@ -1,4 +1,5 @@
 import "dotenv/config";
+import { createClient } from "@supabase/supabase-js";
 import express from "express";
 import fs from "node:fs/promises";
 import os from "node:os";
@@ -21,6 +22,16 @@ const localReviewsFilePath = path.join(__dirname, "reviews.local.json");
 const reservationsFilePath = process.env.VERCEL
   ? path.join(os.tmpdir(), "reservations.json")
   : path.join(__dirname, "reservations.json");
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+const supabase = supabaseUrl && supabaseKey
+  ? createClient(supabaseUrl, supabaseKey, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+      },
+    })
+  : null;
 
 let reviewsCache = null;
 let resolvedPlaceCache = null;
@@ -83,7 +94,7 @@ app.get("/api/availability", async (request, response) => {
       return;
     }
 
-    const reservations = await readReservations();
+    const reservations = await readReservations(month);
     response.json(buildMonthAvailability(month, reservations));
   } catch (error) {
     console.error("Availability error:", error);
@@ -94,7 +105,7 @@ app.get("/api/availability", async (request, response) => {
 app.post("/api/reservations", async (request, response) => {
   try {
     const reservation = normalizeReservation(request.body);
-    const reservations = await readReservations();
+    const reservations = await readReservations(reservation.datetime.slice(0, 7));
 
     if (!isBookableDateTime(reservation.datetime)) {
       response.status(400).json({ error: "La fecha u hora elegida no esta dentro del horario de la clinica." });
@@ -108,13 +119,8 @@ app.post("/api/reservations", async (request, response) => {
       return;
     }
 
-    reservations.push({
-      ...reservation,
-      createdAt: new Date().toISOString(),
-    });
-
-    await fs.writeFile(reservationsFilePath, JSON.stringify(reservations, null, 2));
-    response.status(201).json({ ok: true, reservation });
+    const savedReservation = await saveReservation(reservation);
+    response.status(201).json({ ok: true, reservation: savedReservation });
   } catch (error) {
     response.status(error.statusCode || 400).json({ error: error.message || "No se pudo crear la reserva." });
   }
@@ -308,7 +314,11 @@ async function readUsage() {
   }
 }
 
-async function readReservations() {
+async function readReservations(month) {
+  if (supabase) {
+    return readSupabaseReservations(month);
+  }
+
   try {
     const raw = await fs.readFile(reservationsFilePath, "utf8");
     const parsed = JSON.parse(raw);
@@ -321,6 +331,83 @@ async function readReservations() {
 
     throw error;
   }
+}
+
+async function readSupabaseReservations(month) {
+  const [year, monthNumber] = month.split("-").map(Number);
+  const startDate = `${month}-01T00:00`;
+  const endDate = `${year}-${String(monthNumber + 1).padStart(2, "0")}-01T00:00`;
+  const normalizedEndDate = monthNumber === 12
+    ? `${year + 1}-01-01T00:00`
+    : endDate;
+
+  const { data, error } = await supabase
+    .from("reservations")
+    .select("id,nombre,telefono,mascota,servicio,datetime,created_at")
+    .gte("datetime", startDate)
+    .lt("datetime", normalizedEndDate);
+
+  if (error) {
+    throw new Error(`Supabase no pudo leer reservas: ${error.message}`);
+  }
+
+  return data.map((reservation) => ({
+    id: reservation.id,
+    nombre: reservation.nombre,
+    telefono: reservation.telefono,
+    mascota: reservation.mascota,
+    servicio: reservation.servicio,
+    datetime: reservation.datetime,
+    createdAt: reservation.created_at,
+  }));
+}
+
+async function saveReservation(reservation) {
+  if (supabase) {
+    return saveSupabaseReservation(reservation);
+  }
+
+  const reservations = await readReservations(reservation.datetime.slice(0, 7));
+  reservations.push({
+    ...reservation,
+    createdAt: new Date().toISOString(),
+  });
+  await fs.writeFile(reservationsFilePath, JSON.stringify(reservations, null, 2));
+  return reservation;
+}
+
+async function saveSupabaseReservation(reservation) {
+  const { data, error } = await supabase
+    .from("reservations")
+    .insert({
+      nombre: reservation.nombre,
+      telefono: reservation.telefono,
+      mascota: reservation.mascota,
+      servicio: reservation.servicio,
+      datetime: reservation.datetime,
+    })
+    .select("id,nombre,telefono,mascota,servicio,datetime,created_at")
+    .single();
+
+  if (error) {
+    if (error.code === "23505") {
+      const conflictError = new Error("Ese horario ya esta reservado. Elige otro hueco.");
+      conflictError.statusCode = 409;
+      throw conflictError;
+    }
+
+    throw new Error(`Supabase no pudo guardar la reserva: ${error.message}`);
+  }
+
+  return {
+    id: data.id,
+    nombre: data.nombre,
+    telefono: data.telefono,
+    mascota: data.mascota,
+    servicio: data.servicio,
+    datetime: data.datetime,
+    createdAt: data.created_at,
+  };
 }
 
 function buildMonthAvailability(month, reservations) {

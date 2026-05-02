@@ -113,4 +113,17 @@ El formulario de reserva usa un calendario real:
 - Huecos de 30 minutos.
 - Los horarios reservados aparecen en rojo y no se pueden elegir.
 
-Las reservas se guardan en `reservations.json`, que esta ignorado por Git porque puede contener datos personales.
+Las reservas se guardan en Supabase si existen `SUPABASE_URL` y `SUPABASE_ANON_KEY` o `SUPABASE_SERVICE_ROLE_KEY` en el entorno. Si faltan esas variables, se usa `reservations.json` solo como fallback local de desarrollo.
+
+Para crear la tabla en Supabase:
+
+1. Abre Supabase > SQL Editor.
+2. Ejecuta el contenido de `supabase-reservations.sql`.
+3. En Vercel, anade estas variables:
+
+```env
+SUPABASE_URL=tu_url_de_supabase
+SUPABASE_ANON_KEY=tu_anon_key
+```
+
+Para produccion, es preferible usar `SUPABASE_SERVICE_ROLE_KEY` solo en el backend/Vercel y ajustar las politicas RLS.
