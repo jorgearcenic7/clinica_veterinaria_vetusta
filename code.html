@@ -154,6 +154,34 @@
         .soft-shadow {
             box-shadow: 0 10px 20px rgba(1, 45, 29, 0.04);
         }
+
+        .hero {
+            min-height: 80vh;
+            background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDQTPR4KrFRZe1XP4lOayPvle7_d6tZ3f0-3gFpUrYTF4IdCKK7IjGmx_4t_pwd9FB57pkiReYb8Sa66-EUNmT_rT9x3CdBpUSB9dUUM1IckoJ2NW4pzuj90UbozlNlyxAKWi0Z9wq9Lx2TXwXjy7quoXWVQgWvMr8mVZtTp-JpJ03oydEAvqSpWSStn_CMK-xKsM3nC5z6c9CtJIDF3KE2E3XKzDwExlepuvNE6SiTagRRKVNtem4zBiUnRFcAx9P_jmMbwMxnQ4Dw");
+            background-size: cover;
+            background-position: 60% center;
+            background-repeat: no-repeat;
+        }
+
+        .hero-overlay {
+            background: linear-gradient(
+                to right,
+                rgba(0, 0, 0, 0.6),
+                rgba(0, 0, 0, 0.2)
+            );
+        }
+
+        .hero-content {
+            max-width: 500px;
+        }
+
+        @media (max-width: 767px) {
+            .hero {
+                min-height: 80vh;
+                background-position: center;
+                padding: 40px 20px;
+            }
+        }
     </style>
 </head>
 <body class="bg-background text-on-background font-body-md text-body-md antialiased overflow-x-hidden pb-24 md:pb-0">
@@ -182,13 +210,10 @@
 </header>
 <main>
 <!-- Hero Section -->
-<section class="relative pt-xl pb-lg px-md min-h-[819px] flex flex-col justify-center overflow-hidden" id="inicio">
-<div class="absolute inset-0 z-0 bg-black">
-<img class="w-full h-full object-cover opacity-80" data-alt="Una veterinaria sonriente cuidando con cariño a un perro en una clínica moderna y acogedora, con iluminación natural y tonos cálidos." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQTPR4KrFRZe1XP4lOayPvle7_d6tZ3f0-3gFpUrYTF4IdCKK7IjGmx_4t_pwd9FB57pkiReYb8Sa66-EUNmT_rT9x3CdBpUSB9dUUM1IckoJ2NW4pzuj90UbozlNlyxAKWi0Z9wq9Lx2TXwXjy7quoXWVQgWvMr8mVZtTp-JpJ03oydEAvqSpWSStn_CMK-xKsM3nC5z6c9CtJIDF3KE2E3XKzDwExlepuvNE6SiTagRRKVNtem4zBiUnRFcAx9P_jmMbwMxnQ4Dw"/>
-<div class="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent"></div>
-</div>
-<div class="relative z-10 max-w-container-max mx-auto w-full grid md:grid-cols-12 gap-gutter">
-<div class="md:col-span-8 lg:col-span-6 flex flex-col gap-6">
+<section class="hero relative pt-xl pb-lg px-md flex flex-col justify-center overflow-hidden" id="inicio" role="img" aria-label="Una veterinaria sonriente cuidando con cariño a un perro en una clínica moderna y acogedora, con iluminación natural y tonos cálidos.">
+<div class="hero-overlay absolute inset-0 z-0"></div>
+<div class="relative z-10 max-w-container-max mx-auto w-full">
+<div class="hero-content flex flex-col gap-6">
 <div class="inline-flex items-center gap-2 bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full w-fit border border-white/20">
 <span class="text-tertiary-fixed" data-google-rating>⭐ 4,9/5</span>
 <span class="text-white font-label-caps text-label-caps" data-google-review-count>· +560 reseñas en Google</span>
