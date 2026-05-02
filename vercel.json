@@ -3,7 +3,20 @@
   "builds": [
     {
       "src": "server.js",
-      "use": "@vercel/node"
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": [
+          "code.html",
+          "aviso-legal.html",
+          "privacidad.html",
+          "cookies.html",
+          "sitemap.html",
+          "booking.js",
+          "reviews.js",
+          "screen.png",
+          "reviews.local.json"
+        ]
+      }
     }
   ],
   "routes": [

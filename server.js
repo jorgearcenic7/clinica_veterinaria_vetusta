@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const publicRoot = process.cwd();
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
@@ -26,30 +27,26 @@ let resolvedPlaceCache = null;
 
 app.use(express.json());
 
-const publicFiles = new Set([
-  "aviso-legal.html",
-  "booking.js",
-  "code.html",
-  "cookies.html",
-  "privacidad.html",
-  "reviews.js",
-  "screen.png",
-  "sitemap.html",
-]);
+const publicFiles = {
+  "/": "code.html",
+  "/code.html": "code.html",
+  "/aviso-legal.html": "aviso-legal.html",
+  "/privacidad.html": "privacidad.html",
+  "/cookies.html": "cookies.html",
+  "/sitemap.html": "sitemap.html",
+  "/booking.js": "booking.js",
+  "/reviews.js": "reviews.js",
+  "/screen.png": "screen.png",
+};
 
-app.get("/", (_request, response) => {
-  response.sendFile(path.join(__dirname, "code.html"));
-});
-
-app.get("/:filename", (request, response, next) => {
-  const filename = request.params.filename;
-
-  if (!publicFiles.has(filename)) {
-    next();
-    return;
-  }
-
-  response.sendFile(path.join(__dirname, filename));
+Object.entries(publicFiles).forEach(([route, filename]) => {
+  app.get(route, (request, response, next) => {
+    response.sendFile(filename, { root: publicRoot }, (error) => {
+      if (error) {
+        next(error);
+      }
+    });
+  });
 });
 
 app.get("/api/google-reviews", async (_request, response) => {
