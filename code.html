@@ -75,7 +75,7 @@
                         "base": "8px",
                         "xs": "4px",
                         "lg": "48px",
-                        "container-max": "1200px",
+                        "container-max": "1440px",
                         "gutter": "24px",
                         "md": "24px",
                         "sm": "12px",
@@ -212,7 +212,7 @@
 <body class="bg-background text-on-background font-body-md text-body-md antialiased overflow-x-hidden pb-24 md:pb-0">
 <!-- Sticky Top Navigation Bar -->
 <header class="sticky top-0 w-full z-50 bg-[#FEFBF6]/90 backdrop-blur-md border-b border-[#E6D5B8] shadow-[0_10px_20px_rgba(27,67,50,0.04)]">
-<div class="flex justify-between items-center px-6 md:px-12 py-4 max-w-[1200px] mx-auto">
+<div class="flex justify-between items-center px-6 md:px-12 py-4 max-w-[1440px] mx-auto">
 <div class="flex items-center gap-2">
 <span class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 1;">pets</span>
 <span class="font-h3 text-h3 text-primary-container tracking-tight">Clínica Veterinaria Vetusta</span>
@@ -273,19 +273,19 @@
 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
 <div class="flex items-center gap-3">
 <span class="material-symbols-outlined text-primary-container text-[32px]">star</span>
-<span class="font-label-caps text-label-caps text-on-surface-variant" data-google-trust-copy>Más de 560 reseñas 5 estrellas</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant" data-google-trust-copy data-i18n="trust.reviews">Más de 560 reseñas 5 estrellas</span>
 </div>
 <div class="flex items-center gap-3">
 <span class="material-symbols-outlined text-primary-container text-[32px]">favorite</span>
-<span class="font-label-caps text-label-caps text-on-surface-variant">Trato cercano y sin rodeos</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant" data-i18n="trust.care">Trato cercano y sin rodeos</span>
 </div>
 <div class="flex items-center gap-3">
 <span class="material-symbols-outlined text-primary-container text-[32px]">payments</span>
-<span class="font-label-caps text-label-caps text-on-surface-variant">Precios transparentes</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant" data-i18n="trust.prices">Precios transparentes</span>
 </div>
 <div class="flex items-center gap-3">
 <span class="material-symbols-outlined text-primary-container text-[32px]">location_on</span>
-<span class="font-label-caps text-label-caps text-on-surface-variant">En Oviedo desde hace años</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant" data-i18n="trust.location">En Oviedo desde hace años</span>
 </div>
 </div>
 </div>
@@ -293,9 +293,9 @@
 <!-- Services Grid -->
 <section class="py-xl px-md bg-background" id="servicios">
 <div class="max-w-container-max mx-auto flex flex-col gap-12">
-<div class="text-center max-w-2xl mx-auto">
-<h2 class="font-h2 text-h2 text-on-background mb-4">¿Qué podemos hacer por tu mascota?</h2>
-<p class="font-body-lg text-body-lg text-on-surface-variant">Cuidado integral para asegurar la salud y felicidad de tu compañero de vida.</p>
+<div class="text-center max-w-4xl mx-auto">
+<h2 class="font-h2 text-h2 text-on-background mb-4" data-i18n="services.title">¿Qué podemos hacer por tu mascota?</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant" data-i18n="services.subtitle">Cuidado integral para asegurar la salud y felicidad de tu compañero de vida.</p>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 <!-- Service 1 -->
@@ -303,53 +303,53 @@
 <div class="w-12 h-12 bg-primary-fixed rounded-lg flex items-center justify-center">
 <span class="material-symbols-outlined text-on-primary-fixed">stethoscope</span>
 </div>
-<h3 class="font-h3 text-h3 text-on-background">Consulta médica general</h3>
-<p class="font-body-md text-body-md text-on-surface-variant flex-grow">Revisiones completas para mantener la salud de tu mascota en óptimas condiciones, detectando problemas a tiempo.</p>
+<h3 class="font-h3 text-h3 text-on-background" data-i18n="services.general.title">Consulta médica general</h3>
+<p class="font-body-md text-body-md text-on-surface-variant flex-grow" data-i18n="services.general.text">Revisiones completas para mantener la salud de tu mascota en óptimas condiciones, detectando problemas a tiempo.</p>
 </div>
 <!-- Service 2 -->
 <div class="bg-surface-container-lowest rounded-xl p-6 border border-outline-variant soft-shadow flex flex-col gap-4 hover:shadow-[0_10px_20px_rgba(27,67,50,0.08)] transition-shadow">
 <div class="w-12 h-12 bg-primary-fixed rounded-lg flex items-center justify-center">
 <span class="material-symbols-outlined text-on-primary-fixed">vaccines</span>
 </div>
-<h3 class="font-h3 text-h3 text-on-background">Vacunación y desparasitación</h3>
-<p class="font-body-md text-body-md text-on-surface-variant flex-grow">Planes preventivos personalizados para proteger a tu animal de enfermedades comunes y parásitos.</p>
+<h3 class="font-h3 text-h3 text-on-background" data-i18n="services.vaccine.title">Vacunación y desparasitación</h3>
+<p class="font-body-md text-body-md text-on-surface-variant flex-grow" data-i18n="services.vaccine.text">Planes preventivos personalizados para proteger a tu animal de enfermedades comunes y parásitos.</p>
 </div>
 <!-- Service 3 -->
 <div class="bg-surface-container-lowest rounded-xl p-6 border border-outline-variant soft-shadow flex flex-col gap-4 hover:shadow-[0_10px_20px_rgba(27,67,50,0.08)] transition-shadow">
 <div class="w-12 h-12 bg-primary-fixed rounded-lg flex items-center justify-center">
 <span class="material-symbols-outlined text-on-primary-fixed">surgical</span>
 </div>
-<h3 class="font-h3 text-h3 text-on-background">Cirugía</h3>
-<p class="font-body-md text-body-md text-on-surface-variant flex-grow">Intervenciones quirúrgicas seguras con monitorización constante y quirófano equipado.</p>
+<h3 class="font-h3 text-h3 text-on-background" data-i18n="services.surgery.title">Cirugía</h3>
+<p class="font-body-md text-body-md text-on-surface-variant flex-grow" data-i18n="services.surgery.text">Intervenciones quirúrgicas seguras con monitorización constante y quirófano equipado.</p>
 </div>
 <!-- Service 4 -->
 <div class="bg-surface-container-lowest rounded-xl p-6 border border-outline-variant soft-shadow flex flex-col gap-4 hover:shadow-[0_10px_20px_rgba(27,67,50,0.08)] transition-shadow">
 <div class="w-12 h-12 bg-primary-fixed rounded-lg flex items-center justify-center">
 <span class="material-symbols-outlined text-on-primary-fixed">science</span>
 </div>
-<h3 class="font-h3 text-h3 text-on-background">Análisis de laboratorio</h3>
-<p class="font-body-md text-body-md text-on-surface-variant flex-grow">Diagnósticos rápidos y precisos gracias a nuestro equipamiento de laboratorio in situ.</p>
+<h3 class="font-h3 text-h3 text-on-background" data-i18n="services.lab.title">Análisis de laboratorio</h3>
+<p class="font-body-md text-body-md text-on-surface-variant flex-grow" data-i18n="services.lab.text">Diagnósticos rápidos y precisos gracias a nuestro equipamiento de laboratorio in situ.</p>
 </div>
 <!-- Service 5 -->
 <div class="bg-surface-container-lowest rounded-xl p-6 border border-outline-variant soft-shadow flex flex-col gap-4 hover:shadow-[0_10px_20px_rgba(27,67,50,0.08)] transition-shadow">
 <div class="w-12 h-12 bg-primary-fixed rounded-lg flex items-center justify-center">
 <span class="material-symbols-outlined text-on-primary-fixed">content_cut</span>
 </div>
-<h3 class="font-h3 text-h3 text-on-background">Peluquería canina y felina</h3>
-<p class="font-body-md text-body-md text-on-surface-variant flex-grow">Servicios de higiene y estética adaptados a las necesidades de cada raza y tipo de pelo.</p>
+<h3 class="font-h3 text-h3 text-on-background" data-i18n="services.grooming.title">Peluquería canina y felina</h3>
+<p class="font-body-md text-body-md text-on-surface-variant flex-grow" data-i18n="services.grooming.text">Servicios de higiene y estética adaptados a las necesidades de cada raza y tipo de pelo.</p>
 </div>
 <!-- Service 6 -->
 <div class="bg-surface-container-lowest rounded-xl p-6 border border-outline-variant soft-shadow flex flex-col gap-4 hover:shadow-[0_10px_20px_rgba(27,67,50,0.08)] transition-shadow">
 <div class="w-12 h-12 bg-error-container rounded-lg flex items-center justify-center">
 <span class="material-symbols-outlined text-on-error-container">emergency</span>
 </div>
-<h3 class="font-h3 text-h3 text-on-background">Urgencias veterinarias</h3>
-<p class="font-body-md text-body-md text-on-surface-variant flex-grow">Atención rápida para casos críticos, priorizando siempre el bienestar inmediato del animal.</p>
+<h3 class="font-h3 text-h3 text-on-background" data-i18n="services.emergency.title">Urgencias veterinarias</h3>
+<p class="font-body-md text-body-md text-on-surface-variant flex-grow" data-i18n="services.emergency.text">Atención rápida para casos críticos, priorizando siempre el bienestar inmediato del animal.</p>
 </div>
 </div>
 <div class="text-center mt-8">
-<p class="font-body-md text-body-md text-on-surface-variant mb-4">¿No encuentras lo que buscas?</p>
-<a class="inline-flex items-center justify-center border-2 border-primary text-primary font-label-caps text-label-caps px-8 py-3 rounded-lg hover:bg-primary-fixed transition-colors duration-200 hover:scale-105" href="tel:985206558">
+<p class="font-body-md text-body-md text-on-surface-variant mb-4" data-i18n="services.notFound">¿No encuentras lo que buscas?</p>
+<a class="inline-flex items-center justify-center border-2 border-primary text-primary font-label-caps text-label-caps px-8 py-3 rounded-lg hover:bg-primary-fixed transition-colors duration-200 hover:scale-105" href="tel:985206558" data-i18n="services.call">
                         Llámanos
                     </a>
 </div>
@@ -358,28 +358,28 @@
 <!-- Why Choose Us -->
 <section class="py-xl px-md bg-surface-container-low">
 <div class="max-w-container-max mx-auto text-center">
-<h2 class="font-h2 text-h2 text-on-background mb-12">¿Por qué elegirnos?</h2>
+<h2 class="font-h2 text-h2 text-on-background mb-12" data-i18n="why.title">¿Por qué elegirnos?</h2>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
 <div class="flex flex-col items-center text-center gap-4 bg-surface-container-lowest border border-outline-variant rounded-xl p-6 soft-shadow">
 <div class="w-16 h-16 bg-primary-fixed rounded-full flex items-center justify-center mb-2">
 <span class="material-symbols-outlined text-[#1B4332] text-3xl">favorite</span>
 </div>
-<h3 class="font-h3 text-h3 text-on-background">Trato humano de verdad</h3>
-<p class="font-body-md text-body-md text-on-surface-variant">Patricia y su equipo se toman el tiempo que tú y tu mascota necesitáis. Cada animal es tratado con cariño y paciencia.</p>
+<h3 class="font-h3 text-h3 text-on-background" data-i18n="why.human.title">Trato humano de verdad</h3>
+<p class="font-body-md text-body-md text-on-surface-variant" data-i18n="why.human.text">Patricia y su equipo se toman el tiempo que tú y tu mascota necesitáis. Cada animal es tratado con cariño y paciencia.</p>
 </div>
 <div class="flex flex-col items-center text-center gap-4 bg-surface-container-lowest border border-outline-variant rounded-xl p-6 soft-shadow">
 <div class="w-16 h-16 bg-primary-fixed rounded-full flex items-center justify-center mb-2">
 <span class="material-symbols-outlined text-[#1B4332] text-3xl">verified</span>
 </div>
-<h3 class="font-h3 text-h3 text-on-background">Honestidad ante todo</h3>
-<p class="font-body-md text-body-md text-on-surface-variant">Te decimos las cosas como son, sin rodeos y sin tratamientos innecesarios. Tu confianza es nuestra prioridad.</p>
+<h3 class="font-h3 text-h3 text-on-background" data-i18n="why.honest.title">Honestidad ante todo</h3>
+<p class="font-body-md text-body-md text-on-surface-variant" data-i18n="why.honest.text">Te decimos las cosas como son, sin rodeos y sin tratamientos innecesarios. Tu confianza es nuestra prioridad.</p>
 </div>
 <div class="flex flex-col items-center text-center gap-4 bg-surface-container-lowest border border-outline-variant rounded-xl p-6 soft-shadow">
 <div class="w-16 h-16 bg-primary-fixed rounded-full flex items-center justify-center mb-2">
 <span class="material-symbols-outlined text-[#1B4332] text-3xl">savings</span>
 </div>
-<h3 class="font-h3 text-h3 text-on-background">Precios justos y transparentes</h3>
-<p class="font-body-md text-body-md text-on-surface-variant">Sin sorpresas en la factura. Te informamos de los costes antes de realizar cualquier procedimiento.</p>
+<h3 class="font-h3 text-h3 text-on-background" data-i18n="why.prices.title">Precios justos y transparentes</h3>
+<p class="font-body-md text-body-md text-on-surface-variant" data-i18n="why.prices.text">Sin sorpresas en la factura. Te informamos de los costes antes de realizar cualquier procedimiento.</p>
 </div>
 </div>
 </div>
@@ -387,18 +387,18 @@
 <!-- Team Section -->
 <section class="py-xl px-md bg-background" id="equipo">
 <div class="max-w-container-max mx-auto">
-<div class="text-center max-w-2xl mx-auto mb-12">
-<h2 class="font-h2 text-h2 text-on-background mb-4">Conoce a quienes cuidarán de tu mascota</h2>
-<p class="font-body-lg text-body-lg text-on-surface-variant">Un equipo de profesionales apasionados por el bienestar animal.</p>
+<div class="text-center max-w-4xl mx-auto mb-12">
+<h2 class="font-h2 text-h2 text-on-background mb-4" data-i18n="team.title">Conoce a quienes cuidarán de tu mascota</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant" data-i18n="team.subtitle">Un equipo de profesionales apasionados por el bienestar animal.</p>
 </div>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-5xl mx-auto bg-surface-container-lowest p-8 md:p-12 rounded-2xl border border-outline-variant soft-shadow items-start justify-items-center"><!-- Patricia's Card -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-container-max mx-auto bg-surface-container-lowest p-8 md:p-12 rounded-2xl border border-outline-variant soft-shadow items-start justify-items-center"><!-- Patricia's Card -->
 <div class="flex flex-col items-center gap-6 text-center">
 <div class="flex flex-col gap-3">
 <div>
 <h3 class="font-h3 text-h3 text-on-background">Patricia</h3>
-<p class="text-primary font-label-caps text-label-caps">Veterinaria Principal</p>
+<p class="text-primary font-label-caps text-label-caps" data-i18n="team.patricia.role">Veterinaria Principal</p>
 </div>
-<p class="font-body-md text-body-md text-on-surface-variant">
+<p class="font-body-md text-body-md text-on-surface-variant" data-i18n="team.patricia.text">
             Con más de 15 años de experiencia, Patricia lidera el equipo con una filosofía basada en la honestidad y el trato humano. Su pasión es el bienestar integral de cada paciente.
         </p>
 </div>
@@ -408,9 +408,9 @@
 <div class="flex flex-col gap-3">
 <div>
 <h3 class="font-h3 text-h3 text-on-background">Víctor</h3>
-<p class="text-primary font-label-caps text-label-caps">Auxiliar Veterinario</p>
+<p class="text-primary font-label-caps text-label-caps" data-i18n="team.victor.role">Auxiliar Veterinario</p>
 </div>
-<p class="font-body-md text-body-md text-on-surface-variant">
+<p class="font-body-md text-body-md text-on-surface-variant" data-i18n="team.victor.text">
             Especialista en cuidados preventivos y manejo amable. Víctor se asegura de que cada mascota se sienta tranquila y segura durante su visita a la clínica.
         </p>
 </div>
@@ -421,7 +421,7 @@
 <section class="py-xl px-md bg-surface-container-low" id="opiniones">
 <div class="max-w-container-max mx-auto flex flex-col gap-12">
 <div class="text-center">
-<h2 class="font-h2 text-h2 text-on-background mb-4">Lo que dicen de nosotros</h2>
+<h2 class="font-h2 text-h2 text-on-background mb-4" data-i18n="reviews.title">Lo que dicen de nosotros</h2>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6" data-google-reviews-list>
 <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant soft-shadow flex flex-col gap-4">
@@ -432,7 +432,7 @@
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
 </div>
-<p class="font-body-md text-body-md text-on-surface-variant flex-grow italic">"Víctor es un veterinario de verdad, se nota la vocación y el cariño que le pone. Llevamos a nuestro perro desde cachorro y siempre ha sido un acierto."</p>
+<p class="font-body-md text-body-md text-on-surface-variant flex-grow italic" data-i18n="reviews.one">"Víctor es un veterinario de verdad, se nota la vocación y el cariño que le pone. Llevamos a nuestro perro desde cachorro y siempre ha sido un acierto."</p>
 <div class="flex items-center gap-3 mt-2">
 <div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center font-bold text-on-surface-variant">MF</div>
 <p class="font-label-caps text-label-caps text-on-background">María Fernández</p>
@@ -446,7 +446,7 @@
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
 </div>
-<p class="font-body-md text-body-md text-on-surface-variant flex-grow italic">"Trato inigualable. Tuvimos una urgencia un sábado y nos atendieron con muchísima empatía y profesionalidad. Salvaron a nuestra gata."</p>
+<p class="font-body-md text-body-md text-on-surface-variant flex-grow italic" data-i18n="reviews.two">"Trato inigualable. Tuvimos una urgencia un sábado y nos atendieron con muchísima empatía y profesionalidad. Salvaron a nuestra gata."</p>
 <div class="flex items-center gap-3 mt-2">
 <div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center font-bold text-on-surface-variant">CG</div>
 <p class="font-label-caps text-label-caps text-on-background">Carlos García</p>
@@ -460,7 +460,7 @@
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
 </div>
-<p class="font-body-md text-body-md text-on-surface-variant flex-grow italic">"La mejor clínica de Oviedo. Precios muy razonables y no te intentan vender cosas que no necesitas. Transparencia total."</p>
+<p class="font-body-md text-body-md text-on-surface-variant flex-grow italic" data-i18n="reviews.three">"La mejor clínica de Oviedo. Precios muy razonables y no te intentan vender cosas que no necesitas. Transparencia total."</p>
 <div class="flex items-center gap-3 mt-2">
 <div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center font-bold text-on-surface-variant">LR</div>
 <p class="font-label-caps text-label-caps text-on-background">Laura Rodríguez</p>
@@ -468,7 +468,7 @@
 </div>
 </div>
 <div class="text-center mt-4">
-<a class="inline-flex items-center justify-center border-2 border-primary text-primary font-label-caps text-label-caps px-8 py-3 rounded-lg hover:bg-primary-fixed transition-colors duration-200 bg-surface-container-lowest hover:scale-105" href="#" target="_blank" data-google-maps-link>
+<a class="inline-flex items-center justify-center border-2 border-primary text-primary font-label-caps text-label-caps px-8 py-3 rounded-lg hover:bg-primary-fixed transition-colors duration-200 bg-surface-container-lowest hover:scale-105" href="#" target="_blank" data-google-maps-link data-i18n="reviews.all">
                         Ver todas las opiniones en Google
                     </a>
 </div>
@@ -476,62 +476,62 @@
 </section>
 <!-- Book Appointment CTA -->
 <section class="bg-[#1B4332] py-xl px-md text-center">
-<div class="max-w-3xl mx-auto flex flex-col items-center gap-8"><h2 class="font-h1 text-h2 md:text-h1 text-white">¿Tu mascota necesita atención? Pide cita hoy</h2>
+<div class="max-w-5xl mx-auto flex flex-col items-center gap-8"><h2 class="font-h1 text-h2 md:text-h1 text-white" data-i18n="cta.title">¿Tu mascota necesita atención? Pide cita hoy</h2>
 <div class="flex flex-col gap-4 items-center">
 <a class="text-4xl md:text-6xl font-bold text-primary-fixed hover:text-white transition-colors duration-300" href="tel:985206558">985 20 65 58</a>
-<a class="bg-primary-fixed text-on-primary-fixed font-label-caps text-label-caps px-8 py-4 rounded-lg hover:bg-white transition-colors duration-200 shadow-xl hover:scale-105" href="#reserva">Reservar online</a>
+<a class="bg-primary-fixed text-on-primary-fixed font-label-caps text-label-caps px-8 py-4 rounded-lg hover:bg-white transition-colors duration-200 shadow-xl hover:scale-105" href="#reserva" data-i18n="cta.online">Reservar online</a>
 </div>
-<div class="bg-black/20 p-6 rounded-xl border border-white/10 w-full max-w-lg">
-<h4 class="font-label-caps text-label-caps text-white/80 mb-4 uppercase tracking-widest">Horario de atención</h4>
-<p class="font-body-lg text-body-lg text-white mb-2">Lunes a viernes: 10:30–13:30 y 17:00–20:00</p>
-<p class="font-body-lg text-body-lg text-white">Sábados: 11:00–13:30</p>
+<div class="bg-black/20 p-6 rounded-xl border border-white/10 w-full max-w-2xl">
+<h4 class="font-label-caps text-label-caps text-white/80 mb-4 uppercase tracking-widest" data-i18n="cta.hoursTitle">Horario de atención</h4>
+<p class="font-body-lg text-body-lg text-white mb-2" data-i18n="cta.weekdays">Lunes a viernes: 10:30–13:30 y 17:00–20:00</p>
+<p class="font-body-lg text-body-lg text-white" data-i18n="cta.saturday">Sábados: 11:00–13:30</p>
 </div></div>
 </section>
 <!-- FAQs Section -->
 <section class="py-xl px-md bg-surface-container-low" id="reserva">
-<div class="max-w-4xl mx-auto">
+<div class="max-w-6xl mx-auto">
 <div class="text-center mb-12">
-<h2 class="font-h2 text-h2 text-on-background mb-4">Reserva de cita online</h2>
-<p class="font-body-lg text-body-lg text-on-surface-variant">Completa el formulario y te confirmaremos tu cita lo antes posible.</p>
+<h2 class="font-h2 text-h2 text-on-background mb-4" data-i18n="booking.title">Reserva de cita online</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant" data-i18n="booking.subtitle">Completa el formulario y te confirmaremos tu cita lo antes posible.</p>
 </div>
 <form class="bg-surface-container-lowest p-8 md:p-12 rounded-2xl border border-outline-variant soft-shadow grid grid-cols-1 md:grid-cols-2 gap-6" data-booking-form>
 <div class="flex flex-col gap-2">
-<label class="font-label-caps text-label-caps text-on-surface" for="nombre">Nombre completo</label>
-<input class="rounded-lg border-outline-variant focus:border-primary focus:ring-primary bg-background" id="nombre" name="nombre" placeholder="Tu nombre" required="" type="text"/>
+<label class="font-label-caps text-label-caps text-on-surface" for="nombre" data-i18n="booking.name">Nombre completo</label>
+<input class="rounded-lg border-outline-variant focus:border-primary focus:ring-primary bg-background" id="nombre" name="nombre" placeholder="Tu nombre" required="" type="text" data-i18n-placeholder="booking.namePlaceholder"/>
 </div>
 <div class="flex flex-col gap-2">
-<label class="font-label-caps text-label-caps text-on-surface" for="telefono">Teléfono</label>
-<input class="rounded-lg border-outline-variant focus:border-primary focus:ring-primary bg-background" id="telefono" name="telefono" placeholder="Tu teléfono" required="" type="tel"/>
+<label class="font-label-caps text-label-caps text-on-surface" for="telefono" data-i18n="booking.phone">Teléfono</label>
+<input class="rounded-lg border-outline-variant focus:border-primary focus:ring-primary bg-background" id="telefono" name="telefono" placeholder="Tu teléfono" required="" type="tel" data-i18n-placeholder="booking.phonePlaceholder"/>
 </div>
 <div class="flex flex-col gap-2">
-<label class="font-label-caps text-label-caps text-on-surface" for="mascota">Tipo de mascota</label>
+<label class="font-label-caps text-label-caps text-on-surface" for="mascota" data-i18n="booking.petType">Tipo de mascota</label>
 <select class="rounded-lg border-outline-variant focus:border-primary focus:ring-primary bg-background" id="mascota" name="mascota">
-<option value="perro">Perro</option>
-<option value="gato">Gato</option>
-<option value="otro">Otro</option>
+<option value="perro" data-i18n="booking.pet.dog">Perro</option>
+<option value="gato" data-i18n="booking.pet.cat">Gato</option>
+<option value="otro" data-i18n="booking.pet.other">Otro</option>
 </select>
 </div>
 <div class="flex flex-col gap-2">
-<label class="font-label-caps text-label-caps text-on-surface" for="servicio">Servicio solicitado</label>
+<label class="font-label-caps text-label-caps text-on-surface" for="servicio" data-i18n="booking.service">Servicio solicitado</label>
 <select class="rounded-lg border-outline-variant focus:border-primary focus:ring-primary bg-background" id="servicio" name="servicio">
-<option value="consulta">Consulta general</option>
-<option value="vacunacion">Vacunación</option>
-<option value="cirugia">Cirugía</option>
-<option value="peluqueria">Peluquería</option>
-<option value="urgencia">Urgencia</option>
+<option value="consulta" data-i18n="booking.service.general">Consulta general</option>
+<option value="vacunacion" data-i18n="booking.service.vaccine">Vacunación</option>
+<option value="cirugia" data-i18n="booking.service.surgery">Cirugía</option>
+<option value="peluqueria" data-i18n="booking.service.grooming">Peluquería</option>
+<option value="urgencia" data-i18n="booking.service.emergency">Urgencia</option>
 </select>
 </div>
 <div class="flex flex-col gap-4 md:col-span-2">
-<label class="font-label-caps text-label-caps text-on-surface" for="fecha">Fecha y hora preferida</label>
+<label class="font-label-caps text-label-caps text-on-surface" for="fecha" data-i18n="booking.date">Fecha y hora preferida</label>
 <input id="fecha" name="fecha" required="" type="hidden"/>
 <div class="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-6">
 <div class="border border-outline-variant rounded-xl overflow-hidden bg-background">
 <div class="flex items-center justify-between p-4 border-b border-outline-variant">
-<button class="w-10 h-10 rounded-lg border border-outline-variant flex items-center justify-center hover:bg-primary-fixed" data-calendar-prev type="button" aria-label="Mes anterior">
+<button class="w-10 h-10 rounded-lg border border-outline-variant flex items-center justify-center hover:bg-primary-fixed" data-calendar-prev type="button" aria-label="Mes anterior" data-i18n-aria-label="booking.prevMonth">
 <span class="material-symbols-outlined">chevron_left</span>
 </button>
-<p class="font-h3 text-[18px] text-on-background" data-calendar-title>Calendario</p>
-<button class="w-10 h-10 rounded-lg border border-outline-variant flex items-center justify-center hover:bg-primary-fixed" data-calendar-next type="button" aria-label="Mes siguiente">
+<p class="font-h3 text-[18px] text-on-background" data-calendar-title data-i18n="booking.calendar">Calendario</p>
+<button class="w-10 h-10 rounded-lg border border-outline-variant flex items-center justify-center hover:bg-primary-fixed" data-calendar-next type="button" aria-label="Mes siguiente" data-i18n-aria-label="booking.nextMonth">
 <span class="material-symbols-outlined">chevron_right</span>
 </button>
 </div>
@@ -540,8 +540,8 @@
 </div>
 <div class="border border-outline-variant rounded-xl bg-background p-4 flex flex-col gap-4">
 <div>
-<p class="font-h3 text-[18px] text-on-background" data-selected-date-title>Elige un día</p>
-<p class="text-sm text-on-surface-variant">Los huecos reservados aparecen en rojo.</p>
+<p class="font-h3 text-[18px] text-on-background" data-selected-date-title data-i18n="booking.chooseDay">Elige un día</p>
+<p class="text-sm text-on-surface-variant" data-i18n="booking.reservedNote">Los huecos reservados aparecen en rojo.</p>
 </div>
 <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" data-time-slots></div>
 <p class="text-sm text-on-surface-variant" data-booking-status></p>
@@ -550,57 +550,57 @@
 </div>
 <div class="md:col-span-2 mt-4">
 <button class="w-full bg-[#D4AF37] text-black font-label-caps text-label-caps py-4 rounded-lg hover:bg-[#c29e32] transition-all duration-200 active:scale-[0.98] shadow-lg flex items-center justify-center gap-2" type="submit">
-<span class="material-symbols-outlined">event_available</span> Confirmar reserva
+<span class="material-symbols-outlined">event_available</span> <span data-i18n="booking.confirm">Confirmar reserva</span>
 </button>
 </div>
 </form>
 </div>
 </section><section class="py-xl px-md bg-background">
-<div class="max-w-3xl mx-auto">
-<h2 class="font-h2 text-h2 text-on-background text-center mb-12">Preguntas Frecuentes</h2>
+<div class="max-w-5xl mx-auto">
+<h2 class="font-h2 text-h2 text-on-background text-center mb-12" data-i18n="faq.title">Preguntas Frecuentes</h2>
 <div class="flex flex-col gap-4">
 <details class="group bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden">
 <summary class="flex justify-between items-center font-h3 text-[18px] text-on-background p-6 cursor-pointer select-none">
-<span>¿Es necesario pedir cita previa?</span>
+<span data-i18n="faq.one.q">¿Es necesario pedir cita previa?</span>
 <span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
 </summary>
-<div class="px-6 pb-6 text-on-surface-variant font-body-md">
+<div class="px-6 pb-6 text-on-surface-variant font-body-md" data-i18n="faq.one.a">
                     Sí, recomendamos siempre pedir cita previa llamando al 985 20 65 58 para poder atender a tu mascota sin esperas y dedicarle el tiempo necesario.
                 </div>
 </details>
 <details class="group bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden">
 <summary class="flex justify-between items-center font-h3 text-[18px] text-on-background p-6 cursor-pointer select-none">
-<span>¿Atendéis urgencias?</span>
+<span data-i18n="faq.two.q">¿Atendéis urgencias?</span>
 <span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
 </summary>
-<div class="px-6 pb-6 text-on-surface-variant font-body-md">
+<div class="px-6 pb-6 text-on-surface-variant font-body-md" data-i18n="faq.two.a">
                     Atendemos urgencias dentro de nuestro horario comercial. Si tu mascota tiene una emergencia grave fuera de este horario, te derivaremos a un centro hospitalario 24h de confianza.
                 </div>
 </details>
 <details class="group bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden">
 <summary class="flex justify-between items-center font-h3 text-[18px] text-on-background p-6 cursor-pointer select-none">
-<span>¿Puedo saber el precio antes de un tratamiento?</span>
+<span data-i18n="faq.three.q">¿Puedo saber el precio antes de un tratamiento?</span>
 <span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
 </summary>
-<div class="px-6 pb-6 text-on-surface-variant font-body-md">
+<div class="px-6 pb-6 text-on-surface-variant font-body-md" data-i18n="faq.three.a">
                     Por supuesto. Somos totalmente transparentes. Tras la evaluación inicial, te facilitaremos un presupuesto detallado sin compromiso antes de realizar cualquier prueba o tratamiento.
                 </div>
 </details>
 <details class="group bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden">
 <summary class="flex justify-between items-center font-h3 text-[18px] text-on-background p-6 cursor-pointer select-none">
-<span>¿Qué tipos de animales tratáis?</span>
+<span data-i18n="faq.four.q">¿Qué tipos de animales tratáis?</span>
 <span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
 </summary>
-<div class="px-6 pb-6 text-on-surface-variant font-body-md">
+<div class="px-6 pb-6 text-on-surface-variant font-body-md" data-i18n="faq.four.a">
                     Nos especializamos principalmente en perros y gatos. Para animales exóticos, consúltanos y te recomendaremos al especialista adecuado.
                 </div>
 </details>
 <details class="group bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden">
 <summary class="flex justify-between items-center font-h3 text-[18px] text-on-background p-6 cursor-pointer select-none">
-<span>¿Ofrecéis servicio de peluquería?</span>
+<span data-i18n="faq.five.q">¿Ofrecéis servicio de peluquería?</span>
 <span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
 </summary>
-<div class="px-6 pb-6 text-on-surface-variant font-body-md">
+<div class="px-6 pb-6 text-on-surface-variant font-body-md" data-i18n="faq.five.a">
                     Sí, contamos con servicio de peluquería canina y felina con cita previa, adaptándonos al tipo de pelo y necesidades de cada raza.
                 </div>
 </details>
@@ -614,8 +614,8 @@
 <div class="h-[400px] w-full rounded-2xl overflow-hidden bg-gray-200 border border-outline-variant relative"><iframe allowfullscreen="" class="w-full h-full border-0" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2892.4285223062635!2d-5.833946800000007!3d43.36448399773615!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd368cf01b979493%3A0xc34563a62817df0d!2sAv.%20Torrelavega%2C%2044%2C%2033010%20Oviedo%2C%20Asturias!5e0!3m2!1sen!2ses!4v1716284000000!5m2!1sen!2ses"></iframe></div>
 <div class="flex flex-col gap-8">
 <div>
-<h2 class="font-h2 text-h2 text-on-background mb-4">Dónde encontrarnos</h2>
-<p class="font-body-lg text-body-lg text-on-surface-variant">Estamos en una zona accesible y céntrica de Oviedo para que sea cómodo visitarnos.</p>
+<h2 class="font-h2 text-h2 text-on-background mb-4" data-i18n="contact.title">Dónde encontrarnos</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant" data-i18n="contact.subtitle">Estamos en una zona accesible y céntrica de Oviedo para que sea cómodo visitarnos.</p>
 </div>
 <div class="flex flex-col gap-6">
 <div class="flex items-start gap-4">
@@ -623,7 +623,7 @@
 <span class="material-symbols-outlined text-on-primary-fixed">location_on</span>
 </div>
 <div>
-<h4 class="font-h3 text-[18px] text-on-background mb-1">Dirección</h4>
+<h4 class="font-h3 text-[18px] text-on-background mb-1" data-i18n="contact.address">Dirección</h4>
 <p class="text-on-surface-variant">Av. Torrelavega 44, 33010 Oviedo, Asturias</p>
 </div>
 </div>
@@ -632,7 +632,7 @@
 <span class="material-symbols-outlined text-on-primary-fixed">phone</span>
 </div>
 <div>
-<h4 class="font-h3 text-[18px] text-on-background mb-1">Teléfono</h4>
+<h4 class="font-h3 text-[18px] text-on-background mb-1" data-i18n="contact.phone">Teléfono</h4>
 <a class="text-primary hover:underline font-semibold" href="tel:985206558">985 20 65 58</a>
 </div>
 </div>
@@ -641,7 +641,7 @@
 <span class="material-symbols-outlined text-on-primary-fixed">schedule</span>
 </div>
 <div>
-<h4 class="font-h3 text-[18px] text-on-background mb-1">Horario</h4>
+<h4 class="font-h3 text-[18px] text-on-background mb-1" data-i18n="contact.hours">Horario</h4>
 <p class="text-on-surface-variant">L - V: 10:30–13:30 y 17:00–20:00<br/>Sábados: 11:00–13:30</p>
 </div>
 </div>
@@ -650,8 +650,8 @@
 <span class="material-symbols-outlined text-on-primary-fixed">accessible</span>
 </div>
 <div>
-<h4 class="font-h3 text-[18px] text-on-background mb-1">Accesibilidad</h4>
-<p class="text-on-surface-variant">Acceso adaptado para sillas de ruedas.</p>
+<h4 class="font-h3 text-[18px] text-on-background mb-1" data-i18n="contact.accessibility">Accesibilidad</h4>
+<p class="text-on-surface-variant" data-i18n="contact.accessibilityText">Acceso adaptado para sillas de ruedas.</p>
 </div>
 </div>
 </div>
@@ -662,11 +662,11 @@
 </main>
 <!-- Footer -->
 <footer class="bg-[#1B4332] w-full rounded-t-3xl md:rounded-none border-t border-emerald-800">
-<div class="flex flex-col md:flex-row justify-between items-center px-8 py-12 gap-8 max-w-[1200px] mx-auto">
+<div class="flex flex-col md:flex-row justify-between items-center px-8 py-12 gap-8 max-w-[1440px] mx-auto">
 <div class="flex flex-col items-center md:items-start gap-2">
 <div class="text-xl font-bold text-white font-['Plus_Jakarta_Sans']">Clínica Veterinaria Vetusta</div>
 <a class="text-primary-fixed hover:text-white transition-colors font-bold text-lg" href="tel:985206558">Tel: 985 20 65 58</a>
-<div class="text-white/80 text-sm mt-1 font-['Plus_Jakarta_Sans'] text-center md:text-left">
+<div class="text-white/80 text-sm mt-1 font-['Plus_Jakarta_Sans'] text-center md:text-left whitespace-pre-line" data-i18n="footer.hours">
             L-V: 10:30-13:30 | 17:00-20:00<br/>Sábados: 11:00-13:30
         </div>
 <div class="flex gap-4 mt-3">
@@ -674,19 +674,19 @@
 <a class="text-white hover:text-primary-fixed" href="#"><svg class="w-5 h-5" fill="currentColor" viewbox="0 0 24 24"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"></path></svg></a>
 </div>
 </div>
-<p class="font-['Plus_Jakarta_Sans'] text-xs leading-relaxed text-emerald-50 text-center md:text-left max-w-md">
+<p class="font-['Plus_Jakarta_Sans'] text-xs leading-relaxed text-emerald-50 text-center md:text-left max-w-xl" data-i18n="footer.copy">
                 © 2024 Clínica Veterinaria Vetusta. Cuidado profesional con un toque humano en el corazón de Oviedo.
             </p>
 <nav class="flex flex-wrap justify-center gap-4">
-<a class="text-emerald-100/70 hover:text-white transition-colors font-['Plus_Jakarta_Sans'] text-xs leading-relaxed" href="/aviso-legal.html">Aviso Legal</a>
-<a class="text-emerald-100/70 hover:text-white transition-colors font-['Plus_Jakarta_Sans'] text-xs leading-relaxed" href="/privacidad.html">Privacidad</a>
-<a class="text-emerald-100/70 hover:text-white transition-colors font-['Plus_Jakarta_Sans'] text-xs leading-relaxed" href="/cookies.html">Cookies</a>
+<a class="text-emerald-100/70 hover:text-white transition-colors font-['Plus_Jakarta_Sans'] text-xs leading-relaxed" href="/aviso-legal.html" data-i18n="footer.legal">Aviso Legal</a>
+<a class="text-emerald-100/70 hover:text-white transition-colors font-['Plus_Jakarta_Sans'] text-xs leading-relaxed" href="/privacidad.html" data-i18n="footer.privacy">Privacidad</a>
+<a class="text-emerald-100/70 hover:text-white transition-colors font-['Plus_Jakarta_Sans'] text-xs leading-relaxed" href="/cookies.html" data-i18n="footer.cookies">Cookies</a>
 <a class="text-emerald-100/70 hover:text-white transition-colors font-['Plus_Jakarta_Sans'] text-xs leading-relaxed" href="/sitemap.html">Sitemap</a>
 </nav>
 </div>
 </footer>
 <a class="md:hidden fixed bottom-4 right-4 left-4 z-50 bg-[#1B4332] text-white py-4 rounded-xl font-label-caps text-center shadow-2xl flex items-center justify-center gap-2 hover:scale-[1.02]" href="tel:985206558">
-<span class="material-symbols-outlined">call</span> Llamar ahora
+<span class="material-symbols-outlined">call</span> <span data-i18n="footer.call">Llamar ahora</span>
 </a>
 <script src="/reviews.js"></script>
 <script src="/booking.js"></script>

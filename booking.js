@@ -1,6 +1,9 @@
-const weekdayLabels = ["L", "M", "X", "J", "V", "S", "D"];
-const monthFormatter = new Intl.DateTimeFormat("es-ES", { month: "long", year: "numeric" });
-const dateFormatter = new Intl.DateTimeFormat("es-ES", { weekday: "long", day: "numeric", month: "long" });
+const localeByLanguage = {
+  es: "es-ES",
+  en: "en-GB",
+  fr: "fr-FR",
+  pt: "pt-PT",
+};
 
 const bookingState = {
   visibleMonth: startOfMonth(new Date()),
@@ -25,21 +28,27 @@ if (bookingForm) {
 }
 
 function initBookingCalendar() {
-  calendarWeekdays.replaceChildren(...weekdayLabels.map((label) => {
-    const item = document.createElement("div");
-    item.className = "bg-surface-container-low py-2";
-    item.textContent = label;
-    return item;
-  }));
-
   previousButton.addEventListener("click", () => changeMonth(-1));
   nextButton.addEventListener("click", () => changeMonth(1));
   bookingForm.addEventListener("submit", submitBooking);
+  document.addEventListener("vetusta:languagechange", renderBookingTexts);
   loadAvailability();
 }
 
+function currentLanguage() {
+  return window.VetustaI18n?.getLanguage?.() || "es";
+}
+
+function translate(key) {
+  return window.VetustaI18n?.t?.(key) || key;
+}
+
+function currentLocale() {
+  return localeByLanguage[currentLanguage()] || localeByLanguage.es;
+}
+
 async function loadAvailability() {
-  setStatus("Cargando disponibilidad...");
+  setStatus(translate("booking.loading"));
   const monthKey = toMonthKey(bookingState.visibleMonth);
 
   try {
@@ -53,7 +62,7 @@ async function loadAvailability() {
     bookingState.availability = await response.json();
   } catch (error) {
     console.error("Availability load error:", error);
-    setStatus(`No se pudo cargar la disponibilidad: ${error.message}`);
+    setStatus(`${translate("booking.loadError")} ${error.message}`);
     return;
   }
 
@@ -66,13 +75,18 @@ async function loadAvailability() {
 }
 
 function renderCalendar() {
+  renderWeekdays();
+
   const year = bookingState.visibleMonth.getFullYear();
   const month = bookingState.visibleMonth.getMonth();
   const firstDay = new Date(year, month, 1);
   const mondayOffset = (firstDay.getDay() + 6) % 7;
   const cells = [];
 
-  calendarTitle.textContent = capitalize(monthFormatter.format(bookingState.visibleMonth));
+  calendarTitle.textContent = capitalize(new Intl.DateTimeFormat(currentLocale(), {
+    month: "long",
+    year: "numeric",
+  }).format(bookingState.visibleMonth));
 
   for (let index = 0; index < mondayOffset; index += 1) {
     cells.push(createEmptyDay());
@@ -115,7 +129,13 @@ function createDayButton(day) {
 
   const label = document.createElement("span");
   label.className = "text-[11px]";
-  label.textContent = day.isPast ? "Pasado" : day.fullyBooked ? "Completo" : day.isOpen ? "Libre" : "Cerrado";
+  label.textContent = day.isPast
+    ? translate("booking.past")
+    : day.fullyBooked
+      ? translate("booking.full")
+      : day.isOpen
+        ? translate("booking.free")
+        : translate("booking.closed");
 
   button.append(number, label);
   button.addEventListener("click", () => {
@@ -133,15 +153,19 @@ function renderSlots() {
   timeSlots.replaceChildren();
 
   if (!bookingState.selectedDay) {
-    selectedDateTitle.textContent = "Elige un día";
-    timeSlots.append(createMessage("Selecciona un día disponible en el calendario."));
+    selectedDateTitle.textContent = translate("booking.chooseDay");
+    timeSlots.append(createMessage(translate("booking.selectAvailable")));
     return;
   }
 
-  selectedDateTitle.textContent = capitalize(dateFormatter.format(parseDateKey(bookingState.selectedDay.date)));
+  selectedDateTitle.textContent = capitalize(new Intl.DateTimeFormat(currentLocale(), {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  }).format(parseDateKey(bookingState.selectedDay.date)));
 
   if (bookingState.selectedDay.slots.length === 0) {
-    timeSlots.append(createMessage("La clínica está cerrada este día."));
+    timeSlots.append(createMessage(translate("booking.clinicClosed")));
     return;
   }
 
@@ -156,13 +180,13 @@ function renderSlots() {
       slot.reserved ? "bg-error-container border-error text-on-error-container cursor-not-allowed" : "bg-white border-outline-variant text-primary hover:bg-primary-fixed",
       isSelected ? "ring-2 ring-primary bg-primary-fixed" : "",
     ].join(" ");
-    button.textContent = slot.reserved ? `${slot.time} reservado` : slot.time;
+    button.textContent = slot.reserved ? `${slot.time} ${translate("booking.reserved")}` : slot.time;
 
     button.addEventListener("click", () => {
       bookingState.selectedSlot = slot;
       hiddenDateInput.value = slot.datetime;
       renderSlots();
-      setStatus(`Hora seleccionada: ${slot.time}.`);
+      setStatus(`${translate("booking.selectedTime")} ${slot.time}.`);
     });
 
     timeSlots.append(button);
@@ -180,7 +204,7 @@ async function submitBooking(event) {
   event.preventDefault();
 
   if (!bookingState.selectedSlot) {
-    setStatus("Elige un día y una hora disponibles.");
+    setStatus(translate("booking.selectSlot"));
     return;
   }
 
@@ -193,7 +217,7 @@ async function submitBooking(event) {
     datetime: bookingState.selectedSlot.datetime,
   };
 
-  setStatus("Guardando reserva...");
+  setStatus(translate("booking.saving"));
   const response = await fetch("/api/reservations", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -201,18 +225,18 @@ async function submitBooking(event) {
   });
 
   if (response.status === 409) {
-    setStatus("Ese hueco acaba de reservarse. Elige otro.");
+    setStatus(translate("booking.slotTaken"));
     await loadAvailability();
     return;
   }
 
   if (!response.ok) {
     const data = await response.json().catch(() => ({}));
-    setStatus(data.error || "No se pudo guardar la reserva.");
+    setStatus(data.error || translate("booking.saveError"));
     return;
   }
 
-  setStatus("Reserva guardada. Te confirmaremos la cita lo antes posible.");
+  setStatus(translate("booking.saved"));
   bookingForm.reset();
   await loadAvailability();
 }
@@ -224,6 +248,25 @@ function changeMonth(offset) {
     1,
   );
   loadAvailability();
+}
+
+function renderWeekdays() {
+  const weekdayLabels = translate("booking.weekdays");
+  calendarWeekdays.replaceChildren(...weekdayLabels.map((label) => {
+    const item = document.createElement("div");
+    item.className = "bg-surface-container-low py-2";
+    item.textContent = label;
+    return item;
+  }));
+}
+
+function renderBookingTexts() {
+  if (!bookingState.availability) {
+    return;
+  }
+
+  renderCalendar();
+  renderSlots();
 }
 
 function setStatus(message) {
