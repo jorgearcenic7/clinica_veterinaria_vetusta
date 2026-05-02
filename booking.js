@@ -105,7 +105,7 @@ function renderCalendar() {
 
 function createEmptyDay() {
   const item = document.createElement("div");
-  item.className = "min-h-16 bg-surface-container-lowest";
+  item.className = "min-h-[82px] rounded-xl bg-surface-container-low opacity-60";
   return item;
 }
 
@@ -113,22 +113,34 @@ function createDayButton(day) {
   const button = document.createElement("button");
   const isDisabled = day.isPast || !day.isOpen;
   const isSelected = bookingState.selectedDay?.date === day.date;
+  const isToday = day.date === toDateKey(new Date());
 
   button.type = "button";
   button.disabled = isDisabled;
   button.className = [
-    "min-h-16 p-2 bg-surface-container-lowest text-left transition-colors flex flex-col justify-between",
-    isSelected ? "ring-2 ring-primary bg-primary-fixed" : "",
-    isDisabled ? "text-outline cursor-not-allowed bg-surface-container" : "hover:bg-primary-fixed text-on-background",
-    day.fullyBooked && !isDisabled ? "bg-error-container text-on-error-container" : "",
+    "min-h-[82px] rounded-xl border p-3 text-left transition-all flex flex-col justify-between",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
+    isSelected ? "border-primary bg-primary text-white shadow-lg shadow-primary/20 scale-[1.01]" : "",
+    !isSelected && !isDisabled ? "border-outline-variant bg-white text-on-background hover:border-primary hover:bg-primary-fixed hover:-translate-y-0.5" : "",
+    isDisabled ? "border-surface-container bg-surface-container text-outline cursor-not-allowed" : "",
+    day.fullyBooked && !isDisabled && !isSelected ? "border-error/40 bg-error-container text-on-error-container" : "",
   ].join(" ");
 
   const number = document.createElement("span");
-  number.className = "font-bold";
+  number.className = [
+    "text-[22px] leading-none font-bold",
+    isToday && !isSelected ? "text-primary" : "",
+  ].join(" ");
   number.textContent = day.day;
 
   const label = document.createElement("span");
-  label.className = "text-[11px]";
+  label.className = [
+    "w-fit rounded-full px-2 py-1 text-[11px] font-label-caps",
+    isSelected ? "bg-white/15 text-white" : "",
+    !isSelected && !isDisabled && !day.fullyBooked ? "bg-primary-fixed text-primary" : "",
+    !isSelected && isDisabled ? "bg-white/60 text-outline" : "",
+    !isSelected && day.fullyBooked && !isDisabled ? "bg-error text-white" : "",
+  ].join(" ");
   label.textContent = day.isPast
     ? translate("booking.past")
     : day.fullyBooked
@@ -176,9 +188,9 @@ function renderSlots() {
     button.type = "button";
     button.disabled = slot.reserved;
     button.className = [
-      "rounded-lg border px-3 py-3 text-sm font-label-caps transition-colors",
-      slot.reserved ? "bg-error-container border-error text-on-error-container cursor-not-allowed" : "bg-white border-outline-variant text-primary hover:bg-primary-fixed",
-      isSelected ? "ring-2 ring-primary bg-primary-fixed" : "",
+      "rounded-xl border px-3 py-3 text-sm font-label-caps transition-all",
+      slot.reserved ? "bg-error-container border-error/40 text-on-error-container cursor-not-allowed" : "bg-white border-outline-variant text-primary hover:border-primary hover:bg-primary-fixed hover:-translate-y-0.5",
+      isSelected ? "ring-2 ring-primary bg-primary text-white border-primary shadow-md shadow-primary/20" : "",
     ].join(" ");
     button.textContent = slot.reserved ? `${slot.time} ${translate("booking.reserved")}` : slot.time;
 
@@ -195,7 +207,7 @@ function renderSlots() {
 
 function createMessage(text) {
   const message = document.createElement("p");
-  message.className = "col-span-full text-sm text-on-surface-variant";
+  message.className = "col-span-full rounded-xl bg-surface-container-low p-4 text-sm text-on-surface-variant";
   message.textContent = text;
   return message;
 }
@@ -254,7 +266,7 @@ function renderWeekdays() {
   const weekdayLabels = translate("booking.weekdays");
   calendarWeekdays.replaceChildren(...weekdayLabels.map((label) => {
     const item = document.createElement("div");
-    item.className = "bg-surface-container-low py-2";
+    item.className = "rounded-lg bg-surface-container-low py-2";
     item.textContent = label;
     return item;
   }));
@@ -279,6 +291,14 @@ function startOfMonth(date) {
 
 function toMonthKey(date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+}
+
+function toDateKey(date) {
+  return [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, "0"),
+    String(date.getDate()).padStart(2, "0"),
+  ].join("-");
 }
 
 function parseDateKey(dateKey) {
