@@ -105,7 +105,7 @@ function renderCalendar() {
 
 function createEmptyDay() {
   const item = document.createElement("div");
-  item.className = "min-h-[82px] rounded-xl bg-surface-container-low opacity-60";
+  item.className = "min-h-[96px] rounded-xl bg-surface-container-low opacity-60";
   return item;
 }
 
@@ -118,7 +118,7 @@ function createDayButton(day) {
   button.type = "button";
   button.disabled = isDisabled;
   button.className = [
-    "min-h-[82px] rounded-xl border p-3 text-left transition-all flex flex-col justify-between",
+    "min-h-[96px] rounded-xl border p-4 text-left transition-all flex flex-col justify-between",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
     isSelected ? "border-primary bg-primary text-white shadow-lg shadow-primary/20 scale-[1.01]" : "",
     !isSelected && !isDisabled ? "border-outline-variant bg-white text-on-background hover:border-primary hover:bg-primary-fixed hover:-translate-y-0.5" : "",
@@ -128,14 +128,14 @@ function createDayButton(day) {
 
   const number = document.createElement("span");
   number.className = [
-    "text-[22px] leading-none font-bold",
+    "text-[26px] leading-none font-bold",
     isToday && !isSelected ? "text-primary" : "",
   ].join(" ");
   number.textContent = day.day;
 
   const label = document.createElement("span");
   label.className = [
-    "w-fit rounded-full px-2 py-1 text-[11px] font-label-caps",
+    "w-fit rounded-full px-3 py-1 text-[12px] font-label-caps",
     isSelected ? "bg-white/15 text-white" : "",
     !isSelected && !isDisabled && !day.fullyBooked ? "bg-primary-fixed text-primary" : "",
     !isSelected && isDisabled ? "bg-white/60 text-outline" : "",
@@ -188,7 +188,7 @@ function renderSlots() {
     button.type = "button";
     button.disabled = slot.reserved;
     button.className = [
-      "rounded-xl border px-3 py-3 text-sm font-label-caps transition-all",
+      "rounded-xl border px-4 py-4 text-base font-label-caps transition-all",
       slot.reserved ? "bg-error-container border-error/40 text-on-error-container cursor-not-allowed" : "bg-white border-outline-variant text-primary hover:border-primary hover:bg-primary-fixed hover:-translate-y-0.5",
       isSelected ? "ring-2 ring-primary bg-primary text-white border-primary shadow-md shadow-primary/20" : "",
     ].join(" ");
