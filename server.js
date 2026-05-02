@@ -563,7 +563,7 @@ function validateSupabaseUrl(value) {
       throw new Error("SUPABASE_URL debe empezar por https://");
     }
 
-    return url.toString().replace(/\/$/, "");
+    return url.origin;
   } catch (error) {
     throw new Error("SUPABASE_URL no es valida. Debe tener formato https://TU-PROYECTO.supabase.co");
   }
