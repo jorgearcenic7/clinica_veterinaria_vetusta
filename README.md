@@ -69,6 +69,40 @@ http://127.0.0.1:3000/api/google-reviews
 
 La API key se lee solo desde `.env` en el backend. No se inyecta en el HTML.
 
+## Publicar en Vercel de forma privada
+
+El proyecto ya incluye `vercel.json` y esta preparado para desplegar `server.js` como funcion serverless en Vercel.
+
+1. Sube los ultimos cambios a GitHub.
+2. Entra en https://vercel.com/new.
+3. Importa el repositorio `jorgearcenic7/clinica_veterinaria_vetusta`.
+4. Framework Preset: `Other`.
+5. Build Command: dejar vacio.
+6. Output Directory: dejar vacio.
+7. Install Command: `npm install`.
+8. En Environment Variables, anade como minimo:
+
+```env
+GOOGLE_ENABLE_LIVE_REVIEWS=false
+REVIEWS_CACHE_TTL_SECONDS=21600
+GOOGLE_DAILY_REQUEST_LIMIT=25
+```
+
+No subas `.env` a GitHub. Si en el futuro activas Google Places, anade `GOOGLE_PLACES_API_KEY` solo en las variables de entorno de Vercel.
+
+### Privacidad
+
+Si el repositorio es privado en GitHub, el codigo no sera publico. Eso no significa automaticamente que la URL desplegada sea privada.
+
+Para que la web desplegada sea privada en Vercel:
+
+- En el proyecto de Vercel, entra en Settings > Deployment Protection.
+- Activa Vercel Authentication.
+- En plan Hobby, Standard Protection protege previews y URLs de deployment, pero el dominio de produccion sigue siendo publico.
+- Para proteger tambien produccion, necesitas All Deployments, disponible en planes Pro/Enterprise.
+
+Mientras quieras mantenerla privada sin pagar, usa una Preview Deployment protegida y no compartas ni promociones el dominio de produccion.
+
 ## Reservas online
 
 El formulario de reserva usa un calendario real:
