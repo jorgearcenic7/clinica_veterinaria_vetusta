@@ -1,7 +1,8 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 let cachedClient = null;
-const maxUploadSize = 10 * 1024 * 1024;
+const maxImageUploadSize = 5 * 1024 * 1024;
+const maxDocumentUploadSize = 10 * 1024 * 1024;
 const allowedImageTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
 const allowedDocumentTypes = new Set([...allowedImageTypes, "application/pdf"]);
 
@@ -116,8 +117,8 @@ export function calculateAge(birthDate) {
 
 export async function uploadPetImage(supabase, petId, file) {
   validateUploadFile(file, "image");
-  const extension = getFileExtension(file.name);
-  const filePath = `${petId}/photo-${Date.now()}.${extension}`;
+  const safeName = safeFileName(file.name);
+  const filePath = `pets/${petId}/${Date.now()}-${safeName}`;
   const { error } = await supabase.storage.from("pet-images").upload(filePath, file, {
     cacheControl: "3600",
     contentType: file.type,
@@ -133,7 +134,7 @@ export async function uploadPetImage(supabase, petId, file) {
 
 export async function uploadPetDocumentFile(supabase, petId, file) {
   validateUploadFile(file, "document");
-  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "-");
+  const safeName = safeFileName(file.name);
   const filePath = `${petId}/${Date.now()}-${safeName}`;
   const { error } = await supabase.storage.from("pet-documents").upload(filePath, file, {
     cacheControl: "3600",
@@ -252,8 +253,11 @@ export function validateUploadFile(file, kind = "document") {
     throw new Error("Selecciona un archivo.");
   }
 
-  if (file.size > maxUploadSize) {
-    throw new Error("El archivo supera el tamaño máximo de 10MB.");
+  const maxSize = kind === "image" ? maxImageUploadSize : maxDocumentUploadSize;
+  const maxSizeLabel = kind === "image" ? "5MB" : "10MB";
+
+  if (file.size > maxSize) {
+    throw new Error(`El archivo supera el tamaño máximo de ${maxSizeLabel}.`);
   }
 
   const allowedTypes = kind === "image" ? allowedImageTypes : allowedDocumentTypes;
@@ -295,7 +299,11 @@ export function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
-function getFileExtension(fileName) {
-  const extension = fileName.split(".").pop()?.toLowerCase();
-  return extension && extension.length <= 8 ? extension : "bin";
+function safeFileName(fileName) {
+  return String(fileName || "archivo")
+    .trim()
+    .replace(/[^a-zA-Z0-9._-]/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 120) || "archivo";
 }

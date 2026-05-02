@@ -152,6 +152,30 @@ begin
 end;
 $$;
 
+create or replace function public.prevent_client_pet_official_change()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if public.is_admin() then
+    return new;
+  end if;
+
+  if new.owner_id is distinct from old.owner_id
+    or new.name is distinct from old.name
+    or new.species is distinct from old.species
+    or new.breed is distinct from old.breed
+    or new.birth_date is distinct from old.birth_date
+    or new.created_at is distinct from old.created_at then
+    raise exception 'Solo puedes cambiar la imagen de tus mascotas.';
+  end if;
+
+  return new;
+end;
+$$;
+
 create or replace function public.is_allowed_storage_file(bucket text, metadata jsonb)
 returns boolean
 language sql
@@ -165,7 +189,7 @@ as $$
         else 0
       end,
       0
-    ) between 1 and 10485760
+    ) between 1 and case when bucket = 'pet-images' then 5242880 else 10485760 end
     and (
       (bucket = 'pet-images' and lower(coalesce(metadata ->> 'mimetype', '')) in ('image/jpeg', 'image/png', 'image/webp'))
       or
@@ -183,6 +207,11 @@ create trigger prevent_client_role_change_trigger
   before update of role on public.profiles
   for each row execute function public.prevent_client_role_change();
 
+drop trigger if exists prevent_client_pet_official_change_trigger on public.pets;
+create trigger prevent_client_pet_official_change_trigger
+  before update on public.pets
+  for each row execute function public.prevent_client_pet_official_change();
+
 grant usage on schema public to anon, authenticated;
 grant select, insert, update, delete on public.profiles to authenticated;
 grant select, insert, update, delete on public.pets to authenticated;
@@ -194,6 +223,7 @@ grant execute on function public.set_pet_image(uuid, text) to authenticated;
 drop policy if exists "Clients read own profile" on public.profiles;
 drop policy if exists "Admins manage profiles" on public.profiles;
 drop policy if exists "Clients read own pets" on public.pets;
+drop policy if exists "Clients update own pet image" on public.pets;
 drop policy if exists "Admins manage pets" on public.pets;
 drop policy if exists "Clients read own pet records" on public.pet_records;
 drop policy if exists "Admins manage pet records" on public.pet_records;
@@ -231,6 +261,13 @@ create policy "Clients read own pets"
   for select
   to authenticated
   using (owner_id = auth.uid());
+
+create policy "Clients update own pet image"
+  on public.pets
+  for update
+  to authenticated
+  using (owner_id = auth.uid())
+  with check (owner_id = auth.uid());
 
 create policy "Admins manage pets"
   on public.pets
@@ -347,7 +384,8 @@ create policy "Authenticated read pet images"
       or exists (
         select 1
         from public.pets
-        where pets.id::text = (storage.foldername(name))[1]
+        where (storage.foldername(name))[1] = 'pets'
+          and pets.id::text = (storage.foldername(name))[2]
           and pets.owner_id = auth.uid()
       )
     )
@@ -363,7 +401,8 @@ create policy "Clients upload own pet images"
     and exists (
       select 1
       from public.pets
-      where pets.id::text = (storage.foldername(name))[1]
+      where (storage.foldername(name))[1] = 'pets'
+        and pets.id::text = (storage.foldername(name))[2]
         and pets.owner_id = auth.uid()
     )
   );
@@ -378,7 +417,8 @@ create policy "Clients update own pet images"
     and exists (
       select 1
       from public.pets
-      where pets.id::text = (storage.foldername(name))[1]
+      where (storage.foldername(name))[1] = 'pets'
+        and pets.id::text = (storage.foldername(name))[2]
         and pets.owner_id = auth.uid()
     )
   )
@@ -388,7 +428,8 @@ create policy "Clients update own pet images"
     and exists (
       select 1
       from public.pets
-      where pets.id::text = (storage.foldername(name))[1]
+      where (storage.foldername(name))[1] = 'pets'
+        and pets.id::text = (storage.foldername(name))[2]
         and pets.owner_id = auth.uid()
     )
   );

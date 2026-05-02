@@ -186,14 +186,14 @@ Puedes encontrar el UUID en Supabase > Authentication > Users.
 
 - `profiles`, `pets`, `pet_records`, `pet_documents` y `document_upload_logs` tienen RLS activo.
 - Los clientes autenticados solo leen su perfil, sus mascotas y los registros de sus mascotas.
-- Los clientes pueden cambiar la imagen de sus propias mascotas mediante una funcion limitada a `image_url`.
+- Los clientes pueden cambiar la imagen de sus propias mascotas actualizando solo `pets.image_url`; un trigger impide modificar datos oficiales.
 - Los clientes pueden subir documentos a `pet_documents` solo para sus mascotas y borrar solo los documentos que hayan subido.
 - Los clientes no pueden editar datos medicos oficiales ni `pet_records`.
 - Los admins pueden leer, crear, editar y borrar mascotas, historiales y documentos.
 - En `/admin`, las mascotas se crean para el cliente seleccionado: `pets.owner_id` es el `id` del cliente, no el `auth.uid()` del veterinario/admin.
 - Los buckets `pet-images` y `pet-documents` son privados y se consultan con URLs firmadas.
-- La subida de archivos esta limitada a JPG, PNG, WEBP y PDF, con un maximo de 10MB.
-- Las imagenes de mascota solo aceptan JPG, PNG o WEBP.
+- Los documentos estan limitados a JPG, PNG, WEBP y PDF, con un maximo de 10MB.
+- Las imagenes de mascota solo aceptan JPG, PNG o WEBP, con un maximo de 5MB, y se guardan en `pet-images` con path `pets/{petId}/{timestamp}-{nombre}`.
 - El registro y cambio de contrasena exigen contrasena fuerte: minimo 12 caracteres, mayuscula, minuscula, numero y simbolo.
 - Los cambios de `role` quedan bloqueados para usuarios que no sean admin mediante trigger en Supabase.
 - Las paginas privadas se sirven con `Cache-Control: no-store`.

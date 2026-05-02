@@ -295,11 +295,11 @@ async function savePet(event) {
     if (imageFile) {
       validateUploadFile(imageFile, "image");
       const petId = values.id || data.id;
-      const imageUrl = await uploadPetImage(supabase, petId, imageFile);
-      const { error: imageError } = await supabase.rpc("set_pet_image", {
-        pet_id: petId,
-        image_url: imageUrl,
-      });
+      const imagePath = await uploadPetImage(supabase, petId, imageFile);
+      const { error: imageError } = await supabase
+        .from("pets")
+        .update({ image_url: imagePath })
+        .eq("id", petId);
 
       if (imageError) {
         throw imageError;

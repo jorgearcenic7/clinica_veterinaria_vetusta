@@ -94,21 +94,21 @@ async function changeImage(input) {
 
   try {
     validateUploadFile(file, "image");
-    setStatus(statusEl, "Subiendo foto...");
-    const imageUrl = await uploadPetImage(supabase, input.dataset.imageInput, file);
-    const { error } = await supabase.rpc("set_pet_image", {
-      pet_id: input.dataset.imageInput,
-      image_url: imageUrl,
-    });
+    setStatus(statusEl, "Subiendo imagen...");
+    const imagePath = await uploadPetImage(supabase, input.dataset.imageInput, file);
+    const { error } = await supabase
+      .from("pets")
+      .update({ image_url: imagePath })
+      .eq("id", input.dataset.imageInput);
 
     if (error) {
       throw error;
     }
 
     await loadPets();
-    setStatus(statusEl, "Foto actualizada.");
+    setStatus(statusEl, "Imagen actualizada.");
   } catch (error) {
-    setStatus(statusEl, friendlyError(error) || "No se pudo subir la foto.", true);
+    setStatus(statusEl, friendlyError(error) || "No se pudo subir la imagen.", true);
   } finally {
     input.value = "";
   }
