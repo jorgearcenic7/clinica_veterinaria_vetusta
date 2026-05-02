@@ -20,6 +20,7 @@
           "politica-privacidad.html",
           "booking.js",
           "reviews.js",
+          "i18n.js",
           "supabase-client.js",
           "auth.js",
           "dashboard.js",

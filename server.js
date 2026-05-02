@@ -70,6 +70,7 @@ const publicFiles = {
   "/sitemap.html": "sitemap.html",
   "/booking.js": "booking.js",
   "/reviews.js": "reviews.js",
+  "/i18n.js": "i18n.js",
   "/supabase-client.js": "supabase-client.js",
   "/auth.js": "auth.js",
   "/dashboard.js": "dashboard.js",

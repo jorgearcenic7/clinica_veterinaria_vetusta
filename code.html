@@ -8,6 +8,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://images.pexels.com" rel="preconnect"/>
+<link as="image" href="https://images.pexels.com/photos/6234626/pexels-photo-6234626.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=2400&amp;h=1600&amp;q=90" rel="preload"/>
 <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
         tailwind.config = {
@@ -157,7 +159,7 @@
 
         .hero {
             min-height: 80vh;
-            background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDQTPR4KrFRZe1XP4lOayPvle7_d6tZ3f0-3gFpUrYTF4IdCKK7IjGmx_4t_pwd9FB57pkiReYb8Sa66-EUNmT_rT9x3CdBpUSB9dUUM1IckoJ2NW4pzuj90UbozlNlyxAKWi0Z9wq9Lx2TXwXjy7quoXWVQgWvMr8mVZtTp-JpJ03oydEAvqSpWSStn_CMK-xKsM3nC5z6c9CtJIDF3KE2E3XKzDwExlepuvNE6SiTagRRKVNtem4zBiUnRFcAx9P_jmMbwMxnQ4Dw");
+            background-image: url("https://images.pexels.com/photos/6234626/pexels-photo-6234626.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=2400&h=1600&q=90");
             background-size: cover;
             background-position: 60% center;
             background-repeat: no-repeat;
@@ -182,6 +184,29 @@
                 padding: 40px 20px;
             }
         }
+
+        .language-select {
+            border: 1px solid #c1c8c2;
+            border-radius: 8px;
+            background: #ffffff;
+            color: #1b4332;
+            font-family: "Lexend", system-ui, sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 10px 34px 10px 12px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-left: 18px;
+        }
+
+        .header-cta {
+            white-space: nowrap;
+            min-width: max-content;
+        }
     </style>
 </head>
 <body class="bg-background text-on-background font-body-md text-body-md antialiased overflow-x-hidden pb-24 md:pb-0">
@@ -193,16 +218,25 @@
 <span class="font-h3 text-h3 text-primary-container tracking-tight">Clínica Veterinaria Vetusta</span>
 </div>
 <nav class="hidden md:flex items-center gap-6">
-<a class="text-[#1B4332] font-bold border-b-2 border-[#1B4332] pb-1 font-label-caps text-label-caps" href="#inicio">Inicio</a>
-<a class="text-slate-600 hover:text-[#1B4332] transition-all duration-200 font-label-caps text-label-caps" href="#servicios">Servicios</a>
-<a class="text-slate-600 hover:text-[#1B4332] transition-all duration-200 font-label-caps text-label-caps" href="#equipo">Equipo</a>
-<a class="text-slate-600 hover:text-[#1B4332] transition-all duration-200 font-label-caps text-label-caps" href="#opiniones">Opiniones</a>
-<a class="text-slate-600 hover:text-[#1B4332] transition-all duration-200 font-label-caps text-label-caps" href="#contacto">Contacto</a>
-<a class="text-slate-600 hover:text-[#1B4332] transition-all duration-200 font-label-caps text-label-caps" href="/auth">Area clientes</a>
+<a class="text-[#1B4332] font-bold border-b-2 border-[#1B4332] pb-1 font-label-caps text-label-caps" href="#inicio" data-i18n="nav.home">Inicio</a>
+<a class="text-slate-600 hover:text-[#1B4332] transition-all duration-200 font-label-caps text-label-caps" href="#servicios" data-i18n="nav.services">Servicios</a>
+<a class="text-slate-600 hover:text-[#1B4332] transition-all duration-200 font-label-caps text-label-caps" href="#equipo" data-i18n="nav.team">Equipo</a>
+<a class="text-slate-600 hover:text-[#1B4332] transition-all duration-200 font-label-caps text-label-caps" href="#opiniones" data-i18n="nav.reviews">Opiniones</a>
+<a class="text-slate-600 hover:text-[#1B4332] transition-all duration-200 font-label-caps text-label-caps" href="#contacto" data-i18n="nav.contact">Contacto</a>
+<a class="text-slate-600 hover:text-[#1B4332] transition-all duration-200 font-label-caps text-label-caps" href="/auth" data-i18n="nav.clientArea">Area clientes</a>
 </nav>
-<a class="hidden md:flex items-center justify-center bg-primary text-on-primary font-label-caps text-label-caps px-6 py-3 rounded-lg hover:bg-surface-tint transition-colors duration-200 active:scale-95" href="#reserva">
+<div class="header-actions">
+<label class="sr-only" for="language-select">Idioma</label>
+<select class="language-select" id="language-select" aria-label="Idioma">
+<option value="es">ES</option>
+<option value="en">EN</option>
+<option value="fr">FR</option>
+<option value="pt">PT</option>
+</select>
+<a class="header-cta hidden md:flex items-center justify-center bg-primary text-on-primary font-label-caps text-label-caps px-6 py-3 rounded-lg hover:bg-surface-tint transition-colors duration-200 active:scale-95" href="#reserva" data-i18n="nav.appointment">
                 Pedir cita · 985 20 65 58
             </a>
+</div>
 <button class="md:hidden text-primary p-2">
 <span class="material-symbols-outlined">menu</span>
 </button>
@@ -218,15 +252,15 @@
 <span class="text-tertiary-fixed" data-google-rating>⭐ 4,9/5</span>
 <span class="text-white font-label-caps text-label-caps" data-google-review-count>· +560 reseñas en Google</span>
 </div>
-<h1 class="font-h1 text-h1 text-white drop-shadow-md">Tu mascota merece lo mejor. Y en Vetusta lo sabe.</h1>
+<h1 class="font-h1 text-h1 text-white drop-shadow-md" data-i18n="hero.title">Tu mascota merece lo mejor. Y en Vetusta lo sabe.</h1>
 <p class="font-body-lg text-body-lg text-white/90 drop-shadow-sm">
-                        Clínica veterinaria en Oviedo con <span data-google-hero-copy>más de 560 opiniones de 5 estrellas</span>. Trato humano, honesto y a precios justos.
+                        <span data-i18n="hero.prefix">Clínica veterinaria en Oviedo con</span> <span data-google-hero-copy>más de 560 opiniones de 5 estrellas</span>. <span data-i18n="hero.suffix">Trato humano, honesto y a precios justos.</span>
                     </p>
 <div class="flex flex-col sm:flex-row gap-4 mt-4">
-<a class="flex items-center justify-center bg-primary text-on-primary font-label-caps text-label-caps px-8 py-4 rounded-lg hover:bg-surface-tint transition-colors duration-200 hover:scale-105" href="tel:985206558">
+<a class="flex items-center justify-center bg-primary text-on-primary font-label-caps text-label-caps px-8 py-4 rounded-lg hover:bg-surface-tint transition-colors duration-200 hover:scale-105" href="tel:985206558" data-i18n="hero.call">
                             Llámanos ahora
                         </a>
-<a class="flex items-center justify-center bg-white text-primary border-2 border-white font-label-caps text-label-caps px-8 py-4 rounded-lg hover:bg-gray-100 transition-colors duration-200 shadow-lg hover:scale-105" href="#servicios">
+<a class="flex items-center justify-center bg-white text-primary border-2 border-white font-label-caps text-label-caps px-8 py-4 rounded-lg hover:bg-gray-100 transition-colors duration-200 shadow-lg hover:scale-105" href="#servicios" data-i18n="hero.services">
                             Ver servicios
                         </a>
 </div>
@@ -656,4 +690,5 @@
 </a>
 <script src="/reviews.js"></script>
 <script src="/booking.js"></script>
+<script defer src="/i18n.js"></script>
 </body></html>
