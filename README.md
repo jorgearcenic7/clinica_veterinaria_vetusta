@@ -127,3 +127,77 @@ SUPABASE_ANON_KEY=tu_anon_key
 ```
 
 Para produccion, es preferible usar `SUPABASE_SERVICE_ROLE_KEY` solo en el backend/Vercel y ajustar las politicas RLS.
+
+## Area privada de clientes
+
+Se han anadido tres paginas:
+
+- `/auth`: registro, login y recuperacion de contrasena.
+- `/dashboard`: panel privado del cliente para ver mascotas, historial y proximas vacunas/tratamientos.
+- `/dashboard/pets/:id`: ficha privada de cada mascota con historial oficial y documentacion.
+- `/admin`: panel privado del veterinario para gestionar clientes, mascotas e historiales.
+
+Archivos creados o modificados:
+
+- `auth.html`, `dashboard.html`, `admin.html`
+- `pet-detail.html`, `auth.js`, `dashboard.js`, `pet-detail.js`, `admin.js`, `supabase-client.js`
+- `client-area.css`
+- `supabase-client-area.sql`
+- `server.js`, `code.html`, `vercel.json`
+
+### Variables de entorno
+
+El frontend solo recibe la clave publica `anon`. No pongas nunca la service role key en HTML o JavaScript del navegador.
+
+```env
+SUPABASE_URL=https://TU-PROYECTO.supabase.co
+SUPABASE_ANON_KEY=tu_anon_key_publica
+```
+
+Puedes seguir usando `SUPABASE_SERVICE_ROLE_KEY` en el backend para las reservas si quieres, pero el area privada funciona con `SUPABASE_ANON_KEY` y RLS.
+
+### Crear tablas y politicas RLS
+
+1. Entra en Supabase > SQL Editor.
+2. Ejecuta completo el archivo `supabase-client-area.sql`.
+3. Ve a Authentication > URL Configuration.
+4. Anade tu dominio local y de produccion a Site URL / Redirect URLs, por ejemplo:
+
+```text
+http://127.0.0.1:3000
+http://127.0.0.1:3000/auth
+http://127.0.0.1:3000/dashboard
+https://tu-dominio.com/auth
+https://tu-dominio.com/dashboard
+```
+
+5. Crea una cuenta desde `/auth`.
+6. Convierte esa cuenta en admin desde SQL Editor:
+
+```sql
+update public.profiles
+set role = 'admin'
+where id = 'UUID_DEL_USUARIO';
+```
+
+Puedes encontrar el UUID en Supabase > Authentication > Users.
+
+### Seguridad incluida
+
+- `profiles`, `pets` y `pet_records` tienen RLS activo.
+- Los clientes autenticados solo leen su perfil, sus mascotas y los registros de sus mascotas.
+- Los clientes pueden cambiar la imagen de sus propias mascotas mediante una funcion limitada a `image_url`.
+- Los clientes pueden subir documentos a `pet_documents` solo para sus mascotas y borrar solo los documentos que hayan subido.
+- Los clientes no pueden editar datos medicos oficiales ni `pet_records`.
+- Los admins pueden leer, crear, editar y borrar mascotas, historiales y documentos.
+- Los buckets `pet-images` y `pet-documents` son privados y se consultan con URLs firmadas.
+- El perfil se crea automaticamente al registrarse mediante trigger sobre `auth.users`.
+
+### Ejecutar
+
+```bash
+npm install
+npm run dev
+```
+
+Abre `http://127.0.0.1:3000/auth`.

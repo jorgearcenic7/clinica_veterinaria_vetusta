@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ficha de mascota - Clinica Veterinaria Vetusta</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&family=Plus+Jakarta+Sans:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/client-area.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="/">Clinica Veterinaria Vetusta</a>
+      <nav class="nav-actions">
+        <a class="button secondary" href="/dashboard">Mis mascotas</a>
+        <button class="secondary" type="button" data-logout>Cerrar sesion</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="shell">
+    <p class="status" data-status aria-live="polite">Cargando...</p>
+
+    <section class="grid grid-two">
+      <div class="panel" data-pet-card></div>
+      <div class="panel">
+        <h2 class="section-title">Próximas vacunas o tratamientos</h2>
+        <div class="list" data-upcoming-list></div>
+      </div>
+    </section>
+
+    <section class="panel" style="margin-top:18px">
+      <h2 class="section-title">Historial oficial de la clínica</h2>
+      <div class="list" data-records-list></div>
+    </section>
+
+    <section class="panel" style="margin-top:18px">
+      <h2 class="section-title">Documentación de la mascota</h2>
+      <form class="stack" data-document-form>
+        <div class="grid grid-two">
+          <label>Título
+            <input name="title" required>
+          </label>
+          <label>Archivo
+            <input name="file" type="file" required>
+          </label>
+        </div>
+        <label>Descripción
+          <textarea name="description"></textarea>
+        </label>
+        <button type="submit">Subir documento</button>
+      </form>
+      <div class="list" data-documents-list style="margin-top:18px"></div>
+    </section>
+  </main>
+
+  <script type="module" src="/pet-detail.js"></script>
+</body>
+</html>

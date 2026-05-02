@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel cliente - Clinica Veterinaria Vetusta</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&family=Plus+Jakarta+Sans:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/client-area.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="/">Clinica Veterinaria Vetusta</a>
+      <nav class="nav-actions">
+        <a class="button secondary hidden" href="/admin" data-admin-link>Admin</a>
+        <button class="secondary" type="button" data-logout>Cerrar sesion</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="shell">
+    <h1 class="page-title">Mis mascotas</h1>
+    <p class="lead" data-welcome>Consulta el historial y los proximos cuidados registrados por la clinica.</p>
+    <p class="status" data-status aria-live="polite">Cargando...</p>
+
+    <section class="panel">
+      <h2 class="section-title">Mascotas</h2>
+      <div class="pet-card-grid" data-pets-list></div>
+    </section>
+  </main>
+
+  <script type="module" src="/dashboard.js"></script>
+</body>
+</html>

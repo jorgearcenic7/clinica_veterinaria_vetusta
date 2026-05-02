@@ -51,12 +51,31 @@ app.use(express.json());
 const publicFiles = {
   "/": "code.html",
   "/code.html": "code.html",
+  "/auth": "auth.html",
+  "/auth.html": "auth.html",
+  "/dashboard": "dashboard.html",
+  "/dashboard.html": "dashboard.html",
+  "/pet-detail.html": "pet-detail.html",
+  "/admin": "admin.html",
+  "/admin.html": "admin.html",
+  "/terminos-legales": "terminos-legales.html",
+  "/terminos-legales.html": "terminos-legales.html",
+  "/condiciones-uso": "condiciones-uso.html",
+  "/condiciones-uso.html": "condiciones-uso.html",
+  "/politica-privacidad": "politica-privacidad.html",
+  "/politica-privacidad.html": "politica-privacidad.html",
   "/aviso-legal.html": "aviso-legal.html",
   "/privacidad.html": "privacidad.html",
   "/cookies.html": "cookies.html",
   "/sitemap.html": "sitemap.html",
   "/booking.js": "booking.js",
   "/reviews.js": "reviews.js",
+  "/supabase-client.js": "supabase-client.js",
+  "/auth.js": "auth.js",
+  "/dashboard.js": "dashboard.js",
+  "/pet-detail.js": "pet-detail.js",
+  "/admin.js": "admin.js",
+  "/client-area.css": "client-area.css",
   "/screen.png": "screen.png",
 };
 
@@ -67,6 +86,14 @@ Object.entries(publicFiles).forEach(([route, filename]) => {
         next(error);
       }
     });
+  });
+});
+
+app.get("/dashboard/pets/:id", (_request, response, next) => {
+  response.sendFile("pet-detail.html", { root: publicRoot }, (error) => {
+    if (error) {
+      next(error);
+    }
   });
 });
 
@@ -112,6 +139,27 @@ app.get("/api/availability", async (request, response) => {
       error: "No se pudo cargar la disponibilidad.",
       detail: error.message,
     });
+  }
+});
+
+app.get("/api/supabase-config", (_request, response) => {
+  const publicSupabaseUrl = cleanEnvValue(process.env.SUPABASE_URL);
+  const publicSupabaseAnonKey = cleanEnvValue(process.env.SUPABASE_ANON_KEY);
+
+  if (!publicSupabaseUrl || !publicSupabaseAnonKey) {
+    response.status(500).json({
+      error: "Faltan SUPABASE_URL o SUPABASE_ANON_KEY en las variables de entorno.",
+    });
+    return;
+  }
+
+  try {
+    response.json({
+      supabaseUrl: validateSupabaseUrl(publicSupabaseUrl),
+      supabaseAnonKey: publicSupabaseAnonKey,
+    });
+  } catch (error) {
+    response.status(500).json({ error: error.message });
   }
 });
 

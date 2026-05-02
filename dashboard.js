@@ -1,0 +1,121 @@
+import { calculateAge, escapeHtml, getProfile, requireSession, setStatus, signedPetImageUrl, signOut, uploadPetImage } from "./supabase-client.js";
+
+const statusEl = document.querySelector("[data-status]");
+const welcomeEl = document.querySelector("[data-welcome]");
+const petsListEl = document.querySelector("[data-pets-list]");
+const adminLink = document.querySelector("[data-admin-link]");
+const logoutButton = document.querySelector("[data-logout]");
+
+let supabase = null;
+let pets = [];
+
+logoutButton.addEventListener("click", signOut);
+initDashboard();
+
+async function initDashboard() {
+  try {
+    const auth = await requireSession();
+
+    if (!auth) {
+      return;
+    }
+
+    supabase = auth.supabase;
+    const profile = await getProfile(supabase, auth.session.user.id);
+    welcomeEl.textContent = `Hola${profile.full_name ? `, ${profile.full_name}` : ""}. Estas son las mascotas registradas por la clinica.`;
+    adminLink.classList.toggle("hidden", profile.role !== "admin");
+    await loadPets();
+    setStatus(statusEl, "");
+  } catch (error) {
+    setStatus(statusEl, error.message || "No se pudo cargar el panel.", true);
+  }
+}
+
+async function loadPets() {
+  setStatus(statusEl, "Cargando mascotas...");
+  const { data, error } = await supabase
+    .from("pets")
+    .select("id,name,species,breed,birth_date,image_url,created_at")
+    .order("name", { ascending: true });
+
+  if (error) {
+    throw error;
+  }
+
+  pets = data || [];
+  await renderPets();
+}
+
+async function renderPets() {
+  petsListEl.replaceChildren();
+
+  if (pets.length === 0) {
+    petsListEl.append(emptyMessage("Todavia no hay mascotas asociadas a tu cuenta."));
+    return;
+  }
+
+  const petsWithImages = await Promise.all(pets.map(async (pet) => ({
+    ...pet,
+    signedImageUrl: await signedPetImageUrl(supabase, pet.image_url),
+  })));
+
+  petsWithImages.forEach((pet) => {
+    const card = document.createElement("article");
+    card.className = "card pet-card";
+    card.innerHTML = `
+      ${pet.signedImageUrl ? `<img class="pet-photo" src="${escapeHtml(pet.signedImageUrl)}" alt="Foto de ${escapeHtml(pet.name)}">` : `<div class="pet-photo placeholder" aria-hidden="true">${escapeHtml(pet.name.slice(0, 1).toUpperCase())}</div>`}
+      <div>
+        <h3 class="section-title">${escapeHtml(pet.name)}</h3>
+        <p class="muted">${escapeHtml([pet.species, pet.breed].filter(Boolean).join(" · ") || "Sin detalles")}</p>
+        <p class="small muted">Edad: ${calculateAge(pet.birth_date)}</p>
+      </div>
+      <div class="row">
+        <label class="button secondary">
+          Cambiar foto
+          <input class="hidden" type="file" accept="image/*" data-image-input="${pet.id}">
+        </label>
+        <a class="button" href="/dashboard/pets/${pet.id}">Ver historial</a>
+      </div>
+    `;
+    petsListEl.append(card);
+  });
+
+  petsListEl.querySelectorAll("[data-image-input]").forEach((input) => {
+    input.addEventListener("change", () => changeImage(input));
+  });
+}
+
+async function changeImage(input) {
+  const file = input.files?.[0];
+
+  if (!file) {
+    return;
+  }
+
+  try {
+    setStatus(statusEl, "Subiendo foto...");
+    const imageUrl = await uploadPetImage(supabase, input.dataset.imageInput, file);
+    const { error } = await supabase.rpc("set_pet_image", {
+      pet_id: input.dataset.imageInput,
+      image_url: imageUrl,
+    });
+
+    if (error) {
+      throw error;
+    }
+
+    await loadPets();
+    setStatus(statusEl, "Foto actualizada.");
+  } catch (error) {
+    setStatus(statusEl, error.message || "No se pudo subir la foto.", true);
+  } finally {
+    input.value = "";
+  }
+}
+
+function emptyMessage(text) {
+  const item = document.createElement("p");
+  item.className = "muted";
+  item.textContent = text;
+  return item;
+}

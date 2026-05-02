@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Area privada - Clinica Veterinaria Vetusta</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&family=Plus+Jakarta+Sans:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/client-area.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="/">Clinica Veterinaria Vetusta</a>
+      <nav class="nav-actions">
+        <a class="button secondary" href="/">Volver a la web</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="shell">
+    <h1 class="page-title">Area privada</h1>
+    <p class="lead">Accede para consultar mascotas, historial veterinario y proximas vacunas o tratamientos.</p>
+
+    <section class="panel">
+      <div class="tabs" role="tablist" aria-label="Acceso">
+        <button class="tab-button" type="button" data-tab="login" aria-selected="true">Login</button>
+        <button class="tab-button" type="button" data-tab="register" aria-selected="false">Registro</button>
+        <button class="tab-button" type="button" data-tab="reset" aria-selected="false">Recuperar</button>
+      </div>
+
+      <form class="stack" data-auth-panel="login" data-login-form>
+        <div class="grid grid-two">
+          <label>Email
+            <input name="email" type="email" autocomplete="email" required>
+          </label>
+          <label>Contrasena
+            <input name="password" type="password" autocomplete="current-password" required>
+          </label>
+        </div>
+        <button type="submit">Entrar</button>
+      </form>
+
+      <form class="stack hidden" data-auth-panel="register" data-register-form>
+        <div class="grid grid-two">
+          <label>Nombre completo
+            <input name="full_name" autocomplete="name" required>
+          </label>
+          <label>Telefono
+            <input name="phone" autocomplete="tel">
+          </label>
+          <label>Email
+            <input name="email" type="email" autocomplete="email" required>
+          </label>
+          <label>Contrasena
+            <input name="password" type="password" autocomplete="new-password" minlength="8" required>
+          </label>
+        </div>
+        <button type="submit">Crear cuenta</button>
+      </form>
+
+      <form class="stack hidden" data-auth-panel="reset" data-reset-form>
+        <label>Email
+          <input name="email" type="email" autocomplete="email" required>
+        </label>
+        <button type="submit">Enviar enlace</button>
+      </form>
+
+      <form class="stack hidden" data-update-password-form>
+        <h2 class="section-title">Nueva contrasena</h2>
+        <label>Contrasena nueva
+          <input name="password" type="password" autocomplete="new-password" minlength="8" required>
+        </label>
+        <button type="submit">Guardar contrasena</button>
+      </form>
+
+      <p class="status" data-auth-status aria-live="polite"></p>
+      <p class="legal-note">
+        Al continuar, aceptas los
+        <a href="/terminos-legales">Términos Legales</a>
+        y las
+        <a href="/condiciones-uso">Condiciones de uso</a>
+        de la plataforma. También puedes consultar la
+        <a href="/politica-privacidad">Política de Privacidad</a>.
+      </p>
+    </section>
+  </main>
+
+  <script type="module" src="/auth.js"></script>
+</body>
+</html>
