@@ -193,7 +193,7 @@ Puedes encontrar el UUID en Supabase > Authentication > Users.
 - En `/admin`, las mascotas se crean para el cliente seleccionado: `pets.owner_id` es el `id` del cliente, no el `auth.uid()` del veterinario/admin.
 - Los buckets `pet-images` y `pet-documents` son privados y se consultan con URLs firmadas.
 - Los documentos estan limitados a JPG, PNG, WEBP y PDF, con un maximo de 10MB.
-- Las imagenes de mascota solo aceptan JPG, PNG o WEBP, con un maximo de 5MB en frontend, y se guardan en `pet-images` con path `pets/{petId}/{timestamp}-{nombre}`. La base de datos se actualiza mediante la funcion segura `set_pet_image`.
+- Las imagenes de mascota solo aceptan JPG, PNG o WEBP, con un maximo de 5MB en frontend, y se guardan en `pet-images` con path `{ownerId}/{petId}/{timestamp}-{nombre}`. La base de datos guarda solo ese path relativo en `pets.image_url`.
 - El registro y cambio de contrasena exigen contrasena fuerte: minimo 12 caracteres, mayuscula, minuscula, numero y simbolo.
 - Los cambios de `role` quedan bloqueados para usuarios que no sean admin mediante trigger en Supabase.
 - Las paginas privadas se sirven con `Cache-Control: no-store`.

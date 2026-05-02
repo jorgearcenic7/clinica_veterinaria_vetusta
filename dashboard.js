@@ -7,6 +7,7 @@ const adminLink = document.querySelector("[data-admin-link]");
 const logoutButton = document.querySelector("[data-logout]");
 
 let supabase = null;
+let session = null;
 let pets = [];
 
 logoutButton.addEventListener("click", signOut);
@@ -21,6 +22,7 @@ async function initDashboard() {
     }
 
     supabase = auth.supabase;
+    session = auth.session;
     const profile = await getProfile(supabase, auth.session.user.id);
     welcomeEl.textContent = `Hola${profile.full_name ? `, ${profile.full_name}` : ""}. Estas son las mascotas registradas por la clinica.`;
     adminLink.classList.toggle("hidden", profile.role !== "admin");
@@ -35,7 +37,7 @@ async function loadPets() {
   setStatus(statusEl, "Cargando mascotas...");
   const { data, error } = await supabase
     .from("pets")
-    .select("id,name,species,breed,birth_date,image_url,created_at")
+    .select("id,owner_id,name,species,breed,birth_date,image_url,created_at")
     .order("name", { ascending: true });
 
   if (error) {
@@ -84,7 +86,7 @@ async function renderPets() {
       <div class="row">
         <label class="button secondary">
           Cambiar foto
-          <input class="hidden" type="file" accept="image/jpeg,image/png,image/webp" data-image-input="${pet.id}">
+          <input class="hidden" type="file" accept="image/jpeg,image/png,image/webp" data-image-input="${pet.id}" data-owner-id="${pet.owner_id}">
         </label>
         <a class="button" href="/dashboard/pets/${pet.id}">Ver historial</a>
       </div>
@@ -111,13 +113,16 @@ async function changeImage(input) {
   try {
     validateUploadFile(file, "image");
     setStatus(statusEl, "Subiendo imagen...");
-    const imagePath = await uploadPetImage(supabase, input.dataset.imageInput, file);
-    const { error } = await supabase.rpc("set_pet_image", {
-      pet_id: input.dataset.imageInput,
-      image_url: imagePath,
-    });
+    const petId = input.dataset.imageInput;
+    const ownerId = input.dataset.ownerId || session?.user?.id;
+    const imagePath = await uploadPetImage(supabase, ownerId, petId, file);
+    const { error } = await supabase
+      .from("pets")
+      .update({ image_url: imagePath })
+      .eq("id", petId);
 
     if (error) {
+      console.error("update pet image error", error);
       throw error;
     }
 

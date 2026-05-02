@@ -131,6 +131,14 @@ begin
     raise exception 'No tienes permiso para cambiar la imagen de esta mascota.';
   end if;
 
+  if not public.is_admin()
+    and (
+      (storage.foldername(image_url))[1] is distinct from auth.uid()::text
+      or (storage.foldername(image_url))[2] is distinct from pet_id::text
+    ) then
+    raise exception 'La ruta de la imagen no corresponde a tu mascota.';
+  end if;
+
   update public.pets
   set image_url = public.set_pet_image.image_url
   where id = pet_id;
@@ -401,7 +409,7 @@ create policy "Authenticated read pet images"
       or exists (
         select 1
         from public.pets
-        where (storage.foldername(name))[1] = 'pets'
+        where (storage.foldername(name))[1] = auth.uid()::text
           and pets.id::text = (storage.foldername(name))[2]
           and pets.owner_id = auth.uid()
       )
@@ -415,11 +423,11 @@ create policy "Clients upload own pet images"
   with check (
     bucket_id = 'pet-images'
     and public.is_allowed_storage_path(bucket_id, name)
+    and (storage.foldername(name))[1] = auth.uid()::text
     and exists (
       select 1
       from public.pets
-      where (storage.foldername(name))[1] = 'pets'
-        and pets.id::text = (storage.foldername(name))[2]
+      where pets.id::text = (storage.foldername(name))[2]
         and pets.owner_id = auth.uid()
     )
   );
@@ -431,22 +439,22 @@ create policy "Clients update own pet images"
   using (
     bucket_id = 'pet-images'
     and public.is_allowed_storage_path(bucket_id, name)
+    and (storage.foldername(name))[1] = auth.uid()::text
     and exists (
       select 1
       from public.pets
-      where (storage.foldername(name))[1] = 'pets'
-        and pets.id::text = (storage.foldername(name))[2]
+      where pets.id::text = (storage.foldername(name))[2]
         and pets.owner_id = auth.uid()
     )
   )
   with check (
     bucket_id = 'pet-images'
     and public.is_allowed_storage_path(bucket_id, name)
+    and (storage.foldername(name))[1] = auth.uid()::text
     and exists (
       select 1
       from public.pets
-      where (storage.foldername(name))[1] = 'pets'
-        and pets.id::text = (storage.foldername(name))[2]
+      where pets.id::text = (storage.foldername(name))[2]
         and pets.owner_id = auth.uid()
     )
   );

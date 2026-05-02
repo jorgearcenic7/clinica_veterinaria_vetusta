@@ -115,10 +115,10 @@ export function calculateAge(birthDate) {
   return `${years} ${years === 1 ? "año" : "años"}`;
 }
 
-export async function uploadPetImage(supabase, petId, file) {
+export async function uploadPetImage(supabase, ownerId, petId, file) {
   validateUploadFile(file, "image");
   const safeName = safeFileName(file.name);
-  const filePath = `pets/${petId}/${Date.now()}-${safeName}`;
+  const filePath = `${ownerId}/${petId}/${Date.now()}-${safeName}`;
   const { error } = await supabase.storage.from("pet-images").upload(filePath, file, {
     cacheControl: "3600",
     contentType: file.type,
@@ -126,6 +126,7 @@ export async function uploadPetImage(supabase, petId, file) {
   });
 
   if (error) {
+    console.error("upload error", error);
     throw error;
   }
 
@@ -199,6 +200,10 @@ export async function signedPetImageUrl(supabase, imagePath) {
 
     if (!error && data?.signedUrl) {
       return data.signedUrl;
+    }
+
+    if (error) {
+      console.error("signed url error", error);
     }
   }
 
@@ -327,6 +332,10 @@ function candidatePetImagePaths(imagePath) {
 
   const candidates = [value];
   const parts = value.split("/");
+
+  if (parts.length === 3) {
+    candidates.push(`pets/${parts[1]}/${parts[2]}`);
+  }
 
   if (!value.startsWith("pets/") && parts.length >= 2) {
     candidates.push(`pets/${value}`);
