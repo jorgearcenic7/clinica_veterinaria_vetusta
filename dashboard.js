@@ -119,10 +119,11 @@ async function changeImage(input) {
     const { error } = await supabase
       .from("pets")
       .update({ image_url: imagePath })
-      .eq("id", petId);
+      .eq("id", petId)
+      .eq("owner_id", session.user.id);
 
     if (error) {
-      console.error("update pet image error", error);
+      console.error("update image_url error", error);
       throw error;
     }
 

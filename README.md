@@ -187,7 +187,7 @@ Puedes encontrar el UUID en Supabase > Authentication > Users.
 - `profiles`, `pets`, `pet_records`, `pet_documents` y `document_upload_logs` tienen RLS activo.
 - Los clientes autenticados solo leen su perfil, sus mascotas y los registros de sus mascotas.
 - Los clientes pueden cambiar la imagen de sus propias mascotas actualizando solo `pets.image_url`; un trigger impide modificar datos oficiales.
-- Los clientes pueden subir documentos a `pet_documents` solo para sus mascotas y borrar solo los documentos que hayan subido.
+- Los clientes pueden ver documentos asociados a sus mascotas, pero no pueden subirlos ni borrarlos; la documentacion la gestiona solo el admin/veterinario.
 - Los clientes no pueden editar datos medicos oficiales ni `pet_records`.
 - Los admins pueden leer, crear, editar y borrar mascotas, historiales y documentos.
 - En `/admin`, las mascotas se crean para el cliente seleccionado: `pets.owner_id` es el `id` del cliente, no el `auth.uid()` del veterinario/admin.

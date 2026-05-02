@@ -318,7 +318,7 @@ async function savePet(event) {
         .eq("id", petId);
 
       if (imageError) {
-        console.error("update pet image error", imageError);
+        console.error("update image_url error", imageError);
         throw imageError;
       }
 

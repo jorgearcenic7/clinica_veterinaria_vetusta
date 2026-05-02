@@ -334,57 +334,12 @@ create policy "Clients read own pet documents"
     )
   );
 
-create policy "Clients upload own pet documents"
-  on public.pet_documents
-  for insert
-  to authenticated
-  with check (
-    source = 'client'
-    and uploaded_by = auth.uid()
-    and exists (
-      select 1
-      from public.pets
-      where pets.id = pet_documents.pet_id
-        and pets.owner_id = auth.uid()
-    )
-  );
-
-create policy "Clients delete own uploaded pet documents"
-  on public.pet_documents
-  for delete
-  to authenticated
-  using (
-    source = 'client'
-    and uploaded_by = auth.uid()
-    and exists (
-      select 1
-      from public.pets
-      where pets.id = pet_documents.pet_id
-        and pets.owner_id = auth.uid()
-    )
-  );
-
 create policy "Admins manage pet documents"
   on public.pet_documents
   for all
   to authenticated
   using (public.is_admin())
   with check (public.is_admin());
-
-create policy "Clients insert own document upload logs"
-  on public.document_upload_logs
-  for insert
-  to authenticated
-  with check (
-    source = 'client'
-    and uploaded_by = auth.uid()
-    and exists (
-      select 1
-      from public.pets
-      where pets.id = document_upload_logs.pet_id
-        and pets.owner_id = auth.uid()
-    )
-  );
 
 create policy "Admins read document upload logs"
   on public.document_upload_logs
@@ -406,13 +361,7 @@ create policy "Authenticated read pet images"
     bucket_id = 'pet-images'
     and (
       public.is_admin()
-      or exists (
-        select 1
-        from public.pets
-        where (storage.foldername(name))[1] = auth.uid()::text
-          and pets.id::text = (storage.foldername(name))[2]
-          and pets.owner_id = auth.uid()
-      )
+      or (storage.foldername(name))[1] = auth.uid()::text
     )
   );
 
@@ -420,33 +369,6 @@ create policy "Clients upload own pet images"
   on storage.objects
   for insert
   to authenticated
-  with check (
-    bucket_id = 'pet-images'
-    and public.is_allowed_storage_path(bucket_id, name)
-    and (storage.foldername(name))[1] = auth.uid()::text
-    and exists (
-      select 1
-      from public.pets
-      where pets.id::text = (storage.foldername(name))[2]
-        and pets.owner_id = auth.uid()
-    )
-  );
-
-create policy "Clients update own pet images"
-  on storage.objects
-  for update
-  to authenticated
-  using (
-    bucket_id = 'pet-images'
-    and public.is_allowed_storage_path(bucket_id, name)
-    and (storage.foldername(name))[1] = auth.uid()::text
-    and exists (
-      select 1
-      from public.pets
-      where pets.id::text = (storage.foldername(name))[2]
-        and pets.owner_id = auth.uid()
-    )
-  )
   with check (
     bucket_id = 'pet-images'
     and public.is_allowed_storage_path(bucket_id, name)
@@ -484,36 +406,6 @@ create policy "Authenticated read pet document files"
         where pets.id::text = (storage.foldername(name))[1]
           and pets.owner_id = auth.uid()
       )
-    )
-  );
-
-create policy "Clients upload own pet document files"
-  on storage.objects
-  for insert
-  to authenticated
-  with check (
-    bucket_id = 'pet-documents'
-    and public.is_allowed_storage_path(bucket_id, name)
-    and exists (
-      select 1
-      from public.pets
-      where pets.id::text = (storage.foldername(name))[1]
-        and pets.owner_id = auth.uid()
-    )
-  );
-
-create policy "Clients delete own pet document files"
-  on storage.objects
-  for delete
-  to authenticated
-  using (
-    bucket_id = 'pet-documents'
-    and owner = auth.uid()
-    and exists (
-      select 1
-      from public.pets
-      where pets.id::text = (storage.foldername(name))[1]
-        and pets.owner_id = auth.uid()
     )
   );
 
