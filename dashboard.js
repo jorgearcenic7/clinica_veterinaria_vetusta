@@ -54,10 +54,22 @@ async function renderPets() {
     return;
   }
 
-  const petsWithImages = await Promise.all(pets.map(async (pet) => ({
-    ...pet,
-    signedImageUrl: await signedPetImageUrl(supabase, pet.image_url),
-  })));
+  let imageLoadError = false;
+  const petsWithImages = await Promise.all(pets.map(async (pet) => {
+    try {
+      const signedImageUrl = await signedPetImageUrl(supabase, pet.image_url);
+      imageLoadError = imageLoadError || Boolean(pet.image_url && !signedImageUrl);
+
+      return {
+        ...pet,
+        signedImageUrl,
+      };
+    } catch (error) {
+      console.warn("Pet image signed URL error:", error.message);
+      imageLoadError = true;
+      return { ...pet, signedImageUrl: "" };
+    }
+  }));
 
   petsWithImages.forEach((pet) => {
     const card = document.createElement("article");
@@ -80,6 +92,10 @@ async function renderPets() {
     petsListEl.append(card);
   });
 
+  if (imageLoadError) {
+    setStatus(statusEl, "No se pudo cargar alguna imagen guardada. Vuelve a subir la foto para regenerarla.", true);
+  }
+
   petsListEl.querySelectorAll("[data-image-input]").forEach((input) => {
     input.addEventListener("change", () => changeImage(input));
   });
@@ -96,10 +112,10 @@ async function changeImage(input) {
     validateUploadFile(file, "image");
     setStatus(statusEl, "Subiendo imagen...");
     const imagePath = await uploadPetImage(supabase, input.dataset.imageInput, file);
-    const { error } = await supabase
-      .from("pets")
-      .update({ image_url: imagePath })
-      .eq("id", input.dataset.imageInput);
+    const { error } = await supabase.rpc("set_pet_image", {
+      pet_id: input.dataset.imageInput,
+      image_url: imagePath,
+    });
 
     if (error) {
       throw error;

@@ -197,6 +197,23 @@ as $$
     );
 $$;
 
+create or replace function public.is_allowed_storage_path(bucket text, object_name text)
+returns boolean
+language sql
+stable
+as $$
+  select
+    (
+      bucket = 'pet-images'
+      and lower(object_name) ~ '\.(jpg|jpeg|png|webp)$'
+    )
+    or
+    (
+      bucket = 'pet-documents'
+      and lower(object_name) ~ '\.(jpg|jpeg|png|webp|pdf)$'
+    );
+$$;
+
 drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
@@ -397,7 +414,7 @@ create policy "Clients upload own pet images"
   to authenticated
   with check (
     bucket_id = 'pet-images'
-    and public.is_allowed_storage_file(bucket_id, metadata)
+    and public.is_allowed_storage_path(bucket_id, name)
     and exists (
       select 1
       from public.pets
@@ -413,7 +430,7 @@ create policy "Clients update own pet images"
   to authenticated
   using (
     bucket_id = 'pet-images'
-    and public.is_allowed_storage_file(bucket_id, metadata)
+    and public.is_allowed_storage_path(bucket_id, name)
     and exists (
       select 1
       from public.pets
@@ -424,7 +441,7 @@ create policy "Clients update own pet images"
   )
   with check (
     bucket_id = 'pet-images'
-    and public.is_allowed_storage_file(bucket_id, metadata)
+    and public.is_allowed_storage_path(bucket_id, name)
     and exists (
       select 1
       from public.pets
@@ -442,7 +459,7 @@ create policy "Admins manage pet images"
   with check (
     bucket_id = 'pet-images'
     and public.is_admin()
-    and public.is_allowed_storage_file(bucket_id, metadata)
+    and public.is_allowed_storage_path(bucket_id, name)
   );
 
 create policy "Authenticated read pet document files"
@@ -468,7 +485,7 @@ create policy "Clients upload own pet document files"
   to authenticated
   with check (
     bucket_id = 'pet-documents'
-    and public.is_allowed_storage_file(bucket_id, metadata)
+    and public.is_allowed_storage_path(bucket_id, name)
     and exists (
       select 1
       from public.pets
@@ -500,7 +517,7 @@ create policy "Admins manage pet document files"
   with check (
     bucket_id = 'pet-documents'
     and public.is_admin()
-    and public.is_allowed_storage_file(bucket_id, metadata)
+    and public.is_allowed_storage_path(bucket_id, name)
   );
 
 -- Para convertir una cuenta existente en veterinario/admin:

@@ -193,14 +193,14 @@ Puedes encontrar el UUID en Supabase > Authentication > Users.
 - En `/admin`, las mascotas se crean para el cliente seleccionado: `pets.owner_id` es el `id` del cliente, no el `auth.uid()` del veterinario/admin.
 - Los buckets `pet-images` y `pet-documents` son privados y se consultan con URLs firmadas.
 - Los documentos estan limitados a JPG, PNG, WEBP y PDF, con un maximo de 10MB.
-- Las imagenes de mascota solo aceptan JPG, PNG o WEBP, con un maximo de 5MB, y se guardan en `pet-images` con path `pets/{petId}/{timestamp}-{nombre}`.
+- Las imagenes de mascota solo aceptan JPG, PNG o WEBP, con un maximo de 5MB en frontend, y se guardan en `pet-images` con path `pets/{petId}/{timestamp}-{nombre}`. La base de datos se actualiza mediante la funcion segura `set_pet_image`.
 - El registro y cambio de contrasena exigen contrasena fuerte: minimo 12 caracteres, mayuscula, minuscula, numero y simbolo.
 - Los cambios de `role` quedan bloqueados para usuarios que no sean admin mediante trigger en Supabase.
 - Las paginas privadas se sirven con `Cache-Control: no-store`.
 - El frontend usa solo `SUPABASE_ANON_KEY`; no uses `SUPABASE_SERVICE_ROLE_KEY` en HTML ni JavaScript del navegador.
 - El perfil se crea automaticamente al registrarse mediante trigger sobre `auth.users`.
 
-Si ya ejecutaste una version anterior de `supabase-client-area.sql`, vuelve a ejecutarlo completo para aplicar `document_upload_logs`, validaciones de Storage, trigger de rol y politicas actualizadas.
+Si ya ejecutaste una version anterior de `supabase-client-area.sql`, vuelve a ejecutarlo completo para aplicar `document_upload_logs`, validaciones de Storage, trigger de rol, `set_pet_image` y politicas actualizadas.
 
 ### Ejecutar
 

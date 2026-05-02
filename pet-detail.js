@@ -69,7 +69,15 @@ async function render() {
 }
 
 async function renderPet() {
-  const imageUrl = await signedPetImageUrl(supabase, pet.image_url);
+  let imageUrl = "";
+
+  try {
+    imageUrl = await signedPetImageUrl(supabase, pet.image_url);
+  } catch (error) {
+    console.warn("Pet image signed URL error:", error.message);
+    setStatus(statusEl, "No se pudo cargar la imagen. Revisa que el SQL de Storage esté actualizado y vuelve a subir la foto.", true);
+  }
+
   petCardEl.innerHTML = `
     ${imageUrl ? `<img class="pet-photo" src="${escapeHtml(imageUrl)}" alt="Foto de ${escapeHtml(pet.name)}">` : `<div class="pet-photo placeholder" aria-hidden="true">${escapeHtml(pet.name.slice(0, 1).toUpperCase())}</div>`}
     <h1 class="page-title">${escapeHtml(pet.name)}</h1>

@@ -125,10 +125,22 @@ async function renderPets() {
     return;
   }
 
-  const petsWithImages = await Promise.all(clientPets.map(async (pet) => ({
-    ...pet,
-    signedImageUrl: await signedPetImageUrl(supabase, pet.image_url),
-  })));
+  let imageLoadError = false;
+  const petsWithImages = await Promise.all(clientPets.map(async (pet) => {
+    try {
+      const signedImageUrl = await signedPetImageUrl(supabase, pet.image_url);
+      imageLoadError = imageLoadError || Boolean(pet.image_url && !signedImageUrl);
+
+      return {
+        ...pet,
+        signedImageUrl,
+      };
+    } catch (error) {
+      console.warn("Pet image signed URL error:", error.message);
+      imageLoadError = true;
+      return { ...pet, signedImageUrl: "" };
+    }
+  }));
 
   petsWithImages.forEach((pet) => {
     const item = document.createElement("article");
@@ -150,6 +162,10 @@ async function renderPets() {
     `;
     petsListEl.append(item);
   });
+
+  if (imageLoadError) {
+    setStatus(statusEl, "No se pudo cargar alguna imagen guardada. Vuelve a subir la foto para regenerarla.", true);
+  }
 
   petsListEl.querySelectorAll("[data-select-pet]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -296,10 +312,10 @@ async function savePet(event) {
       validateUploadFile(imageFile, "image");
       const petId = values.id || data.id;
       const imagePath = await uploadPetImage(supabase, petId, imageFile);
-      const { error: imageError } = await supabase
-        .from("pets")
-        .update({ image_url: imagePath })
-        .eq("id", petId);
+      const { error: imageError } = await supabase.rpc("set_pet_image", {
+        pet_id: petId,
+        image_url: imagePath,
+      });
 
       if (imageError) {
         throw imageError;
@@ -478,11 +494,11 @@ function fillPetForm(id) {
   }
 
   selectedPetId = pet.id;
-  petForm.id.value = pet.id;
-  petForm.name.value = pet.name || "";
-  petForm.species.value = pet.species || "";
-  petForm.breed.value = pet.breed || "";
-  petForm.birth_date.value = pet.birth_date || "";
+  petForm.elements.id.value = pet.id;
+  petForm.elements.name.value = pet.name || "";
+  petForm.elements.species.value = pet.species || "";
+  petForm.elements.breed.value = pet.breed || "";
+  petForm.elements.birth_date.value = pet.birth_date || "";
   render();
 }
 
@@ -493,22 +509,22 @@ function fillRecordForm(id) {
     return;
   }
 
-  recordForm.id.value = record.id;
-  recordForm.title.value = record.title || "";
-  recordForm.record_type.value = record.record_type || "Consulta";
-  recordForm.record_date.value = record.record_date || "";
-  recordForm.next_due_date.value = record.next_due_date || "";
-  recordForm.notes.value = record.notes || "";
+  recordForm.elements.id.value = record.id;
+  recordForm.elements.title.value = record.title || "";
+  recordForm.elements.record_type.value = record.record_type || "Consulta";
+  recordForm.elements.record_date.value = record.record_date || "";
+  recordForm.elements.next_due_date.value = record.next_due_date || "";
+  recordForm.elements.notes.value = record.notes || "";
 }
 
 function resetPetForm() {
   petForm.reset();
-  petForm.id.value = "";
+  petForm.elements.id.value = "";
 }
 
 function resetRecordForm() {
   recordForm.reset();
-  recordForm.id.value = "";
+  recordForm.elements.id.value = "";
 }
 
 function resetDocumentForm() {

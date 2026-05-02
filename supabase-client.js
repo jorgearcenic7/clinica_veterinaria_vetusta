@@ -129,6 +129,12 @@ export async function uploadPetImage(supabase, petId, file) {
     throw error;
   }
 
+  const signedUrl = await signedPetImageUrl(supabase, filePath);
+
+  if (!signedUrl) {
+    throw new Error("La imagen se subió, pero Supabase no permite leerla. Revisa las políticas del bucket pet-images.");
+  }
+
   return filePath;
 }
 
@@ -186,13 +192,17 @@ export async function signedPetImageUrl(supabase, imagePath) {
     return imagePath;
   }
 
-  const { data, error } = await supabase.storage.from("pet-images").createSignedUrl(imagePath, 3600);
+  const candidates = candidatePetImagePaths(imagePath);
 
-  if (error) {
-    throw error;
+  for (const candidate of candidates) {
+    const { data, error } = await supabase.storage.from("pet-images").createSignedUrl(candidate, 3600);
+
+    if (!error && data?.signedUrl) {
+      return data.signedUrl;
+    }
   }
 
-  return data.signedUrl;
+  return "";
 }
 
 export async function signedPetDocumentUrl(supabase, filePath) {
@@ -306,4 +316,25 @@ function safeFileName(fileName) {
     .replace(/-+/g, "-")
     .replace(/^-|-$/g, "")
     .slice(0, 120) || "archivo";
+}
+
+function candidatePetImagePaths(imagePath) {
+  const value = String(imagePath || "").trim();
+
+  if (!value) {
+    return [];
+  }
+
+  const candidates = [value];
+  const parts = value.split("/");
+
+  if (!value.startsWith("pets/") && parts.length >= 2) {
+    candidates.push(`pets/${value}`);
+  }
+
+  if (value.startsWith("pets/")) {
+    candidates.push(value.replace(/^pets\//, ""));
+  }
+
+  return [...new Set(candidates)];
 }
