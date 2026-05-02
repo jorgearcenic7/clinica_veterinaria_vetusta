@@ -41,14 +41,22 @@ function initBookingCalendar() {
 async function loadAvailability() {
   setStatus("Cargando disponibilidad...");
   const monthKey = toMonthKey(bookingState.visibleMonth);
-  const response = await fetch(`/api/availability?month=${monthKey}`);
 
-  if (!response.ok) {
-    setStatus("No se pudo cargar la disponibilidad.");
+  try {
+    const response = await fetch(`/api/availability?month=${monthKey}`);
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `Error ${response.status}`);
+    }
+
+    bookingState.availability = await response.json();
+  } catch (error) {
+    console.error("Availability load error:", error);
+    setStatus(`No se pudo cargar la disponibilidad: ${error.message}`);
     return;
   }
 
-  bookingState.availability = await response.json();
   bookingState.selectedDay = null;
   bookingState.selectedSlot = null;
   hiddenDateInput.value = "";
