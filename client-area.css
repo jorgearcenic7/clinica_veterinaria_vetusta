@@ -156,6 +156,35 @@ a {
   font-weight: 700;
 }
 
+.badge-pending {
+  background: var(--surface-soft);
+  color: var(--muted);
+}
+
+.badge-confirmed {
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.badge-cancelled {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.sync-status {
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.sync-status-ok {
+  color: var(--primary);
+}
+
+.sync-status-error {
+  color: var(--danger);
+}
+
 .section-title {
   margin: 0 0 14px;
   font-family: "Plus Jakarta Sans", system-ui, sans-serif;

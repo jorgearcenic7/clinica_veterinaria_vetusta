@@ -3,6 +3,7 @@ import { formatDate, formToObject, friendlyError, logDocumentUpload, removePetDo
 const statusEl = document.querySelector("[data-status]");
 const clientsListEl = document.querySelector("[data-clients-list]");
 const petsListEl = document.querySelector("[data-pets-list]");
+const reservationsTableEl = document.querySelector("[data-reservations-table]");
 const recordsTitleEl = document.querySelector("[data-records-title]");
 const recordsTableEl = document.querySelector("[data-records-table]");
 const petForm = document.querySelector("[data-pet-form]");
@@ -17,6 +18,7 @@ const logoutButton = document.querySelector("[data-logout]");
 let supabase = null;
 let clients = [];
 let pets = [];
+let reservations = [];
 let records = [];
 let documents = [];
 let selectedClientId = null;
@@ -51,14 +53,15 @@ async function initAdmin() {
 async function loadAll() {
   setStatus(statusEl, "Cargando datos...");
 
-  const [clientsResult, petsResult, recordsResult, documentsResult] = await Promise.all([
+  const [clientsResult, petsResult, reservationsResult, recordsResult, documentsResult] = await Promise.all([
     supabase.from("profiles").select("id,full_name,phone,role,created_at").eq("role", "client").order("created_at", { ascending: false }),
     supabase.from("pets").select("id,owner_id,name,species,breed,birth_date,image_url,created_at").order("name", { ascending: true }),
+    loadReservations(),
     supabase.from("pet_records").select("id,pet_id,title,record_type,record_date,notes,next_due_date,created_at").order("record_date", { ascending: false }),
     supabase.from("pet_documents").select("id,pet_id,uploaded_by,title,description,file_url,file_name,file_type,source,created_at").order("created_at", { ascending: false }),
   ]);
 
-  [clientsResult, petsResult, recordsResult, documentsResult].forEach((result) => {
+  [clientsResult, petsResult, reservationsResult, recordsResult, documentsResult].forEach((result) => {
     if (result.error) {
       throw result.error;
     }
@@ -66,6 +69,7 @@ async function loadAll() {
 
   clients = clientsResult.data || [];
   pets = petsResult.data || [];
+  reservations = reservationsResult.data || [];
   records = recordsResult.data || [];
   documents = documentsResult.data || [];
   selectedClientId = clients.some((client) => client.id === selectedClientId) ? selectedClientId : clients[0]?.id || null;
@@ -76,10 +80,58 @@ async function loadAll() {
 }
 
 async function render() {
+  renderReservations();
   renderClients();
   await renderPets();
   renderRecords();
   await renderDocuments();
+}
+
+function loadReservations() {
+  return supabase
+    .from("reservations")
+    .select("*")
+    .order("datetime", { ascending: true });
+}
+
+function renderReservations() {
+  reservationsTableEl.replaceChildren();
+
+  if (reservations.length === 0) {
+    reservationsTableEl.append(tableMessage("No hay reservas online.", 7));
+    return;
+  }
+
+  reservations.forEach((reservation) => {
+    const status = reservation.status || "pending";
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${escapeHtml(reservation.nombre)}</td>
+      <td>${escapeHtml(reservation.telefono)}</td>
+      <td>${escapeHtml(reservation.mascota || "Sin indicar")}</td>
+      <td>${escapeHtml(formatReservationService(reservation.servicio))}</td>
+      <td>${escapeHtml(formatReservationDateTime(reservation.datetime))}</td>
+      <td>
+        <span class="badge ${statusClass(status)}">${escapeHtml(statusLabel(status))}</span>
+        ${syncStatusMarkup(reservation)}
+      </td>
+      <td>
+        <div class="nav-actions">
+          <button class="secondary" type="button" data-confirm-reservation="${reservation.id}" ${status === "confirmed" ? "disabled" : ""}>Confirmar</button>
+          <button class="danger" type="button" data-cancel-reservation="${reservation.id}" ${status === "cancelled" ? "disabled" : ""}>Cancelar</button>
+        </div>
+      </td>
+    `;
+    reservationsTableEl.append(row);
+  });
+
+  reservationsTableEl.querySelectorAll("[data-confirm-reservation]").forEach((button) => {
+    button.addEventListener("click", () => updateReservationStatus(button.dataset.confirmReservation, "confirmed"));
+  });
+
+  reservationsTableEl.querySelectorAll("[data-cancel-reservation]").forEach((button) => {
+    button.addEventListener("click", () => updateReservationStatus(button.dataset.cancelReservation, "cancelled"));
+  });
 }
 
 function renderClients() {
@@ -422,6 +474,94 @@ async function saveDocument(event) {
   }
 }
 
+async function updateReservationStatus(id, status) {
+  try {
+    setStatus(statusEl, "Actualizando reserva...");
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+
+    if (sessionError || !sessionData.session?.access_token) {
+      throw sessionError || new Error("Sesion no valida.");
+    }
+
+    const response = await fetch(`/api/admin/reservations/${encodeURIComponent(id)}`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${sessionData.session.access_token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ status }),
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(data.error || "No se pudo actualizar la reserva.");
+    }
+
+    const statusText = status === "confirmed" ? "confirmada" : "cancelada";
+    await loadAll();
+    const syncError = data.reservation?.googleSyncError || data.reservation?.google_sync_error;
+    setStatus(
+      statusEl,
+      syncError ? `Reserva ${statusText}. Error de sincronizacion con Google Calendar.` : `Reserva ${statusText}.`,
+      Boolean(syncError),
+    );
+  } catch (error) {
+    setStatus(statusEl, friendlyError(error) || "No se pudo actualizar la reserva.", true);
+  }
+}
+
+function formatReservationDateTime(value) {
+  if (!value) {
+    return "Sin fecha";
+  }
+
+  const [dateKey, time = ""] = String(value).split("T");
+  const formattedDate = formatDate(dateKey);
+  return time ? `${formattedDate} ${time}` : formattedDate;
+}
+
+function formatReservationService(value) {
+  const labels = {
+    consulta: "Consulta general",
+    vacunacion: "Vacunacion",
+    cirugia: "Cirugia",
+    peluqueria: "Peluqueria",
+    urgencia: "Urgencia",
+  };
+
+  return labels[value] || value || "Sin indicar";
+}
+
+function statusLabel(status) {
+  const labels = {
+    pending: "Pendiente",
+    confirmed: "Confirmada",
+    cancelled: "Cancelada",
+  };
+
+  return labels[status] || status;
+}
+
+function statusClass(status) {
+  return `badge-${status || "pending"}`;
+}
+
+function syncStatusMarkup(reservation) {
+  if (reservation.google_sync_error) {
+    return `<div class="sync-status sync-status-error" title="${escapeHtml(reservation.google_sync_error)}">Error de sincronizacion</div>`;
+  }
+
+  if (
+    (reservation.status === "confirmed" && reservation.google_event_id)
+    || (reservation.status === "cancelled" && reservation.google_synced_at)
+  ) {
+    return `<div class="sync-status sync-status-ok">Sincronizado con Google Calendar</div>`;
+  }
+
+  return "";
+}
+
 async function deletePet(id) {
   if (!confirm("Se eliminara la mascota y todo su historial. Continuar?")) {
     return;
@@ -546,10 +686,10 @@ function emptyMessage(text) {
   return item;
 }
 
-function tableMessage(text) {
+function tableMessage(text, colSpan = 6) {
   const row = document.createElement("tr");
   const cell = document.createElement("td");
-  cell.colSpan = 6;
+  cell.colSpan = colSpan;
   cell.className = "muted";
   cell.textContent = text;
   row.append(cell);

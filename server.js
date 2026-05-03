@@ -1,5 +1,6 @@
 import "dotenv/config";
 import { createClient } from "@supabase/supabase-js";
+import crypto from "node:crypto";
 import express from "express";
 import fs from "node:fs/promises";
 import os from "node:os";
@@ -24,7 +25,11 @@ const reservationsFilePath = process.env.VERCEL
   : path.join(__dirname, "reservations.json");
 const supabaseUrl = cleanEnvValue(process.env.SUPABASE_URL);
 const supabaseKey = cleanEnvValue(process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY);
+const supabaseAnonKey = cleanEnvValue(process.env.SUPABASE_ANON_KEY);
 const gaId = cleanEnvValue(process.env.NEXT_PUBLIC_GA_ID || process.env.VITE_GA_ID);
+const googleCalendarId = cleanEnvValue(process.env.GOOGLE_CALENDAR_ID || "clinicavetusta@gmail.com");
+const googleClientEmail = cleanEnvValue(process.env.GOOGLE_CLIENT_EMAIL);
+const googlePrivateKey = cleanGooglePrivateKey(process.env.GOOGLE_PRIVATE_KEY);
 let supabaseConfigError = null;
 const supabase = supabaseUrl && supabaseKey
   ? createSupabaseClient()
@@ -210,7 +215,10 @@ app.post("/api/reservations", async (request, response) => {
       return;
     }
 
-    const alreadyReserved = reservations.some((item) => item.datetime === reservation.datetime);
+    const alreadyReserved = reservations.some((item) => (
+      item.datetime === reservation.datetime
+      && item.status !== "cancelled"
+    ));
 
     if (alreadyReserved) {
       response.status(409).json({ error: "Ese horario ya esta reservado. Elige otro hueco." });
@@ -221,6 +229,27 @@ app.post("/api/reservations", async (request, response) => {
     response.status(201).json({ ok: true, reservation: savedReservation });
   } catch (error) {
     response.status(error.statusCode || 400).json({ error: error.message || "No se pudo crear la reserva." });
+  }
+});
+
+app.patch("/api/admin/reservations/:id", async (request, response) => {
+  try {
+    const auth = await requireAdminRequest(request);
+    const reservationId = String(request.params.id || "").trim();
+    const changes = normalizeReservationUpdate(request.body);
+
+    if (!reservationId) {
+      response.status(400).json({ error: "Falta el id de la reserva." });
+      return;
+    }
+
+    const updatedReservation = await updateReservationFromAdmin(auth.supabase, reservationId, changes);
+    response.json({ ok: true, reservation: updatedReservation });
+  } catch (error) {
+    console.error("Reservation admin update error:", error);
+    response.status(error.statusCode || 500).json({
+      error: error.message || "No se pudo actualizar la reserva.",
+    });
   }
 });
 
@@ -445,7 +474,7 @@ async function readSupabaseReservations(month) {
 
   const { data, error } = await supabase
     .from("reservations")
-    .select("id,nombre,telefono,mascota,servicio,datetime,created_at")
+    .select(reservationSelectFields())
     .gte("datetime", startDate)
     .lt("datetime", normalizedEndDate);
 
@@ -457,11 +486,449 @@ async function readSupabaseReservations(month) {
     id: reservation.id,
     nombre: reservation.nombre,
     telefono: reservation.telefono,
+    email: reservation.email,
     mascota: reservation.mascota,
     servicio: reservation.servicio,
     datetime: reservation.datetime,
+    status: reservation.status || "pending",
+    notes: reservation.notes,
+    workerId: reservation.worker_id,
+    googleEventId: reservation.google_event_id,
+    googleSyncError: reservation.google_sync_error,
+    googleSyncedAt: reservation.google_synced_at,
+    startAt: reservation.start_at,
+    endAt: reservation.end_at,
+    updatedAt: reservation.updated_at,
     createdAt: reservation.created_at,
   }));
+}
+
+function reservationSelectFields() {
+  return [
+    "id",
+    "nombre",
+    "telefono",
+    "email",
+    "mascota",
+    "servicio",
+    "datetime",
+    "status",
+    "notes",
+    "worker_id",
+    "google_event_id",
+    "google_sync_error",
+    "google_synced_at",
+    "start_at",
+    "end_at",
+    "updated_at",
+    "created_at",
+  ].join(",");
+}
+
+async function requireAdminRequest(request) {
+  const accessToken = getBearerToken(request);
+
+  if (!accessToken) {
+    const error = new Error("No autenticado.");
+    error.statusCode = 401;
+    throw error;
+  }
+
+  if (supabaseConfigError) {
+    throw supabaseConfigError;
+  }
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    const error = new Error("Faltan SUPABASE_URL o SUPABASE_ANON_KEY.");
+    error.statusCode = 500;
+    throw error;
+  }
+
+  const requestSupabase = createClient(validateSupabaseUrl(supabaseUrl), supabaseAnonKey, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+    },
+    global: {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    },
+  });
+
+  const { data: userData, error: userError } = await requestSupabase.auth.getUser(accessToken);
+
+  if (userError || !userData.user) {
+    const error = new Error("Sesion no valida.");
+    error.statusCode = 401;
+    throw error;
+  }
+
+  const { data: profile, error: profileError } = await requestSupabase
+    .from("profiles")
+    .select("role")
+    .eq("id", userData.user.id)
+    .single();
+
+  if (profileError || profile?.role !== "admin") {
+    const error = new Error("No tienes permisos de administrador.");
+    error.statusCode = 403;
+    throw error;
+  }
+
+  return {
+    supabase: requestSupabase,
+    user: userData.user,
+  };
+}
+
+function getBearerToken(request) {
+  const header = request.get("authorization") || "";
+  const match = header.match(/^Bearer\s+(.+)$/i);
+  return match?.[1] || "";
+}
+
+function normalizeReservationUpdate(body) {
+  const changes = {};
+
+  if (Object.hasOwn(body || {}, "status")) {
+    const status = cleanText(body.status);
+
+    if (!["pending", "confirmed", "cancelled"].includes(status)) {
+      const error = new Error("Estado de reserva no valido.");
+      error.statusCode = 400;
+      throw error;
+    }
+
+    changes.status = status;
+  }
+
+  if (Object.hasOwn(body || {}, "datetime")) {
+    const datetime = cleanText(body.datetime);
+
+    if (!isBookableDateTime(datetime)) {
+      const error = new Error("La fecha u hora elegida no esta dentro del horario de la clinica.");
+      error.statusCode = 400;
+      throw error;
+    }
+
+    changes.datetime = datetime;
+    Object.assign(changes, buildReservationTimestamps(datetime));
+  }
+
+  if (Object.hasOwn(body || {}, "notes")) {
+    changes.notes = cleanLongText(body.notes) || null;
+  }
+
+  if (Object.hasOwn(body || {}, "worker_id")) {
+    changes.worker_id = cleanText(body.worker_id) || null;
+  }
+
+  if (Object.keys(changes).length === 0) {
+    const error = new Error("No hay cambios para aplicar.");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  return changes;
+}
+
+async function updateReservationFromAdmin(requestSupabase, reservationId, changes) {
+  const { data: current, error: readError } = await requestSupabase
+    .from("reservations")
+    .select(reservationSelectFields())
+    .eq("id", reservationId)
+    .single();
+
+  if (readError) {
+    throw new Error(`Supabase no pudo leer la reserva: ${readError.message}`);
+  }
+
+  const next = {
+    ...current,
+    ...toDatabaseReservationChanges(changes),
+  };
+
+  const calendarSync = await syncReservationCalendar(current, next);
+  const payload = {
+    ...toDatabaseReservationChanges(changes),
+    google_event_id: calendarSync.googleEventId,
+    google_sync_error: calendarSync.error,
+    google_synced_at: calendarSync.syncedAt,
+  };
+
+  const { data, error } = await requestSupabase
+    .from("reservations")
+    .update(payload)
+    .eq("id", reservationId)
+    .select(reservationSelectFields())
+    .single();
+
+  if (error) {
+    throw new Error(`Supabase no pudo actualizar la reserva: ${error.message}`);
+  }
+
+  return mapReservationRow(data);
+}
+
+async function syncReservationCalendar(current, next) {
+  try {
+    if (next.status === "cancelled") {
+      if (current.google_event_id) {
+        console.log("Deleting Google event", current.id);
+        await deleteCalendarEvent(current.google_event_id);
+      }
+
+      return {
+        googleEventId: null,
+        error: null,
+        syncedAt: new Date().toISOString(),
+      };
+    }
+
+    if (next.status !== "confirmed") {
+      return {
+        googleEventId: current.google_event_id || null,
+        error: null,
+        syncedAt: current.google_synced_at || null,
+      };
+    }
+
+    validateReservationForCalendar(next);
+
+    if (current.google_event_id) {
+      if (hasCalendarRelevantChanges(current, next)) {
+        console.log("Updating Google event", current.id);
+        await updateCalendarEvent(current.google_event_id, next);
+      }
+
+      return {
+        googleEventId: current.google_event_id,
+        error: null,
+        syncedAt: new Date().toISOString(),
+      };
+    }
+
+    console.log("Creating Google event", current.id);
+    const event = await createCalendarEvent(next);
+
+    return {
+      googleEventId: event.id,
+      error: null,
+      syncedAt: new Date().toISOString(),
+    };
+  } catch (error) {
+    console.error("Google Calendar error", error);
+
+    return {
+      googleEventId: current.google_event_id || null,
+      error: error.message || "No se pudo sincronizar con Google Calendar.",
+      syncedAt: current.google_synced_at || null,
+    };
+  }
+}
+
+function validateReservationForCalendar(reservation) {
+  if (!reservation.datetime) {
+    throw new Error("La reserva no tiene fecha/hora para sincronizar.");
+  }
+
+  if (!reservation.nombre) {
+    throw new Error("La reserva no tiene nombre para sincronizar.");
+  }
+
+  if (!reservation.telefono) {
+    throw new Error("La reserva no tiene telefono para sincronizar.");
+  }
+}
+
+function hasCalendarRelevantChanges(current, next) {
+  return [
+    "nombre",
+    "telefono",
+    "email",
+    "mascota",
+    "servicio",
+    "datetime",
+    "notes",
+    "start_at",
+    "end_at",
+  ].some((key) => (current[key] || "") !== (next[key] || ""));
+}
+
+async function createCalendarEvent(reservation) {
+  const response = await googleCalendarRequest("", {
+    method: "POST",
+    body: JSON.stringify(toCalendarEvent(reservation)),
+  });
+
+  return response;
+}
+
+async function updateCalendarEvent(eventId, reservation) {
+  return googleCalendarRequest(`/${encodeURIComponent(eventId)}`, {
+    method: "PUT",
+    body: JSON.stringify(toCalendarEvent(reservation)),
+  });
+}
+
+async function deleteCalendarEvent(eventId) {
+  try {
+    await googleCalendarRequest(`/${encodeURIComponent(eventId)}`, {
+      method: "DELETE",
+      expectJson: false,
+    });
+  } catch (error) {
+    if (error.statusCode !== 404 && error.statusCode !== 410) {
+      throw error;
+    }
+  }
+}
+
+async function googleCalendarRequest(pathSuffix, options = {}) {
+  const token = await getGoogleCalendarAccessToken();
+  const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(googleCalendarId)}/events${pathSuffix}`;
+  const googleResponse = await fetch(url, {
+    method: options.method || "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: options.body,
+  });
+
+  if (options.expectJson === false && googleResponse.ok) {
+    return null;
+  }
+
+  const payload = await googleResponse.json().catch(() => ({}));
+
+  if (!googleResponse.ok) {
+    const error = new Error(payload?.error?.message || `Google Calendar respondio con ${googleResponse.status}.`);
+    error.statusCode = googleResponse.status;
+    throw error;
+  }
+
+  return payload;
+}
+
+async function getGoogleCalendarAccessToken() {
+  if (!googleCalendarId || !googleClientEmail || !googlePrivateKey) {
+    const error = new Error("Faltan GOOGLE_CALENDAR_ID, GOOGLE_CLIENT_EMAIL o GOOGLE_PRIVATE_KEY.");
+    error.statusCode = 500;
+    throw error;
+  }
+
+  const now = Math.floor(Date.now() / 1000);
+  const header = {
+    alg: "RS256",
+    typ: "JWT",
+  };
+  const claimSet = {
+    iss: googleClientEmail,
+    scope: "https://www.googleapis.com/auth/calendar.events",
+    aud: "https://oauth2.googleapis.com/token",
+    exp: now + 3600,
+    iat: now,
+  };
+  const unsignedToken = `${base64UrlJson(header)}.${base64UrlJson(claimSet)}`;
+  const signature = crypto
+    .createSign("RSA-SHA256")
+    .update(unsignedToken)
+    .sign(googlePrivateKey, "base64url");
+  const assertion = `${unsignedToken}.${signature}`;
+  const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: new URLSearchParams({
+      grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
+      assertion,
+    }),
+  });
+  const payload = await tokenResponse.json().catch(() => ({}));
+
+  if (!tokenResponse.ok) {
+    const error = new Error(payload?.error_description || payload?.error || "Google no devolvio un access token.");
+    error.statusCode = tokenResponse.status;
+    throw error;
+  }
+
+  return payload.access_token;
+}
+
+function toCalendarEvent(reservation) {
+  return {
+    summary: `Cita veterinaria: ${reservation.nombre || "Cliente"}`,
+    description: [
+      `Cliente: ${reservation.nombre || "Sin nombre"}`,
+      `Telefono: ${reservation.telefono || "Sin telefono"}`,
+      reservation.email ? `Email: ${reservation.email}` : "",
+      `Mascota: ${reservation.mascota || "Sin indicar"}`,
+      `Servicio: ${formatReservationServiceForCalendar(reservation.servicio)}`,
+      reservation.notes ? `Notas: ${reservation.notes}` : "",
+    ].filter(Boolean).join("\n"),
+    start: {
+      dateTime: reservation.start_at || buildReservationTimestamps(reservation.datetime).startAt,
+      timeZone: "Europe/Madrid",
+    },
+    end: {
+      dateTime: reservation.end_at || buildReservationTimestamps(reservation.datetime).endAt,
+      timeZone: "Europe/Madrid",
+    },
+    attendees: reservation.email ? [{ email: reservation.email }] : undefined,
+  };
+}
+
+function formatReservationServiceForCalendar(value) {
+  const labels = {
+    consulta: "Consulta general",
+    vacunacion: "Vacunacion",
+    cirugia: "Cirugia",
+    peluqueria: "Peluqueria",
+    urgencia: "Urgencia",
+  };
+
+  return labels[value] || value || "Sin indicar";
+}
+
+function toDatabaseReservationChanges(changes) {
+  const payload = { ...changes };
+
+  if (Object.hasOwn(payload, "startAt")) {
+    payload.start_at = payload.startAt;
+    delete payload.startAt;
+  }
+
+  if (Object.hasOwn(payload, "endAt")) {
+    payload.end_at = payload.endAt;
+    delete payload.endAt;
+  }
+
+  return payload;
+}
+
+function mapReservationRow(reservation) {
+  return {
+    id: reservation.id,
+    nombre: reservation.nombre,
+    telefono: reservation.telefono,
+    email: reservation.email,
+    mascota: reservation.mascota,
+    servicio: reservation.servicio,
+    datetime: reservation.datetime,
+    status: reservation.status || "pending",
+    notes: reservation.notes,
+    workerId: reservation.worker_id,
+    googleEventId: reservation.google_event_id,
+    googleSyncError: reservation.google_sync_error,
+    googleSyncedAt: reservation.google_synced_at,
+    startAt: reservation.start_at,
+    endAt: reservation.end_at,
+    updatedAt: reservation.updated_at,
+    createdAt: reservation.created_at,
+  };
 }
 
 async function saveReservation(reservation) {
@@ -476,6 +943,8 @@ async function saveReservation(reservation) {
   const reservations = await readReservations(reservation.datetime.slice(0, 7));
   reservations.push({
     ...reservation,
+    status: "pending",
+    ...buildReservationTimestamps(reservation.datetime),
     createdAt: new Date().toISOString(),
   });
   await fs.writeFile(reservationsFilePath, JSON.stringify(reservations, null, 2));
@@ -483,16 +952,20 @@ async function saveReservation(reservation) {
 }
 
 async function saveSupabaseReservation(reservation) {
+  const timestamps = buildReservationTimestamps(reservation.datetime);
   const { data, error } = await supabase
     .from("reservations")
     .insert({
       nombre: reservation.nombre,
       telefono: reservation.telefono,
+      email: reservation.email || null,
       mascota: reservation.mascota,
       servicio: reservation.servicio,
       datetime: reservation.datetime,
+      start_at: timestamps.startAt,
+      end_at: timestamps.endAt,
     })
-    .select("id,nombre,telefono,mascota,servicio,datetime,created_at")
+    .select(reservationSelectFields())
     .single();
 
   if (error) {
@@ -509,9 +982,19 @@ async function saveSupabaseReservation(reservation) {
     id: data.id,
     nombre: data.nombre,
     telefono: data.telefono,
+    email: data.email,
     mascota: data.mascota,
     servicio: data.servicio,
     datetime: data.datetime,
+    status: data.status || "pending",
+    notes: data.notes,
+    workerId: data.worker_id,
+    googleEventId: data.google_event_id,
+    googleSyncError: data.google_sync_error,
+    googleSyncedAt: data.google_synced_at,
+    startAt: data.start_at,
+    endAt: data.end_at,
+    updatedAt: data.updated_at,
     createdAt: data.created_at,
   };
 }
@@ -520,7 +1003,11 @@ function buildMonthAvailability(month, reservations) {
   const [year, monthNumber] = month.split("-").map(Number);
   const daysInMonth = new Date(year, monthNumber, 0).getDate();
   const todayKey = toDateKey(new Date());
-  const reservedTimes = new Set(reservations.map((reservation) => reservation.datetime));
+  const reservedTimes = new Set(
+    reservations
+      .filter((reservation) => reservation.status !== "cancelled")
+      .map((reservation) => reservation.datetime),
+  );
   const days = [];
 
   for (let day = 1; day <= daysInMonth; day += 1) {
@@ -600,6 +1087,7 @@ function normalizeReservation(body) {
   const reservation = {
     nombre: cleanText(body?.nombre),
     telefono: cleanText(body?.telefono),
+    email: cleanText(body?.email),
     mascota: cleanText(body?.mascota),
     servicio: cleanText(body?.servicio),
     datetime: cleanText(body?.datetime),
@@ -612,6 +1100,63 @@ function normalizeReservation(body) {
   }
 
   return reservation;
+}
+
+function cleanLongText(value) {
+  return String(value || "").trim().slice(0, 2000);
+}
+
+function buildReservationTimestamps(datetime) {
+  const endDatetime = addMinutesToDatetime(datetime, 30);
+
+  return {
+    startAt: toMadridOffsetDateTime(datetime),
+    endAt: toMadridOffsetDateTime(endDatetime),
+  };
+}
+
+function addMinutesToDatetime(datetime, minutesToAdd) {
+  const [dateKey, time] = datetime.split("T");
+  const [year, month, day] = dateKey.split("-").map(Number);
+  const [hours, minutes] = time.split(":").map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day, hours, minutes + minutesToAdd));
+
+  return [
+    date.getUTCFullYear(),
+    String(date.getUTCMonth() + 1).padStart(2, "0"),
+    String(date.getUTCDate()).padStart(2, "0"),
+  ].join("-") + `T${String(date.getUTCHours()).padStart(2, "0")}:${String(date.getUTCMinutes()).padStart(2, "0")}`;
+}
+
+function toMadridOffsetDateTime(datetime) {
+  const [dateKey, time] = datetime.split("T");
+  const [year, month, day] = dateKey.split("-").map(Number);
+  const [hours, minutes] = time.split(":").map(Number);
+  const probeDate = new Date(Date.UTC(year, month - 1, day, hours, minutes));
+  const offset = madridOffset(probeDate);
+
+  return `${dateKey}T${time}:00${offset}`;
+}
+
+function madridOffset(date) {
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Europe/Madrid",
+    timeZoneName: "shortOffset",
+  });
+  const timeZoneName = formatter
+    .formatToParts(date)
+    .find((part) => part.type === "timeZoneName")?.value || "GMT+1";
+  const match = timeZoneName.match(/^GMT([+-])(\d{1,2})(?::(\d{2}))?$/);
+
+  if (!match) {
+    return "+01:00";
+  }
+
+  const sign = match[1];
+  const hours = String(Number(match[2])).padStart(2, "0");
+  const minutes = match[3] || "00";
+
+  return `${sign}${hours}:${minutes}`;
 }
 
 function cleanText(value) {
@@ -638,6 +1183,14 @@ function fromMinutes(totalMinutes) {
 
 function cleanEnvValue(value) {
   return String(value || "").trim().replace(/^["']|["']$/g, "");
+}
+
+function cleanGooglePrivateKey(value) {
+  return cleanEnvValue(value).replace(/\\n/g, "\n");
+}
+
+function base64UrlJson(value) {
+  return Buffer.from(JSON.stringify(value)).toString("base64url");
 }
 
 function escapeJavaScript(value) {

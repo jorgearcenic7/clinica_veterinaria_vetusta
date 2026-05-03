@@ -128,6 +128,26 @@ SUPABASE_ANON_KEY=tu_anon_key
 
 Para produccion, es preferible usar `SUPABASE_SERVICE_ROLE_KEY` solo en el backend/Vercel y ajustar las politicas RLS.
 
+### Sincronizar reservas con Google Calendar
+
+La sincronizacion de reservas se ejecuta solo desde `server.js`. Las credenciales de Google no se exponen al frontend.
+
+Comparte el calendario de Google con el email de la service account y anade estas variables al entorno:
+
+```env
+GOOGLE_CALENDAR_ID=clinicavetusta@gmail.com
+GOOGLE_CLIENT_EMAIL=service-account@proyecto.iam.gserviceaccount.com
+GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+```
+
+Zona horaria usada para los eventos: `Europe/Madrid`.
+
+Flujo:
+
+- Al confirmar una reserva, el backend crea el evento y guarda `google_event_id` en Supabase.
+- Si una reserva confirmada cambia de hora, el backend actualiza el evento existente.
+- Al cancelar una reserva, el backend elimina el evento y borra `google_event_id`.
+
 ## Area privada de clientes
 
 Se han anadido tres paginas:
