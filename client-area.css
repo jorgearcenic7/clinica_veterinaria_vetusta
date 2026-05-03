@@ -151,6 +151,36 @@ a {
   font-weight: 700;
 }
 
+.pet-detail-image-wrapper {
+  width: 100%;
+  max-height: 340px;
+  background: #f4f4f4;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.pet-detail-image {
+  width: 100%;
+  height: 100%;
+  max-height: 320px;
+  border-radius: 14px;
+  object-fit: contain;
+  object-position: center;
+}
+
+.pet-detail-image.placeholder {
+  min-height: 240px;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  font-size: 56px;
+  font-weight: 700;
+}
+
 .file-row {
   display: grid;
   gap: 8px;

@@ -77,7 +77,9 @@ async function renderPet() {
   }
 
   petCardEl.innerHTML = `
-    ${imageUrl ? `<img class="pet-photo" src="${escapeHtml(imageUrl)}" alt="Foto de ${escapeHtml(pet.name)}">` : `<div class="pet-photo placeholder" aria-hidden="true">${escapeHtml(pet.name.slice(0, 1).toUpperCase())}</div>`}
+    <div class="pet-detail-image-wrapper">
+      ${imageUrl ? `<img class="pet-detail-image" src="${escapeHtml(imageUrl)}" alt="Foto de ${escapeHtml(pet.name)}">` : `<div class="pet-detail-image placeholder" aria-hidden="true">${escapeHtml(pet.name.slice(0, 1).toUpperCase())}</div>`}
+    </div>
     <div class="row">
       <label class="button secondary">
         Cambiar foto
