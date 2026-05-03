@@ -3,7 +3,12 @@ import { formatDate, formToObject, friendlyError, logDocumentUpload, removePetDo
 const statusEl = document.querySelector("[data-status]");
 const clientsListEl = document.querySelector("[data-clients-list]");
 const petsListEl = document.querySelector("[data-pets-list]");
-const reservationsTableEl = document.querySelector("[data-reservations-table]");
+const reservationsCalendarEl = document.querySelector("[data-reservations-calendar]");
+const reservationDetailEl = document.querySelector("[data-reservation-detail]");
+const calendarRangeEl = document.querySelector("[data-calendar-range]");
+const calendarPrevButton = document.querySelector("[data-calendar-prev]");
+const calendarNextButton = document.querySelector("[data-calendar-next]");
+const clientDetailEl = document.querySelector("[data-client-detail]");
 const recordsTitleEl = document.querySelector("[data-records-title]");
 const recordsTableEl = document.querySelector("[data-records-table]");
 const petForm = document.querySelector("[data-pet-form]");
@@ -23,8 +28,12 @@ let records = [];
 let documents = [];
 let selectedClientId = null;
 let selectedPetId = null;
+let selectedReservationId = null;
+let visibleWeekStart = startOfWeek(new Date());
 
 logoutButton.addEventListener("click", signOut);
+calendarPrevButton.addEventListener("click", () => changeCalendarWeek(-1));
+calendarNextButton.addEventListener("click", () => changeCalendarWeek(1));
 clearPetButton.addEventListener("click", () => resetPetForm());
 clearRecordButton.addEventListener("click", () => resetRecordForm());
 petForm.addEventListener("submit", savePet);
@@ -72,7 +81,7 @@ async function loadAll() {
   reservations = reservationsResult.data || [];
   records = recordsResult.data || [];
   documents = documentsResult.data || [];
-  selectedClientId = clients.some((client) => client.id === selectedClientId) ? selectedClientId : clients[0]?.id || null;
+  selectedClientId = clients.some((client) => client.id === selectedClientId) ? selectedClientId : null;
   selectedPetId = pets.some((pet) => pet.id === selectedPetId && pet.owner_id === selectedClientId)
     ? selectedPetId
     : pets.find((pet) => pet.owner_id === selectedClientId)?.id || null;
@@ -82,9 +91,27 @@ async function loadAll() {
 async function render() {
   renderReservations();
   renderClients();
+  renderClientDetailVisibility();
+
+  if (!selectedClientId) {
+    return;
+  }
+
   await renderPets();
   renderRecords();
   await renderDocuments();
+}
+
+function renderClientDetailVisibility() {
+  if (selectedClientId) {
+    clientDetailEl.classList.remove("hidden");
+    return;
+  }
+
+  clientDetailEl.classList.add("hidden");
+  petsListEl.replaceChildren();
+  recordsTableEl.replaceChildren();
+  documentsListEl.replaceChildren();
 }
 
 function loadReservations() {
@@ -95,41 +122,107 @@ function loadReservations() {
 }
 
 function renderReservations() {
-  reservationsTableEl.replaceChildren();
+  reservationsCalendarEl.replaceChildren();
+  calendarRangeEl.textContent = formatWeekRange(visibleWeekStart);
 
-  if (reservations.length === 0) {
-    reservationsTableEl.append(tableMessage("No hay reservas online.", 7));
+  const weekDays = Array.from({ length: 7 }, (_, index) => addDays(visibleWeekStart, index));
+  const weekReservations = reservations.filter((reservation) => {
+    const dateKey = reservationDateKey(reservation);
+    return weekDays.some((day) => toDateKey(day) === dateKey);
+  });
+
+  reservationsCalendarEl.append(...weekDays.map((day) => createCalendarDay(day, weekReservations)));
+
+  if (weekReservations.length === 0) {
+    const empty = document.createElement("p");
+    empty.className = "calendar-empty muted";
+    empty.textContent = "No hay reservas esta semana.";
+    reservationsCalendarEl.append(empty);
+  }
+
+  renderReservationDetail();
+}
+
+function createCalendarDay(day, weekReservations) {
+  const dayKey = toDateKey(day);
+  const column = document.createElement("article");
+  column.className = "calendar-day";
+  column.innerHTML = `
+    <div class="calendar-day-header">
+      <strong>${escapeHtml(formatWeekday(day))}</strong>
+      <span>${escapeHtml(formatDate(dayKey))}</span>
+    </div>
+  `;
+
+  const dayReservations = weekReservations
+    .filter((reservation) => reservationDateKey(reservation) === dayKey)
+    .sort((a, b) => reservationStartMinutes(a) - reservationStartMinutes(b));
+
+  if (dayReservations.length === 0) {
+    const empty = document.createElement("p");
+    empty.className = "calendar-day-empty";
+    empty.textContent = "Sin citas";
+    column.append(empty);
+    return column;
+  }
+
+  dayReservations.forEach((reservation) => {
+    column.append(createCalendarEvent(reservation));
+  });
+
+  return column;
+}
+
+function createCalendarEvent(reservation) {
+  const status = reservation.status || "pending";
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = `calendar-event calendar-event-${status} ${reservation.id === selectedReservationId ? "active" : ""}`;
+  button.innerHTML = `
+    <strong>${escapeHtml(formatReservationTitle(reservation))}</strong>
+    <span>${escapeHtml(formatReservationService(reservation.servicio))}</span>
+    <time>${escapeHtml(formatReservationTimeRange(reservation))}</time>
+  `;
+  button.addEventListener("click", () => {
+    selectedReservationId = reservation.id;
+    renderReservations();
+  });
+
+  return button;
+}
+
+function renderReservationDetail() {
+  const reservation = reservations.find((item) => item.id === selectedReservationId);
+  reservationDetailEl.replaceChildren();
+
+  if (!reservation) {
+    reservationDetailEl.classList.add("hidden");
     return;
   }
 
-  reservations.forEach((reservation) => {
-    const status = reservation.status || "pending";
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td>${escapeHtml(reservation.nombre)}</td>
-      <td>${escapeHtml(reservation.telefono)}</td>
-      <td>${escapeHtml(reservation.mascota || "Sin indicar")}</td>
-      <td>${escapeHtml(formatReservationService(reservation.servicio))}</td>
-      <td>${escapeHtml(formatReservationDateTime(reservation.datetime))}</td>
-      <td>
-        <span class="badge ${statusClass(status)}">${escapeHtml(statusLabel(status))}</span>
-        ${syncStatusMarkup(reservation)}
-      </td>
-      <td>
-        <div class="nav-actions">
-          <button class="secondary" type="button" data-confirm-reservation="${reservation.id}" ${status === "confirmed" ? "disabled" : ""}>Confirmar</button>
-          <button class="danger" type="button" data-cancel-reservation="${reservation.id}" ${status === "cancelled" ? "disabled" : ""}>Cancelar</button>
-        </div>
-      </td>
-    `;
-    reservationsTableEl.append(row);
-  });
+  const status = reservation.status || "pending";
+  reservationDetailEl.classList.remove("hidden");
+  reservationDetailEl.innerHTML = `
+    <div>
+      <p class="muted small">Detalle rapido</p>
+      <h3>${escapeHtml(formatReservationTitle(reservation))}</h3>
+      <p>${escapeHtml(formatReservationService(reservation.servicio))}</p>
+      <p class="muted">${escapeHtml(formatReservationDateTime(reservation.datetime))} · ${escapeHtml(formatReservationTimeRange(reservation))}</p>
+      <p class="muted">${escapeHtml(reservation.telefono || "Sin telefono")}</p>
+      <span class="badge ${statusClass(status)}">${escapeHtml(statusLabel(status))}</span>
+      ${syncStatusMarkup(reservation)}
+    </div>
+    <div class="nav-actions">
+      <button class="secondary" type="button" data-confirm-reservation="${reservation.id}" ${status === "confirmed" ? "disabled" : ""}>Confirmar</button>
+      <button class="danger" type="button" data-cancel-reservation="${reservation.id}" ${status === "cancelled" ? "disabled" : ""}>Cancelar</button>
+    </div>
+  `;
 
-  reservationsTableEl.querySelectorAll("[data-confirm-reservation]").forEach((button) => {
+  reservationDetailEl.querySelectorAll("[data-confirm-reservation]").forEach((button) => {
     button.addEventListener("click", () => updateReservationStatus(button.dataset.confirmReservation, "confirmed"));
   });
 
-  reservationsTableEl.querySelectorAll("[data-cancel-reservation]").forEach((button) => {
+  reservationDetailEl.querySelectorAll("[data-cancel-reservation]").forEach((button) => {
     button.addEventListener("click", () => updateReservationStatus(button.dataset.cancelReservation, "cancelled"));
   });
 }
@@ -145,11 +238,10 @@ function renderClients() {
   clients.forEach((client) => {
     const button = document.createElement("button");
     button.type = "button";
-    button.className = `list-item ${client.id === selectedClientId ? "active" : ""}`;
+    button.className = `client-card ${client.id === selectedClientId ? "active" : ""}`;
     button.innerHTML = `
       <strong>${escapeHtml(client.full_name || "Sin nombre")}</strong>
-      <div class="small muted">${escapeHtml(client.phone || "Sin telefono")}</div>
-      <div class="small muted">${escapeHtml(client.role)}</div>
+      <span>${escapeHtml(client.phone || "Sin telefono")}</span>
     `;
     button.addEventListener("click", () => {
       selectedClientId = client.id;
@@ -560,6 +652,78 @@ function syncStatusMarkup(reservation) {
   }
 
   return "";
+}
+
+function changeCalendarWeek(offset) {
+  visibleWeekStart = addDays(visibleWeekStart, offset * 7);
+  renderReservations();
+}
+
+function formatReservationTitle(reservation) {
+  const petName = reservation.mascota || "Mascota";
+  const clientName = reservation.nombre || "Cliente";
+  return `${petName} (${clientName})`;
+}
+
+function formatReservationTimeRange(reservation) {
+  const start = reservationStartTime(reservation);
+  const end = reservationEndTime(reservation);
+  return `${start} - ${end}`;
+}
+
+function formatWeekRange(startDate) {
+  const endDate = addDays(startDate, 6);
+  return `${formatDate(toDateKey(startDate))} - ${formatDate(toDateKey(endDate))}`;
+}
+
+function formatWeekday(date) {
+  return new Intl.DateTimeFormat("es-ES", { weekday: "short" }).format(date);
+}
+
+function reservationDateKey(reservation) {
+  return String(reservation.start_at || reservation.datetime || "").slice(0, 10);
+}
+
+function reservationStartTime(reservation) {
+  return String(reservation.start_at || reservation.datetime || "T00:00").slice(11, 16) || "00:00";
+}
+
+function reservationEndTime(reservation) {
+  if (reservation.end_at) {
+    return String(reservation.end_at).slice(11, 16);
+  }
+
+  return addMinutesToTime(reservationStartTime(reservation), 30);
+}
+
+function reservationStartMinutes(reservation) {
+  const [hours, minutes] = reservationStartTime(reservation).split(":").map(Number);
+  return (hours || 0) * 60 + (minutes || 0);
+}
+
+function addMinutesToTime(time, minutesToAdd) {
+  const [hours, minutes] = time.split(":").map(Number);
+  const total = (hours || 0) * 60 + (minutes || 0) + minutesToAdd;
+  return `${String(Math.floor(total / 60)).padStart(2, "0")}:${String(total % 60).padStart(2, "0")}`;
+}
+
+function startOfWeek(date) {
+  const weekStart = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const mondayOffset = (weekStart.getDay() + 6) % 7;
+  weekStart.setDate(weekStart.getDate() - mondayOffset);
+  return weekStart;
+}
+
+function addDays(date, days) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate() + days);
+}
+
+function toDateKey(date) {
+  return [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, "0"),
+    String(date.getDate()).padStart(2, "0"),
+  ].join("-");
 }
 
 async function deletePet(id) {

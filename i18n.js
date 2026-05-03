@@ -11,7 +11,7 @@
       "nav.contact": "Contacto",
       "nav.clientArea": "Area clientes",
       "nav.appointment": "Pedir cita · 985 20 65 58",
-      "hero.title": "Tu mascota merece lo mejor. Y en Vetusta lo sabe.",
+    "hero.title": "Tu mascota merece lo mejor. Y en Vetusta lo saben.",
       "hero.reviewCount": "· +560 reseñas en Google",
       "hero.prefix": "Clínica veterinaria en Oviedo con",
       "hero.reviewCopy": "más de 560 opiniones de 5 estrellas",

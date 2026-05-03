@@ -21,6 +21,7 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: Lexend, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 17px;
   line-height: 1.5;
 }
 
@@ -29,9 +30,9 @@ a {
 }
 
 .shell {
-  width: min(1120px, calc(100% - 32px));
+  width: min(1360px, calc(100% - 40px));
   margin: 0 auto;
-  padding: 32px 0 56px;
+  padding: 40px 0 72px;
 }
 
 .topbar {
@@ -44,8 +45,8 @@ a {
 }
 
 .topbar-inner {
-  width: min(1120px, calc(100% - 32px));
-  min-height: 72px;
+  width: min(1360px, calc(100% - 40px));
+  min-height: 80px;
   margin: 0 auto;
   display: flex;
   align-items: center;
@@ -73,19 +74,20 @@ a {
 .page-title {
   margin: 0 0 8px;
   font-family: "Plus Jakarta Sans", system-ui, sans-serif;
-  font-size: clamp(30px, 5vw, 44px);
+  font-size: clamp(38px, 5vw, 56px);
   line-height: 1.15;
 }
 
 .lead {
   margin: 0 0 24px;
   color: var(--muted);
-  max-width: 720px;
+  max-width: 920px;
+  font-size: 19px;
 }
 
 .grid {
   display: grid;
-  gap: 18px;
+  gap: 22px;
 }
 
 .grid-two {
@@ -104,11 +106,11 @@ a {
 }
 
 .panel {
-  padding: 22px;
+  padding: 28px;
 }
 
 .card {
-  padding: 18px;
+  padding: 22px;
 }
 
 .pet-card-grid {
@@ -152,7 +154,7 @@ a {
   background: var(--surface-soft);
   color: var(--muted);
   padding: 4px 10px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
 }
 
@@ -162,18 +164,18 @@ a {
 }
 
 .badge-confirmed {
-  background: var(--primary-soft);
-  color: var(--primary);
+  background: #dcfce7;
+  color: #16a34a;
 }
 
 .badge-cancelled {
-  background: var(--danger-soft);
-  color: var(--danger);
+  background: #fee2e2;
+  color: #dc2626;
 }
 
 .sync-status {
   margin-top: 6px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
 }
 
@@ -188,7 +190,194 @@ a {
 .section-title {
   margin: 0 0 14px;
   font-family: "Plus Jakarta Sans", system-ui, sans-serif;
-  font-size: 22px;
+  font-size: 28px;
+}
+
+.admin-shell {
+  width: min(1520px, calc(100% - 40px));
+}
+
+.admin-section-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.admin-section-header .section-title,
+.admin-section-header p {
+  margin-bottom: 0;
+}
+
+.admin-calendar-panel,
+.admin-clients-panel,
+.client-detail-shell {
+  margin-top: 18px;
+}
+
+.calendar-range {
+  align-items: center;
+  color: var(--primary);
+  display: inline-flex;
+  min-height: 42px;
+}
+
+.calendar-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(7, minmax(170px, 1fr));
+  overflow-x: auto;
+  padding-bottom: 4px;
+  position: relative;
+}
+
+.calendar-day {
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: grid;
+  gap: 10px;
+  min-height: 340px;
+  min-width: 170px;
+  padding: 14px;
+}
+
+.calendar-day-header {
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  gap: 2px;
+  padding-bottom: 10px;
+}
+
+.calendar-day-header strong {
+  color: var(--primary);
+  text-transform: capitalize;
+}
+
+.calendar-day-header span,
+.calendar-day-empty,
+.calendar-empty {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.calendar-empty {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+.calendar-event {
+  align-items: flex-start;
+  border: 1px solid transparent;
+  border-left-width: 4px;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(1, 45, 29, 0.08);
+  color: var(--text);
+  display: grid;
+  gap: 4px;
+  justify-content: stretch;
+  min-height: 0;
+  padding: 12px;
+  text-align: left;
+  width: 100%;
+}
+
+.calendar-event strong,
+.calendar-event span,
+.calendar-event time {
+  display: block;
+  line-height: 1.3;
+}
+
+.calendar-event span,
+.calendar-event time {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.calendar-event-pending {
+  background: #f4f4f5;
+  border-left-color: var(--muted);
+}
+
+.calendar-event-confirmed {
+  background: #f0fdf4;
+  border-left-color: #16a34a;
+}
+
+.calendar-event-cancelled {
+  background: #fef2f2;
+  border-left-color: #dc2626;
+}
+
+.calendar-event.active {
+  border-color: var(--primary);
+}
+
+.quick-detail {
+  animation: panelIn 180ms ease-out;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 18px 40px rgba(1, 45, 29, 0.12);
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+  margin-top: 16px;
+  padding: 18px;
+}
+
+.quick-detail h3,
+.quick-detail p {
+  margin: 0 0 6px;
+}
+
+.clients-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.client-card {
+  align-items: flex-start;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  display: grid;
+  gap: 4px;
+  justify-content: stretch;
+  min-height: 92px;
+  padding: 18px;
+  text-align: left;
+}
+
+.client-card span {
+  color: var(--muted);
+  font-size: 16px;
+}
+
+.client-card.active {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+}
+
+.client-detail-shell {
+  animation: panelIn 220ms ease-out;
+  display: grid;
+  gap: 18px;
+}
+
+@keyframes panelIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .muted {
@@ -196,12 +385,12 @@ a {
 }
 
 .small {
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .stack {
   display: grid;
-  gap: 12px;
+  gap: 16px;
 }
 
 .row {
@@ -214,7 +403,7 @@ a {
 
 .button,
 button {
-  min-height: 42px;
+  min-height: 48px;
   border: 1px solid var(--primary);
   border-radius: 8px;
   background: var(--primary);
@@ -224,7 +413,7 @@ button {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 10px 14px;
+  padding: 12px 18px;
   font: inherit;
   font-weight: 700;
   text-decoration: none;
@@ -252,7 +441,7 @@ label {
   display: grid;
   gap: 6px;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
 }
 
@@ -265,7 +454,7 @@ textarea {
   background: #ffffff;
   color: var(--text);
   font: inherit;
-  padding: 11px 12px;
+  padding: 13px 14px;
 }
 
 textarea {
@@ -287,7 +476,7 @@ textarea {
   border-top: 1px solid var(--border);
   padding-top: 16px;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .legal-note a,
@@ -303,7 +492,7 @@ textarea {
 .legal-page h2 {
   margin: 28px 0 8px;
   font-family: "Plus Jakarta Sans", system-ui, sans-serif;
-  font-size: 22px;
+  font-size: 28px;
 }
 
 .legal-page p,
@@ -338,13 +527,13 @@ textarea {
 
 .list {
   display: grid;
-  gap: 10px;
+  gap: 12px;
 }
 
 .list-item {
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 14px;
+  padding: 18px;
   background: var(--surface);
 }
 
@@ -359,27 +548,41 @@ textarea {
 
 table {
   width: 100%;
-  min-width: 720px;
+  min-width: 860px;
   border-collapse: collapse;
 }
 
 th,
 td {
   border-bottom: 1px solid var(--border);
-  padding: 10px;
+  padding: 14px;
   text-align: left;
   vertical-align: top;
 }
 
 th {
   color: var(--muted);
-  font-size: 13px;
+  font-size: 15px;
 }
 
 @media (max-width: 760px) {
   .grid-two,
   .grid-three {
     grid-template-columns: 1fr;
+  }
+
+  .admin-section-header,
+  .quick-detail {
+    flex-direction: column;
+  }
+
+  .calendar-grid {
+    grid-template-columns: 1fr;
+    overflow-x: visible;
+  }
+
+  .calendar-day {
+    min-height: 180px;
   }
 
   .topbar-inner {
