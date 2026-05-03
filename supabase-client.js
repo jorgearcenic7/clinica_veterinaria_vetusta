@@ -124,7 +124,7 @@ export async function uploadPetImage(supabase, ownerId, petId, file) {
   const { data, error } = await supabase.storage.from("pet-images").upload(filePath, file, {
     cacheControl: "3600",
     contentType: file.type,
-    upsert: true,
+    upsert: false,
   });
   console.log("upload result", data, error);
 

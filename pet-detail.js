@@ -80,7 +80,7 @@ async function renderPet() {
     <div class="pet-detail-image-wrapper">
       ${imageUrl ? `<img class="pet-detail-image" src="${escapeHtml(imageUrl)}" alt="Foto de ${escapeHtml(pet.name)}">` : `<div class="pet-detail-image placeholder" aria-hidden="true">${escapeHtml(pet.name.slice(0, 1).toUpperCase())}</div>`}
     </div>
-    <div class="row">
+    <div class="row change-photo-button">
       <label class="button secondary">
         Cambiar foto
         <input class="hidden" type="file" accept="image/jpeg,image/png,image/webp" data-image-input="${pet.id}">
@@ -122,7 +122,8 @@ async function changeImage(event) {
     await loadPetData();
     setStatus(statusEl, "Imagen actualizada.");
   } catch (error) {
-    setStatus(statusEl, friendlyError(error) || "No se pudo subir la imagen.", true);
+    console.error("change pet image error", error);
+    setStatus(statusEl, error?.message || friendlyError(error) || "No se pudo subir la imagen.", true);
   } finally {
     input.value = "";
   }
