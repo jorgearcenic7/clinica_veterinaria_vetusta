@@ -374,12 +374,6 @@ create policy "Clients upload own pet images"
     bucket_id = 'pet-images'
     and public.is_allowed_storage_path(bucket_id, name)
     and (storage.foldername(name))[1] = auth.uid()::text
-    and exists (
-      select 1
-      from public.pets
-      where pets.id::text = (storage.foldername(name))[2]
-        and pets.owner_id = auth.uid()
-    )
   );
 
 create policy "Admins manage pet images"
