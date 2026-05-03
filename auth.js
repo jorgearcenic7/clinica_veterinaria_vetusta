@@ -23,7 +23,7 @@ async function initAuth() {
     }
 
     if (data.session) {
-      window.location.replace(redirectTo);
+      window.location.replace(await dashboardPathForSession(supabase, data.session));
       return;
     }
   } catch (error) {
@@ -51,7 +51,8 @@ loginForm.addEventListener("submit", async (event) => {
       throw error;
     }
 
-    window.location.replace(redirectTo);
+    const { data } = await supabase.auth.getSession();
+    window.location.replace(await dashboardPathForSession(supabase, data.session));
   } catch (error) {
     setStatus(statusEl, friendlyAuthError(error), true);
   }
@@ -134,8 +135,9 @@ updatePasswordForm.addEventListener("submit", async (event) => {
       throw error;
     }
 
+    const { data } = await supabase.auth.getSession();
     setStatus(statusEl, "Contrasena actualizada. Ya puedes entrar.");
-    window.location.replace("/dashboard");
+    window.location.replace(data.session ? await dashboardPathForSession(supabase, data.session) : "/dashboard");
   } catch (error) {
     setStatus(statusEl, friendlyAuthError(error), true);
   }
@@ -158,6 +160,25 @@ function showPasswordUpdate() {
   tabButtons.forEach((button) => button.setAttribute("aria-selected", "false"));
   panels.forEach((panel) => panel.classList.add("hidden"));
   updatePasswordForm.classList.remove("hidden");
+}
+
+async function dashboardPathForSession(supabase, session) {
+  if (!session?.user?.id) {
+    return redirectTo;
+  }
+
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", session.user.id)
+    .single();
+
+  if (error) {
+    console.error("profile redirect error", error);
+    return redirectTo;
+  }
+
+  return data?.role === "admin" ? "/admin" : redirectTo;
 }
 
 function friendlyAuthError(error) {
