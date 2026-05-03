@@ -83,7 +83,7 @@ async function renderPet() {
     <div class="row">
       <label class="button secondary">
         Cambiar foto
-        <input class="hidden" type="file" accept="image/jpeg,image/png,image/webp" data-image-input="${pet.id}" data-owner-id="${pet.owner_id}">
+        <input class="hidden" type="file" accept="image/jpeg,image/png,image/webp" data-image-input="${pet.id}">
       </label>
     </div>
     <h1 class="page-title">${escapeHtml(pet.name)}</h1>

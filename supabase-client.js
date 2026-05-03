@@ -129,7 +129,7 @@ export async function uploadPetImage(supabase, ownerId, petId, file) {
   console.log("upload result", data, error);
 
   if (error) {
-    console.error("upload pet image error", error);
+    console.error("upload image error", error);
     throw error;
   }
 

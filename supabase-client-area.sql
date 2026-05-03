@@ -249,6 +249,7 @@ drop policy if exists "Clients read own profile" on public.profiles;
 drop policy if exists "Admins manage profiles" on public.profiles;
 drop policy if exists "Clients read own pets" on public.pets;
 drop policy if exists "Clients update own pet image" on public.pets;
+drop policy if exists "clients can update own pet image" on public.pets;
 drop policy if exists "Admins manage pets" on public.pets;
 drop policy if exists "Clients read own pet records" on public.pet_records;
 drop policy if exists "Admins manage pet records" on public.pet_records;
@@ -287,7 +288,7 @@ create policy "Clients read own pets"
   to authenticated
   using (owner_id = auth.uid());
 
-create policy "Clients update own pet image"
+create policy "clients can update own pet image"
   on public.pets
   for update
   to authenticated

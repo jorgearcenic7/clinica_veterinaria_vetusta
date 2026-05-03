@@ -86,7 +86,7 @@ async function renderPets() {
       <div class="row">
         <label class="button secondary">
           Cambiar foto
-          <input class="hidden" type="file" accept="image/jpeg,image/png,image/webp" data-image-input="${pet.id}" data-owner-id="${pet.owner_id}">
+          <input class="hidden" type="file" accept="image/jpeg,image/png,image/webp" data-image-input="${pet.id}">
         </label>
         <a class="button" href="/dashboard/pets/${pet.id}">Ver historial</a>
       </div>
@@ -114,8 +114,7 @@ async function changeImage(input) {
     validateUploadFile(file, "image");
     setStatus(statusEl, "Subiendo imagen...");
     const petId = input.dataset.imageInput;
-    const ownerId = input.dataset.ownerId || session?.user?.id;
-    const imagePath = await uploadPetImage(supabase, ownerId, petId, file);
+    const imagePath = await uploadPetImage(supabase, session.user.id, petId, file);
     const { error } = await supabase
       .from("pets")
       .update({ image_url: imagePath })
