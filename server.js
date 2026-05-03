@@ -30,6 +30,9 @@ const gaId = cleanEnvValue(process.env.NEXT_PUBLIC_GA_ID || process.env.VITE_GA_
 const googleCalendarId = cleanEnvValue(process.env.GOOGLE_CALENDAR_ID || "clinicavetusta@gmail.com");
 const googleClientEmail = cleanEnvValue(process.env.GOOGLE_CLIENT_EMAIL);
 const googlePrivateKey = cleanGooglePrivateKey(process.env.GOOGLE_PRIVATE_KEY);
+const resendApiKey = cleanEnvValue(process.env.RESEND_API_KEY);
+const reservationFromEmail = cleanEnvValue(process.env.RESERVATION_FROM_EMAIL || "Clínica Veterinaria Vetusta <reservas@clinicavetusta.com>");
+const clinicPhone = cleanEnvValue(process.env.CLINIC_PHONE || "985 20 65 58");
 let supabaseConfigError = null;
 const supabase = supabaseUrl && supabaseKey
   ? createSupabaseClient()
@@ -226,7 +229,8 @@ app.post("/api/reservations", async (request, response) => {
     }
 
     const savedReservation = await saveReservation(reservation);
-    response.status(201).json({ ok: true, reservation: savedReservation });
+    const emailResult = await sendReservationEmailIfRequested(savedReservation, reservation.emailCopy);
+    response.status(201).json({ ok: true, reservation: savedReservation, email: emailResult });
   } catch (error) {
     response.status(error.statusCode || 400).json({ error: error.message || "No se pudo crear la reserva." });
   }
@@ -943,6 +947,7 @@ async function saveReservation(reservation) {
   const reservations = await readReservations(reservation.datetime.slice(0, 7));
   reservations.push({
     ...reservation,
+    id: reservation.id,
     status: "pending",
     ...buildReservationTimestamps(reservation.datetime),
     createdAt: new Date().toISOString(),
@@ -953,9 +958,10 @@ async function saveReservation(reservation) {
 
 async function saveSupabaseReservation(reservation) {
   const timestamps = buildReservationTimestamps(reservation.datetime);
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from("reservations")
     .insert({
+      id: reservation.id,
       nombre: reservation.nombre,
       telefono: reservation.telefono,
       email: reservation.email || null,
@@ -964,9 +970,7 @@ async function saveSupabaseReservation(reservation) {
       datetime: reservation.datetime,
       start_at: timestamps.startAt,
       end_at: timestamps.endAt,
-    })
-    .select(reservationSelectFields())
-    .single();
+    });
 
   if (error) {
     if (error.code === "23505") {
@@ -979,23 +983,24 @@ async function saveSupabaseReservation(reservation) {
   }
 
   return {
-    id: data.id,
-    nombre: data.nombre,
-    telefono: data.telefono,
-    email: data.email,
-    mascota: data.mascota,
-    servicio: data.servicio,
-    datetime: data.datetime,
-    status: data.status || "pending",
-    notes: data.notes,
-    workerId: data.worker_id,
-    googleEventId: data.google_event_id,
-    googleSyncError: data.google_sync_error,
-    googleSyncedAt: data.google_synced_at,
-    startAt: data.start_at,
-    endAt: data.end_at,
-    updatedAt: data.updated_at,
-    createdAt: data.created_at,
+    id: reservation.id,
+    code: reservation.code,
+    nombre: reservation.nombre,
+    telefono: reservation.telefono,
+    email: reservation.email || null,
+    mascota: reservation.mascota,
+    servicio: reservation.servicio,
+    datetime: reservation.datetime,
+    status: "pending",
+    notes: null,
+    workerId: null,
+    googleEventId: null,
+    googleSyncError: null,
+    googleSyncedAt: null,
+    startAt: timestamps.startAt,
+    endAt: timestamps.endAt,
+    updatedAt: null,
+    createdAt: new Date().toISOString(),
   };
 }
 
@@ -1084,14 +1089,18 @@ function isBookableDateTime(datetime) {
 }
 
 function normalizeReservation(body) {
+  const emailCopy = Boolean(body?.emailCopy);
   const reservation = {
+    id: crypto.randomUUID(),
     nombre: cleanText(body?.nombre),
     telefono: cleanText(body?.telefono),
     email: cleanText(body?.email),
     mascota: cleanText(body?.mascota),
     servicio: cleanText(body?.servicio),
     datetime: cleanText(body?.datetime),
+    emailCopy,
   };
+  reservation.code = reservation.id.slice(0, 8).toUpperCase();
 
   if (!reservation.nombre || !reservation.telefono || !reservation.datetime) {
     const error = new Error("Nombre, telefono y fecha/hora son obligatorios.");
@@ -1099,7 +1108,91 @@ function normalizeReservation(body) {
     throw error;
   }
 
+  if (reservation.emailCopy && !isValidEmail(reservation.email)) {
+    const error = new Error("Indica un email valido para recibir la copia de la reserva.");
+    error.statusCode = 400;
+    throw error;
+  }
+
   return reservation;
+}
+
+async function sendReservationEmailIfRequested(reservation, emailCopy) {
+  if (!emailCopy) {
+    return { requested: false, sent: false, pending: false };
+  }
+
+  if (!resendApiKey) {
+    return {
+      requested: true,
+      sent: false,
+      pending: true,
+      message: "Reserva creada. El envio por email esta pendiente de configuracion.",
+    };
+  }
+
+  try {
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${resendApiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: reservationFromEmail,
+        to: reservation.email,
+        subject: `Reserva solicitada ${reservation.code} - Clínica Veterinaria Vetusta`,
+        text: reservationEmailText(reservation),
+        html: reservationEmailHtml(reservation),
+      }),
+    });
+
+    const payload = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(payload?.message || `El proveedor de email respondio con ${response.status}.`);
+    }
+
+    return { requested: true, sent: true, pending: false };
+  } catch (error) {
+    console.error("Reservation email error:", error);
+    return {
+      requested: true,
+      sent: false,
+      pending: true,
+      message: "Reserva creada. El envio por email esta pendiente de configuracion.",
+    };
+  }
+}
+
+function reservationEmailText(reservation) {
+  return [
+    `Hola ${reservation.nombre},`,
+    "",
+    "Tu reserva esta solicitada en Clínica Veterinaria Vetusta.",
+    `Codigo de reserva: ${reservation.code}`,
+    `Fecha y hora: ${formatReservationDateTime(reservation.datetime)}`,
+    `Mascota: ${formatPetType(reservation.mascota)}`,
+    `Servicio: ${formatReservationServiceForCalendar(reservation.servicio)}`,
+    `Telefono de la clinica: ${clinicPhone}`,
+    "",
+    "Te contactaremos lo antes posible para confirmar definitivamente la cita.",
+  ].join("\n");
+}
+
+function reservationEmailHtml(reservation) {
+  return `
+    <div style="font-family:Arial,sans-serif;color:#1b1c1c;line-height:1.5">
+      <h1 style="color:#1b4332">Clínica Veterinaria Vetusta</h1>
+      <p>Hola ${escapeHtmlText(reservation.nombre)}, tu reserva está solicitada.</p>
+      <p><strong>Código de reserva:</strong> ${escapeHtmlText(reservation.code)}</p>
+      <p><strong>Fecha y hora:</strong> ${escapeHtmlText(formatReservationDateTime(reservation.datetime))}</p>
+      <p><strong>Mascota:</strong> ${escapeHtmlText(formatPetType(reservation.mascota))}</p>
+      <p><strong>Servicio:</strong> ${escapeHtmlText(formatReservationServiceForCalendar(reservation.servicio))}</p>
+      <p><strong>Teléfono de la clínica:</strong> ${escapeHtmlText(clinicPhone)}</p>
+      <p>Te contactaremos lo antes posible para confirmar definitivamente la cita.</p>
+    </div>
+  `;
 }
 
 function cleanLongText(value) {
@@ -1161,6 +1254,47 @@ function madridOffset(date) {
 
 function cleanText(value) {
   return String(value || "").trim().slice(0, 160);
+}
+
+function isValidEmail(value) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || "").trim());
+}
+
+function formatReservationDateTime(datetime) {
+  if (!datetime) {
+    return "Sin fecha";
+  }
+
+  const [dateKey, time] = datetime.split("T");
+  const [year, month, day] = dateKey.split("-").map(Number);
+  const date = new Date(year, month - 1, day);
+  const dateLabel = new Intl.DateTimeFormat("es-ES", {
+    weekday: "long",
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  }).format(date);
+
+  return `${dateLabel} a las ${time}`;
+}
+
+function formatPetType(value) {
+  const labels = {
+    perro: "Perro",
+    gato: "Gato",
+    otro: "Otro",
+  };
+
+  return labels[value] || value || "Sin indicar";
+}
+
+function escapeHtmlText(value) {
+  return String(value || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
 function toDateKey(date) {

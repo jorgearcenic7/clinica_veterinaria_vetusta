@@ -100,8 +100,10 @@ create index if not exists reservations_google_synced_at_idx
   on public.reservations (google_synced_at);
 
 grant usage on schema public to anon, authenticated;
-grant select, insert on table public.reservations to anon;
-grant select, update on table public.reservations to authenticated;
+revoke all on table public.reservations from anon;
+revoke all on table public.reservations from authenticated;
+grant insert on table public.reservations to anon;
+grant select, update, delete on table public.reservations to authenticated;
 
 -- Recomendado para produccion:
 -- 1. Mantener RLS activado.
@@ -127,21 +129,39 @@ drop policy if exists "admin read reservations"
 drop policy if exists "admin update reservations"
   on public.reservations;
 
-create policy "allow public insert"
+drop policy if exists "Public can create reservations"
+  on public.reservations;
+
+drop policy if exists "Admin can read reservations"
+  on public.reservations;
+
+drop policy if exists "Admin can update reservations"
+  on public.reservations;
+
+drop policy if exists "Admin can delete reservations"
+  on public.reservations;
+
+create policy "Public can create reservations"
   on public.reservations
   for insert
   to anon
   with check (true);
 
-create policy "admin read reservations"
+create policy "Admin can read reservations"
   on public.reservations
   for select
   to authenticated
-  using (true);
+  using (public.is_admin());
 
-create policy "admin update reservations"
+create policy "Admin can update reservations"
   on public.reservations
   for update
   to authenticated
   using (public.is_admin())
   with check (public.is_admin());
+
+create policy "Admin can delete reservations"
+  on public.reservations
+  for delete
+  to authenticated
+  using (public.is_admin());

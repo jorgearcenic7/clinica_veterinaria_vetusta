@@ -588,6 +588,16 @@
 <label class="font-label-caps text-label-caps text-on-surface" for="telefono" data-i18n="booking.phone">Teléfono</label>
 <input class="rounded-lg border-outline-variant focus:border-primary focus:ring-primary bg-background" id="telefono" name="telefono" placeholder="Tu teléfono" required="" type="tel" data-i18n-placeholder="booking.phonePlaceholder"/>
 </div>
+<div class="md:col-span-2 flex flex-col gap-3 rounded-xl border border-outline-variant bg-background p-4">
+<label class="flex items-center gap-3 font-label-caps text-label-caps text-on-surface" for="email-copy">
+<input class="rounded border-outline-variant text-primary focus:ring-primary" id="email-copy" name="email_copy" type="checkbox" data-email-copy-toggle/>
+<span>Quiero recibir una copia de la reserva por email</span>
+</label>
+<div class="hidden flex-col gap-2" data-email-field-wrapper>
+<label class="font-label-caps text-label-caps text-on-surface" for="email">Email</label>
+<input class="rounded-lg border-outline-variant focus:border-primary focus:ring-primary bg-background" id="email" name="email" placeholder="tu@email.com" type="email" data-email-input/>
+</div>
+</div>
 <div class="flex flex-col gap-2">
 <label class="font-label-caps text-label-caps text-on-surface" for="mascota" data-i18n="booking.petType">Tipo de mascota</label>
 <select class="rounded-lg border-outline-variant focus:border-primary focus:ring-primary bg-background" id="mascota" name="mascota">
@@ -629,6 +639,7 @@
 <p class="text-sm text-on-surface-variant" data-i18n="booking.reservedNote">Los huecos reservados aparecen en rojo.</p>
 </div>
 <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" data-time-slots></div>
+<p class="rounded-xl bg-surface-container-low p-4 text-sm font-label-caps text-primary" data-selected-time-status>Selecciona una hora disponible para continuar.</p>
 <p class="text-sm text-on-surface-variant" data-booking-status></p>
 </div>
 </div>
@@ -639,6 +650,7 @@
 </button>
 </div>
 </form>
+<div class="hidden mt-8" data-booking-confirmation></div>
 </div>
 </section><section class="py-xl px-md bg-background">
 <div class="max-w-[1480px] mx-auto w-full">
