@@ -24,7 +24,7 @@ async function initDashboard() {
     supabase = auth.supabase;
     session = auth.session;
     const profile = await getProfile(supabase, auth.session.user.id);
-    welcomeEl.textContent = `Hola${profile.full_name ? `, ${profile.full_name}` : ""}. Estas son las mascotas registradas por la clinica.`;
+    welcomeEl.textContent = `Hola${profile.full_name ? `, ${profile.full_name}` : ""}. Estas son sus mascotas registradas en la clínica.`;
     adminLink.classList.toggle("hidden", profile.role !== "admin");
     await loadPets();
     setStatus(statusEl, "");

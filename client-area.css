@@ -121,22 +121,26 @@ a {
 
 .pet-card-grid {
   display: grid;
-  gap: 18px;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  align-items: start;
+  gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 360px));
+  justify-content: start;
 }
 
 .pet-card {
   display: grid;
   gap: 14px;
+  max-width: 360px;
 }
 
 .pet-photo {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  height: 220px;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 12px;
   background: var(--surface-soft);
   object-fit: cover;
+  object-position: center;
 }
 
 .pet-photo.placeholder {
@@ -575,6 +579,18 @@ th {
   .grid-two,
   .grid-three {
     grid-template-columns: 1fr;
+  }
+
+  .pet-card-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .pet-card {
+    max-width: 100%;
+  }
+
+  .pet-photo {
+    height: 200px;
   }
 
   .admin-section-header,
