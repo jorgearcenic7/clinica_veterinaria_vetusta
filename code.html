@@ -197,15 +197,24 @@
         }
     </script>
 <style>
+        html,
+        body {
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
         .soft-shadow {
             box-shadow: 0 10px 20px rgba(1, 45, 29, 0.04);
         }
 
         .hero {
-            min-height: 80vh;
+            width: 100%;
+            height: 90vh;
+            min-height: 720px;
             background-image: url("https://images.pexels.com/photos/6234626/pexels-photo-6234626.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=2400&h=1600&q=90");
             background-size: cover;
-            background-position: 60% center;
+            background-position: center;
             background-repeat: no-repeat;
         }
 
@@ -218,14 +227,22 @@
         }
 
         .hero-content {
-            max-width: 500px;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 20px;
         }
 
         @media (max-width: 767px) {
             .hero {
                 min-height: 80vh;
+                height: auto;
                 background-position: center;
-                padding: 40px 20px;
+                padding: 96px 0 48px;
+            }
+
+            .hero-content {
+                padding: 0 20px;
             }
         }
 
@@ -288,10 +305,9 @@
 </header>
 <main>
 <!-- Hero Section -->
-<section class="hero relative pt-xl pb-lg px-md flex flex-col justify-center overflow-hidden" id="inicio" role="img" aria-label="Una veterinaria sonriente cuidando con cariño a un perro en una clínica moderna y acogedora, con iluminación natural y tonos cálidos.">
+<section class="hero relative flex flex-col justify-center overflow-hidden" id="inicio" role="img" aria-label="Una veterinaria sonriente cuidando con cariño a un perro en una clínica moderna y acogedora, con iluminación natural y tonos cálidos.">
 <div class="hero-overlay absolute inset-0 z-0"></div>
-<div class="relative z-10 max-w-[1760px] mx-auto w-full">
-<div class="hero-content flex flex-col gap-8">
+<div class="hero-content relative z-10 flex flex-col gap-8">
 <div class="inline-flex items-center gap-2 bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full w-fit border border-white/20">
 <span class="text-tertiary-fixed" data-google-rating>⭐ 4,9/5</span>
 <span class="text-white font-label-caps text-label-caps" data-google-review-count>· +560 reseñas en Google</span>
@@ -307,7 +323,6 @@
 <a class="flex items-center justify-center bg-white text-primary border-2 border-white font-label-caps text-label-caps px-8 py-4 rounded-lg hover:bg-gray-100 transition-colors duration-200 shadow-lg hover:scale-105" href="#servicios" data-i18n="hero.services">
                             Ver servicios
                         </a>
-</div>
 </div>
 </div>
 </section>
