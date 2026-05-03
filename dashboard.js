@@ -3,7 +3,6 @@ import { calculateAge, escapeHtml, friendlyError, getProfile, requireSession, se
 const statusEl = document.querySelector("[data-status]");
 const welcomeEl = document.querySelector("[data-welcome]");
 const petsListEl = document.querySelector("[data-pets-list]");
-const adminLink = document.querySelector("[data-admin-link]");
 const logoutButton = document.querySelector("[data-logout]");
 
 let supabase = null;
@@ -24,8 +23,13 @@ async function initDashboard() {
     supabase = auth.supabase;
     session = auth.session;
     const profile = await getProfile(supabase, auth.session.user.id);
+
+    if (profile.role === "admin") {
+      window.location.replace("/admin");
+      return;
+    }
+
     welcomeEl.textContent = `Hola${profile.full_name ? `, ${profile.full_name}` : ""}. Estas son sus mascotas registradas en la clínica.`;
-    adminLink.classList.toggle("hidden", profile.role !== "admin");
     await loadPets();
     setStatus(statusEl, "");
   } catch (error) {
