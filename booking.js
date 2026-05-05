@@ -195,7 +195,8 @@ function renderSlots() {
   bookingState.selectedDay.slots.forEach((slot) => {
     const button = document.createElement("button");
     const isSelected = bookingState.selectedSlot?.datetime === slot.datetime;
-    const isAvailable = isSlotAvailableForSelectedService(slot);
+    const availability = slotAvailabilityForSelectedService(slot);
+    const isAvailable = availability === "available";
     const slotLabel = formatSlotLabel(slot);
 
     button.type = "button";
@@ -205,7 +206,9 @@ function renderSlots() {
       !isAvailable ? "bg-error-container border-error/40 text-on-error-container cursor-not-allowed" : "bg-white border-outline-variant text-primary hover:border-primary hover:bg-primary-fixed hover:-translate-y-0.5",
       isSelected ? "!bg-primary !text-white !border-primary ring-2 ring-primary shadow-md shadow-primary/20 scale-[1.02]" : "",
     ].join(" ");
-    button.textContent = isAvailable ? slotLabel : `${slotLabel} ${translate("booking.reserved")}`;
+    button.textContent = isAvailable
+      ? slotLabel
+      : `${slotLabel} ${translate(availability === "reserved" ? "booking.reserved" : "booking.unavailable")}`;
 
     button.addEventListener("click", () => {
       bookingState.selectedSlot = slot;
@@ -236,7 +239,7 @@ function renderSelectedTimeStatus() {
 function handleServiceChange() {
   if (
     bookingState.selectedSlot
-    && !isSlotAvailableForSelectedService(bookingState.selectedSlot)
+    && slotAvailabilityForSelectedService(bookingState.selectedSlot) !== "available"
   ) {
     bookingState.selectedSlot = null;
     hiddenDateInput.value = "";
@@ -249,24 +252,27 @@ function selectedServiceDurationMinutes() {
   return serviceSelect?.value === "cirugia" ? 60 : 30;
 }
 
-function isSlotAvailableForSelectedService(slot) {
+function slotAvailabilityForSelectedService(slot) {
   if (!bookingState.selectedDay || slot.reserved) {
-    return false;
+    return "reserved";
   }
 
   const neededSlots = selectedServiceDurationMinutes() / 30;
   const slotIndex = bookingState.selectedDay.slots.findIndex((item) => item.datetime === slot.datetime);
 
   if (slotIndex < 0) {
-    return false;
+    return "unavailable";
   }
 
   const requiredSlots = bookingState.selectedDay.slots.slice(slotIndex, slotIndex + neededSlots);
-  return requiredSlots.length === neededSlots
-    && requiredSlots.every((item, index) => (
-      !item.reserved
-      && item.time === addMinutesToTime(slot.time, index * 30)
-    ));
+  const hasEnoughConsecutiveSlots = requiredSlots.length === neededSlots
+    && requiredSlots.every((item, index) => item.time === addMinutesToTime(slot.time, index * 30));
+
+  if (!hasEnoughConsecutiveSlots) {
+    return "unavailable";
+  }
+
+  return requiredSlots.some((item) => item.reserved) ? "reserved" : "available";
 }
 
 function formatSlotLabel(slot) {
