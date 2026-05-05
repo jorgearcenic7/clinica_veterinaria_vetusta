@@ -27,6 +27,7 @@ const confirmationContainer = document.querySelector("[data-booking-confirmation
 const emailCopyToggle = document.querySelector("[data-email-copy-toggle]");
 const emailFieldWrapper = document.querySelector("[data-email-field-wrapper]");
 const emailInput = document.querySelector("[data-email-input]");
+const serviceSelect = document.querySelector("#servicio");
 
 if (bookingForm) {
   initBookingCalendar();
@@ -37,6 +38,7 @@ function initBookingCalendar() {
   nextButton.addEventListener("click", () => changeMonth(1));
   bookingForm.addEventListener("submit", submitBooking);
   emailCopyToggle?.addEventListener("change", updateEmailField);
+  serviceSelect?.addEventListener("change", handleServiceChange);
   confirmationContainer?.addEventListener("click", handleConfirmationAction);
   document.addEventListener("vetusta:languagechange", renderBookingTexts);
   updateEmailField();
@@ -193,15 +195,17 @@ function renderSlots() {
   bookingState.selectedDay.slots.forEach((slot) => {
     const button = document.createElement("button");
     const isSelected = bookingState.selectedSlot?.datetime === slot.datetime;
+    const isAvailable = isSlotAvailableForSelectedService(slot);
+    const slotLabel = formatSlotLabel(slot);
 
     button.type = "button";
-    button.disabled = slot.reserved;
+    button.disabled = !isAvailable;
     button.className = [
       "rounded-xl border px-4 py-4 text-base font-label-caps transition-all",
-      slot.reserved ? "bg-error-container border-error/40 text-on-error-container cursor-not-allowed" : "bg-white border-outline-variant text-primary hover:border-primary hover:bg-primary-fixed hover:-translate-y-0.5",
+      !isAvailable ? "bg-error-container border-error/40 text-on-error-container cursor-not-allowed" : "bg-white border-outline-variant text-primary hover:border-primary hover:bg-primary-fixed hover:-translate-y-0.5",
       isSelected ? "!bg-primary !text-white !border-primary ring-2 ring-primary shadow-md shadow-primary/20 scale-[1.02]" : "",
     ].join(" ");
-    button.textContent = slot.reserved ? `${slot.time} ${translate("booking.reserved")}` : slot.time;
+    button.textContent = isAvailable ? slotLabel : `${slotLabel} ${translate("booking.reserved")}`;
 
     button.addEventListener("click", () => {
       bookingState.selectedSlot = slot;
@@ -225,8 +229,52 @@ function renderSelectedTimeStatus() {
     return;
   }
 
-  selectedTimeStatus.textContent = `Hora seleccionada: ${bookingState.selectedSlot.time}`;
+  selectedTimeStatus.textContent = `Hora seleccionada: ${formatSlotLabel(bookingState.selectedSlot)}`;
   selectedTimeStatus.className = "rounded-xl bg-primary p-4 text-sm font-label-caps text-white";
+}
+
+function handleServiceChange() {
+  if (
+    bookingState.selectedSlot
+    && !isSlotAvailableForSelectedService(bookingState.selectedSlot)
+  ) {
+    bookingState.selectedSlot = null;
+    hiddenDateInput.value = "";
+  }
+
+  renderSlots();
+}
+
+function selectedServiceDurationMinutes() {
+  return serviceSelect?.value === "cirugia" ? 60 : 30;
+}
+
+function isSlotAvailableForSelectedService(slot) {
+  if (!bookingState.selectedDay || slot.reserved) {
+    return false;
+  }
+
+  const neededSlots = selectedServiceDurationMinutes() / 30;
+  const slotIndex = bookingState.selectedDay.slots.findIndex((item) => item.datetime === slot.datetime);
+
+  if (slotIndex < 0) {
+    return false;
+  }
+
+  const requiredSlots = bookingState.selectedDay.slots.slice(slotIndex, slotIndex + neededSlots);
+  return requiredSlots.length === neededSlots
+    && requiredSlots.every((item, index) => (
+      !item.reserved
+      && item.time === addMinutesToTime(slot.time, index * 30)
+    ));
+}
+
+function formatSlotLabel(slot) {
+  if (selectedServiceDurationMinutes() === 30) {
+    return slot.time;
+  }
+
+  return `${slot.time} - ${addMinutesToTime(slot.time, selectedServiceDurationMinutes())}`;
 }
 
 function createMessage(text) {
@@ -410,6 +458,12 @@ function capitalize(text) {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
+function addMinutesToTime(time, minutesToAdd) {
+  const [hours, minutes] = time.split(":").map(Number);
+  const total = (hours || 0) * 60 + (minutes || 0) + minutesToAdd;
+  return `${String(Math.floor(total / 60)).padStart(2, "0")}:${String(total % 60).padStart(2, "0")}`;
+}
+
 function formatSelectedDateTime(datetime) {
   if (!datetime) {
     return "Sin fecha";
@@ -443,7 +497,6 @@ function formatService(value) {
     vacunacion: "Vacunación",
     cirugia: "Cirugía",
     peluqueria: "Peluquería",
-    urgencia: "Urgencia",
   };
 
   return labels[value] || value || "Sin indicar";

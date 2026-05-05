@@ -67,9 +67,12 @@ where status = 'pending';
 update public.reservations
 set
   start_at = coalesce(start_at, datetime::timestamp at time zone 'Europe/Madrid'),
-  end_at = coalesce(end_at, (datetime::timestamp + interval '30 minutes') at time zone 'Europe/Madrid')
+  end_at = case
+    when servicio = 'cirugia' then (datetime::timestamp + interval '60 minutes') at time zone 'Europe/Madrid'
+    else coalesce(end_at, (datetime::timestamp + interval '30 minutes') at time zone 'Europe/Madrid')
+  end
 where datetime ~ '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$'
-  and (start_at is null or end_at is null);
+  and (start_at is null or end_at is null or servicio = 'cirugia');
 
 create or replace function public.set_reservation_updated_at()
 returns trigger
@@ -132,8 +135,21 @@ begin
   month_end := to_char((p_month || '-01')::date + interval '1 month', 'YYYY-MM-DD') || 'T00:00';
 
   return query
-    select reservations.datetime, reservations.status
+    select
+      to_char(slot_at, 'YYYY-MM-DD"T"HH24:MI') as datetime,
+      reservations.status
     from public.reservations
+    cross join lateral generate_series(
+      reservations.datetime::timestamp,
+      coalesce(
+        reservations.end_at at time zone 'Europe/Madrid',
+        reservations.datetime::timestamp + case
+          when reservations.servicio = 'cirugia' then interval '60 minutes'
+          else interval '30 minutes'
+        end
+      ) - interval '30 minutes',
+      interval '30 minutes'
+    ) as slots(slot_at)
     where reservations.datetime >= month_start
       and reservations.datetime < month_end
       and reservations.status <> 'cancelled';

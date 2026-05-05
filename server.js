@@ -214,15 +214,12 @@ app.post("/api/reservations", async (request, response) => {
     const reservation = normalizeReservation(request.body);
     const reservations = await readReservations(reservation.datetime.slice(0, 7));
 
-    if (!isBookableDateTime(reservation.datetime)) {
+    if (!isBookableDateTime(reservation.datetime, reservation.servicio)) {
       response.status(400).json({ error: "La fecha u hora elegida no esta dentro del horario de la clinica." });
       return;
     }
 
-    const alreadyReserved = reservations.some((item) => (
-      item.datetime === reservation.datetime
-      && item.status !== "cancelled"
-    ));
+    const alreadyReserved = reservations.some((item) => reservationOverlaps(item, reservation));
 
     if (alreadyReserved) {
       response.status(409).json({ error: "Ese horario ya esta reservado. Elige otro hueco." });
@@ -678,6 +675,28 @@ async function updateReservationFromAdmin(requestSupabase, reservationId, change
     ...toDatabaseReservationChanges(changes),
   };
 
+  if (Object.hasOwn(changes, "datetime")) {
+    Object.assign(next, toDatabaseReservationChanges(buildReservationTimestamps(next.datetime, next.servicio)));
+
+    if (!isBookableDateTime(next.datetime, next.servicio)) {
+      const error = new Error("La fecha u hora elegida no esta dentro del horario de la clinica.");
+      error.statusCode = 400;
+      throw error;
+    }
+
+    const reservations = await readReservations(next.datetime.slice(0, 7));
+    const alreadyReserved = reservations.some((item) => (
+      item.id !== reservationId
+      && reservationOverlaps(item, next)
+    ));
+
+    if (alreadyReserved) {
+      const error = new Error("Ese horario ya esta reservado. Elige otro hueco.");
+      error.statusCode = 409;
+      throw error;
+    }
+  }
+
   const calendarSync = await syncReservationCalendar(current, next);
   const payload = {
     ...toDatabaseReservationChanges(changes),
@@ -899,11 +918,11 @@ function toCalendarEvent(reservation) {
       reservation.notes ? `Notas: ${reservation.notes}` : "",
     ].filter(Boolean).join("\n"),
     start: {
-      dateTime: reservation.start_at || buildReservationTimestamps(reservation.datetime).startAt,
+      dateTime: reservation.start_at || buildReservationTimestamps(reservation.datetime, reservation.servicio).startAt,
       timeZone: "Europe/Madrid",
     },
     end: {
-      dateTime: reservation.end_at || buildReservationTimestamps(reservation.datetime).endAt,
+      dateTime: reservation.end_at || buildReservationTimestamps(reservation.datetime, reservation.servicio).endAt,
       timeZone: "Europe/Madrid",
     },
     attendees: reservation.email ? [{ email: reservation.email }] : undefined,
@@ -975,7 +994,7 @@ async function saveReservation(reservation) {
     ...reservation,
     id: reservation.id,
     status: "confirmed",
-    ...buildReservationTimestamps(reservation.datetime),
+    ...buildReservationTimestamps(reservation.datetime, reservation.servicio),
     createdAt: new Date().toISOString(),
   };
   reservations.push(savedReservation);
@@ -984,7 +1003,7 @@ async function saveReservation(reservation) {
 }
 
 async function saveSupabaseReservation(reservation) {
-  const timestamps = buildReservationTimestamps(reservation.datetime);
+  const timestamps = buildReservationTimestamps(reservation.datetime, reservation.servicio);
   const databaseReservation = {
     id: reservation.id,
     nombre: reservation.nombre,
@@ -1074,11 +1093,6 @@ function buildMonthAvailability(month, reservations) {
   const [year, monthNumber] = month.split("-").map(Number);
   const daysInMonth = new Date(year, monthNumber, 0).getDate();
   const todayKey = toDateKey(new Date());
-  const reservedTimes = new Set(
-    reservations
-      .filter((reservation) => reservation.status !== "cancelled")
-      .map((reservation) => reservation.datetime),
-  );
   const days = [];
 
   for (let day = 1; day <= daysInMonth; day += 1) {
@@ -1087,7 +1101,7 @@ function buildMonthAvailability(month, reservations) {
     const schedule = getScheduleForDate(date);
     const slots = buildSlots(dateKey, schedule).map((slot) => ({
       ...slot,
-      reserved: reservedTimes.has(slot.datetime),
+      reserved: reservations.some((reservation) => reservationOccupiesSlot(reservation, slot.datetime)),
     }));
 
     days.push({
@@ -1137,7 +1151,7 @@ function getScheduleForDate(date) {
   return [];
 }
 
-function isBookableDateTime(datetime) {
+function isBookableDateTime(datetime, service = "consulta") {
   if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(datetime)) {
     return false;
   }
@@ -1151,7 +1165,54 @@ function isBookableDateTime(datetime) {
     return false;
   }
 
-  return buildSlots(dateKey, getScheduleForDate(date)).some((slot) => slot.time === time);
+  const duration = reservationDurationMinutes(service);
+  const startMinutes = toMinutes(time);
+  const endMinutes = startMinutes + duration;
+  return getScheduleForDate(date).some(([start, end]) => (
+    startMinutes >= toMinutes(start)
+    && endMinutes <= toMinutes(end)
+    && (startMinutes - toMinutes(start)) % 30 === 0
+  ));
+}
+
+function reservationOverlaps(existingReservation, requestedReservation) {
+  if (existingReservation.status === "cancelled") {
+    return false;
+  }
+
+  const existingRange = reservationMinuteRange(existingReservation);
+  const requestedRange = reservationMinuteRange(requestedReservation);
+  return existingRange.dateKey === requestedRange.dateKey
+    && existingRange.start < requestedRange.end
+    && requestedRange.start < existingRange.end;
+}
+
+function reservationOccupiesSlot(reservation, slotDatetime) {
+  if (reservation.status === "cancelled") {
+    return false;
+  }
+
+  const slotRange = {
+    dateKey: slotDatetime.slice(0, 10),
+    start: toMinutes(slotDatetime.slice(11, 16)),
+    end: toMinutes(slotDatetime.slice(11, 16)) + 30,
+  };
+  const reservationRange = reservationMinuteRange(reservation);
+
+  return reservationRange.dateKey === slotRange.dateKey
+    && reservationRange.start < slotRange.end
+    && slotRange.start < reservationRange.end;
+}
+
+function reservationMinuteRange(reservation) {
+  const datetime = reservation.datetime || reservation.startAt || reservation.start_at;
+  const dateKey = String(datetime || "").slice(0, 10);
+  const start = toMinutes(String(datetime || "T00:00").slice(11, 16));
+  return {
+    dateKey,
+    start,
+    end: start + reservationDurationMinutes(reservation.servicio),
+  };
 }
 
 function normalizeReservation(body) {
@@ -1170,6 +1231,12 @@ function normalizeReservation(body) {
 
   if (!reservation.nombre || !reservation.telefono || !reservation.datetime) {
     const error = new Error("Nombre, telefono y fecha/hora son obligatorios.");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  if (!["consulta", "vacunacion", "cirugia", "peluqueria"].includes(reservation.servicio)) {
+    const error = new Error("Servicio no valido. Para urgencias, llama directamente a la clinica.");
     error.statusCode = 400;
     throw error;
   }
@@ -1265,13 +1332,17 @@ function cleanLongText(value) {
   return String(value || "").trim().slice(0, 2000);
 }
 
-function buildReservationTimestamps(datetime) {
-  const endDatetime = addMinutesToDatetime(datetime, 30);
+function buildReservationTimestamps(datetime, service = "consulta") {
+  const endDatetime = addMinutesToDatetime(datetime, reservationDurationMinutes(service));
 
   return {
     startAt: toMadridOffsetDateTime(datetime),
     endAt: toMadridOffsetDateTime(endDatetime),
   };
+}
+
+function reservationDurationMinutes(service) {
+  return service === "cirugia" ? 60 : 30;
 }
 
 function addMinutesToDatetime(datetime, minutesToAdd) {
