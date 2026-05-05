@@ -1229,20 +1229,20 @@ function normalizeReservation(body) {
   };
   reservation.code = reservation.id.slice(0, 8).toUpperCase();
 
-  if (!reservation.nombre || !reservation.telefono || !reservation.datetime) {
-    const error = new Error("Nombre, telefono y fecha/hora son obligatorios.");
+  if (!reservation.nombre || !reservation.telefono || !reservation.email || !reservation.mascota || !reservation.servicio || !reservation.datetime) {
+    const error = new Error("Nombre, telefono, email, mascota, servicio y fecha/hora son obligatorios.");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  if (!isValidEmail(reservation.email)) {
+    const error = new Error("Indica un email valido.");
     error.statusCode = 400;
     throw error;
   }
 
   if (!["consulta", "vacunacion", "cirugia", "peluqueria"].includes(reservation.servicio)) {
     const error = new Error("Servicio no valido. Para urgencias, llama directamente a la clinica.");
-    error.statusCode = 400;
-    throw error;
-  }
-
-  if (reservation.emailCopy && !isValidEmail(reservation.email)) {
-    const error = new Error("Indica un email valido para recibir la copia de la reserva.");
     error.statusCode = 400;
     throw error;
   }

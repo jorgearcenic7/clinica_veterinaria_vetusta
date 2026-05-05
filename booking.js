@@ -340,14 +340,9 @@ function updateEmailField() {
     return;
   }
 
-  const enabled = emailCopyToggle.checked;
-  emailFieldWrapper.classList.toggle("hidden", !enabled);
-  emailFieldWrapper.classList.toggle("flex", enabled);
-  emailInput.required = enabled;
-
-  if (!enabled) {
-    emailInput.value = "";
-  }
+  emailFieldWrapper.classList.remove("hidden");
+  emailFieldWrapper.classList.add("flex");
+  emailInput.required = true;
 }
 
 function showBookingConfirmation(reservation, emailResult = {}) {

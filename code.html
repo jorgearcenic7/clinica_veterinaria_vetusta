@@ -593,14 +593,14 @@
 <input class="rounded border-outline-variant text-primary focus:ring-primary" id="email-copy" name="email_copy" type="checkbox" data-email-copy-toggle/>
 <span>Quiero recibir una copia de la reserva por email</span>
 </label>
-<div class="hidden flex-col gap-2" data-email-field-wrapper>
+<div class="flex flex-col gap-2" data-email-field-wrapper>
 <label class="font-label-caps text-label-caps text-on-surface" for="email">Email</label>
-<input class="rounded-lg border-outline-variant focus:border-primary focus:ring-primary bg-background" id="email" name="email" placeholder="tu@email.com" type="email" data-email-input/>
+<input class="rounded-lg border-outline-variant focus:border-primary focus:ring-primary bg-background" id="email" name="email" placeholder="tu@email.com" required="" type="email" data-email-input/>
 </div>
 </div>
 <div class="flex flex-col gap-2">
 <label class="font-label-caps text-label-caps text-on-surface" for="mascota" data-i18n="booking.petType">Tipo de mascota</label>
-<select class="rounded-lg border-outline-variant focus:border-primary focus:ring-primary bg-background" id="mascota" name="mascota">
+<select class="rounded-lg border-outline-variant focus:border-primary focus:ring-primary bg-background" id="mascota" name="mascota" required="">
 <option value="perro" data-i18n="booking.pet.dog">Perro</option>
 <option value="gato" data-i18n="booking.pet.cat">Gato</option>
 <option value="otro" data-i18n="booking.pet.other">Otro</option>
@@ -608,7 +608,7 @@
 </div>
 <div class="flex flex-col gap-2">
 <label class="font-label-caps text-label-caps text-on-surface" for="servicio" data-i18n="booking.service">Servicio solicitado</label>
-<select class="rounded-lg border-outline-variant focus:border-primary focus:ring-primary bg-background" id="servicio" name="servicio">
+<select class="rounded-lg border-outline-variant focus:border-primary focus:ring-primary bg-background" id="servicio" name="servicio" required="">
 <option value="consulta" data-i18n="booking.service.general">Consulta general</option>
 <option value="vacunacion" data-i18n="booking.service.vaccine">Vacunación</option>
 <option value="cirugia" data-i18n="booking.service.surgery">Cirugía</option>
