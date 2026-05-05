@@ -115,8 +115,32 @@ a {
   padding: 28px;
 }
 
+.dashboard-section + .dashboard-section {
+  margin-top: 24px;
+}
+
 .card {
   padding: 22px;
+}
+
+.reservation-list {
+  display: grid;
+  gap: 12px;
+}
+
+.reservation-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.reservation-card p {
+  margin: 4px 0 0;
 }
 
 .pet-card-grid {

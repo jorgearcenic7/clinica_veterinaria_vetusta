@@ -3,11 +3,13 @@ import { calculateAge, escapeHtml, friendlyError, getProfile, requireSession, se
 const statusEl = document.querySelector("[data-status]");
 const welcomeEl = document.querySelector("[data-welcome]");
 const petsListEl = document.querySelector("[data-pets-list]");
+const reservationsListEl = document.querySelector("[data-reservations-list]");
 const logoutButton = document.querySelector("[data-logout]");
 
 let supabase = null;
 let session = null;
 let pets = [];
+let reservations = [];
 
 logoutButton.addEventListener("click", signOut);
 initDashboard();
@@ -30,26 +32,67 @@ async function initDashboard() {
     }
 
     welcomeEl.textContent = `Hola${profile.full_name ? `, ${profile.full_name}` : ""}. Estas son sus mascotas registradas en la clínica.`;
-    await loadPets();
+    await loadDashboardData();
     setStatus(statusEl, "");
   } catch (error) {
     setStatus(statusEl, error.message || "No se pudo cargar el panel.", true);
   }
 }
 
-async function loadPets() {
-  setStatus(statusEl, "Cargando mascotas...");
-  const { data, error } = await supabase
-    .from("pets")
-    .select("id,owner_id,name,species,breed,birth_date,image_url,created_at")
-    .order("name", { ascending: true });
+async function loadDashboardData() {
+  setStatus(statusEl, "Cargando datos...");
+  const [petsResult, reservationsResult] = await Promise.all([
+    supabase
+      .from("pets")
+      .select("id,owner_id,name,species,breed,birth_date,image_url,created_at")
+      .order("name", { ascending: true }),
+    supabase
+      .from("reservations")
+      .select("id,nombre,telefono,email,mascota,servicio,datetime,status,created_at")
+      .eq("client_id", session.user.id)
+      .order("datetime", { ascending: true }),
+  ]);
 
-  if (error) {
-    throw error;
+  if (petsResult.error) {
+    throw petsResult.error;
   }
 
-  pets = data || [];
+  if (reservationsResult.error) {
+    throw reservationsResult.error;
+  }
+
+  pets = petsResult.data || [];
+  reservations = reservationsResult.data || [];
+  renderReservations();
   await renderPets();
+}
+
+async function loadPets() {
+  await loadDashboardData();
+}
+
+function renderReservations() {
+  reservationsListEl.replaceChildren();
+
+  if (reservations.length === 0) {
+    reservationsListEl.append(emptyMessage("Todavia no hay citas asociadas a tu cuenta."));
+    return;
+  }
+
+  reservations.forEach((reservation) => {
+    const item = document.createElement("article");
+    const status = reservation.status || "confirmed";
+    item.className = "reservation-card";
+    item.innerHTML = `
+      <div>
+        <strong>${escapeHtml(formatReservationService(reservation.servicio))}</strong>
+        <p class="muted">${escapeHtml(formatReservationDateTime(reservation.datetime))}</p>
+        <p class="small muted">${escapeHtml(formatPetType(reservation.mascota))}</p>
+      </div>
+      <span class="badge badge-${escapeHtml(status)}">${escapeHtml(formatReservationStatus(status))}</span>
+    `;
+    reservationsListEl.append(item);
+  });
 }
 
 async function renderPets() {
@@ -145,4 +188,62 @@ function emptyMessage(text) {
   item.className = "muted";
   item.textContent = text;
   return item;
+}
+
+function formatReservationDateTime(datetime) {
+  if (!datetime) {
+    return "Sin fecha";
+  }
+
+  const [dateKey, time = ""] = String(datetime).split("T");
+  const date = parseDateKey(dateKey);
+  const dateLabel = new Intl.DateTimeFormat("es-ES", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(date);
+
+  return `${capitalize(dateLabel)} · ${time}`;
+}
+
+function formatReservationService(value) {
+  const labels = {
+    consulta: "Consulta general",
+    vacunacion: "Vacunacion",
+    cirugia: "Cirugia",
+    peluqueria: "Peluqueria",
+    urgencia: "Urgencia",
+  };
+
+  return labels[value] || value || "Cita veterinaria";
+}
+
+function formatPetType(value) {
+  const labels = {
+    perro: "Perro",
+    gato: "Gato",
+    otro: "Otro",
+  };
+
+  return labels[value] || value || "Mascota sin indicar";
+}
+
+function formatReservationStatus(status) {
+  const labels = {
+    pending: "Pendiente",
+    confirmed: "Confirmada",
+    cancelled: "Cancelada",
+  };
+
+  return labels[status] || status;
+}
+
+function parseDateKey(dateKey) {
+  const [year, month, day] = String(dateKey || "").split("-").map(Number);
+  return new Date(year || 1970, (month || 1) - 1, day || 1);
+}
+
+function capitalize(text) {
+  return text.charAt(0).toUpperCase() + text.slice(1);
 }

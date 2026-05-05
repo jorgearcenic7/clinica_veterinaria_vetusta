@@ -311,7 +311,7 @@ function showBookingConfirmation(reservation, emailResult = {}) {
     <article class="mx-auto max-w-[720px] overflow-hidden rounded-2xl border border-outline-variant bg-white soft-shadow">
       <div class="bg-primary px-8 py-7 text-white">
         <p class="font-label-caps text-label-caps text-white/80">Clínica Veterinaria Vetusta</p>
-        <h3 class="mt-2 font-h2 text-[32px] leading-tight">Gracias, ${escapeHtml(reservation?.nombre || "cliente")}, tu reserva está solicitada</h3>
+        <h3 class="mt-2 font-h2 text-[32px] leading-tight">Gracias, ${escapeHtml(reservation?.nombre || "cliente")}, tu reserva está confirmada</h3>
       </div>
       <div class="grid gap-5 p-8">
         <div class="rounded-xl bg-primary-fixed/60 p-4">
@@ -324,7 +324,7 @@ function showBookingConfirmation(reservation, emailResult = {}) {
           <div><dt class="font-label-caps text-primary">Servicio</dt><dd>${escapeHtml(formatService(reservation?.servicio))}</dd></div>
           <div><dt class="font-label-caps text-primary">Teléfono clínica</dt><dd>985 20 65 58</dd></div>
         </dl>
-        <p class="text-on-surface-variant">Te contactaremos lo antes posible para confirmar definitivamente la cita.</p>
+        <p class="text-on-surface-variant">Tu cita queda confirmada. Si necesitamos ajustar algun detalle, te contactaremos lo antes posible.</p>
         ${emailMessage}
         <div class="flex flex-col gap-3 sm:flex-row">
           <a class="button-like flex-1 rounded-lg bg-primary px-6 py-4 text-center font-label-caps text-white" href="#inicio" data-confirmation-home>Volver a la web</a>

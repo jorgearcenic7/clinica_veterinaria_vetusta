@@ -134,6 +134,17 @@ SUPABASE_SERVICE_ROLE_KEY=tu_service_role_key_solo_backend
 
 No pongas nunca `SUPABASE_SERVICE_ROLE_KEY` en HTML o JavaScript del navegador.
 
+### Enviar copia de reserva por email
+
+La casilla "Quiero recibir una copia de la reserva por email" usa Resend desde el backend. Si no configuras estas variables, la reserva se crea igualmente, pero se muestra un aviso indicando que el email no se ha enviado.
+
+```env
+RESEND_API_KEY=tu_api_key_de_resend
+RESERVATION_FROM_EMAIL="Clinica Veterinaria Vetusta <reservas@tudominio.com>"
+```
+
+En Resend, el dominio del remitente debe estar verificado. En local ponlo en `.env`; en produccion ponlo en Vercel > Project Settings > Environment Variables y redepliega.
+
 ### Sincronizar reservas con Google Calendar
 
 La sincronizacion de reservas se ejecuta solo desde `server.js`. Las credenciales de Google no se exponen al frontend.
@@ -150,7 +161,7 @@ Zona horaria usada para los eventos: `Europe/Madrid`.
 
 Flujo:
 
-- Al confirmar una reserva, el backend crea el evento y guarda `google_event_id` en Supabase.
+- Al crear una reserva, queda confirmada automaticamente. Si el backend usa `SUPABASE_SERVICE_ROLE_KEY`, tambien crea el evento y guarda `google_event_id` en Supabase.
 - Si una reserva confirmada cambia de hora, el backend actualiza el evento existente.
 - Al cancelar una reserva, el backend elimina el evento y borra `google_event_id`.
 

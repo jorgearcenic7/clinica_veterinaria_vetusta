@@ -6,7 +6,7 @@ create table if not exists public.reservations (
   mascota text,
   servicio text,
   datetime text not null unique,
-  status text not null default 'pending',
+  status text not null default 'confirmed',
   notes text,
   worker_id uuid,
   google_event_id text,
@@ -14,12 +14,13 @@ create table if not exists public.reservations (
   google_synced_at timestamp,
   start_at timestamptz,
   end_at timestamptz,
+  client_id uuid references public.profiles(id) on delete set null,
   updated_at timestamp not null default now(),
   created_at timestamptz not null default now()
 );
 
 alter table public.reservations
-  add column if not exists status text not null default 'pending',
+  add column if not exists status text not null default 'confirmed',
   add column if not exists email text,
   add column if not exists notes text,
   add column if not exists worker_id uuid,
@@ -28,6 +29,7 @@ alter table public.reservations
   add column if not exists google_synced_at timestamp,
   add column if not exists start_at timestamptz,
   add column if not exists end_at timestamptz,
+  add column if not exists client_id uuid references public.profiles(id) on delete set null,
   add column if not exists updated_at timestamp not null default now();
 
 do $$
@@ -54,6 +56,13 @@ begin
   end if;
 end;
 $$;
+
+alter table public.reservations
+  alter column status set default 'confirmed';
+
+update public.reservations
+set status = 'confirmed'
+where status = 'pending';
 
 update public.reservations
 set
@@ -93,6 +102,9 @@ create index if not exists reservations_status_idx
 create index if not exists reservations_worker_id_idx
   on public.reservations (worker_id);
 
+create index if not exists reservations_client_id_idx
+  on public.reservations (client_id);
+
 create index if not exists reservations_google_event_id_idx
   on public.reservations (google_event_id);
 
@@ -127,6 +139,46 @@ begin
       and reservations.status <> 'cancelled';
 end;
 $$;
+
+create or replace function public.find_profile_id_by_email(p_email text)
+returns uuid
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select p.id
+  from auth.users as u
+  join public.profiles as p on p.id = u.id
+  where lower(u.email) = lower(trim(p_email))
+  limit 1;
+$$;
+
+create or replace function public.set_reservation_client_id()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if nullif(trim(coalesce(new.email, '')), '') is null then
+    new.client_id = null;
+  else
+    new.client_id = public.find_profile_id_by_email(new.email);
+  end if;
+
+  return new;
+end;
+$$;
+
+drop trigger if exists set_reservation_client_id_trigger on public.reservations;
+create trigger set_reservation_client_id_trigger
+  before insert or update of email on public.reservations
+  for each row execute function public.set_reservation_client_id();
+
+update public.reservations
+set client_id = public.find_profile_id_by_email(email)
+where email is not null;
 
 grant usage on schema public to anon, authenticated;
 revoke all on table public.reservations from anon;
@@ -165,6 +217,9 @@ drop policy if exists "Public can create reservations"
 drop policy if exists "Admin can read reservations"
   on public.reservations;
 
+drop policy if exists "Clients read own reservations"
+  on public.reservations;
+
 drop policy if exists "Admin can update reservations"
   on public.reservations;
 
@@ -182,6 +237,12 @@ create policy "Admin can read reservations"
   for select
   to authenticated
   using (public.is_admin());
+
+create policy "Clients read own reservations"
+  on public.reservations
+  for select
+  to authenticated
+  using (client_id = auth.uid());
 
 create policy "Admin can update reservations"
   on public.reservations

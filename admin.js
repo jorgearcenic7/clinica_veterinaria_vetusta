@@ -174,7 +174,7 @@ function createCalendarDay(day, weekReservations) {
 }
 
 function createCalendarEvent(reservation) {
-  const status = reservation.status || "pending";
+  const status = reservation.status || "confirmed";
   const button = document.createElement("button");
   button.type = "button";
   button.className = `calendar-event calendar-event-${status} ${reservation.id === selectedReservationId ? "active" : ""}`;
@@ -200,7 +200,7 @@ function renderReservationDetail() {
     return;
   }
 
-  const status = reservation.status || "pending";
+  const status = reservation.status || "confirmed";
   reservationDetailEl.classList.remove("hidden");
   reservationDetailEl.innerHTML = `
     <div>
@@ -213,14 +213,9 @@ function renderReservationDetail() {
       ${syncStatusMarkup(reservation)}
     </div>
     <div class="nav-actions">
-      <button class="secondary" type="button" data-confirm-reservation="${reservation.id}" ${status === "confirmed" ? "disabled" : ""}>Confirmar</button>
-      <button class="danger" type="button" data-cancel-reservation="${reservation.id}" ${status === "cancelled" ? "disabled" : ""}>Cancelar</button>
+      ${status === "cancelled" ? "" : `<button class="danger" type="button" data-cancel-reservation="${reservation.id}">Cancelar</button>`}
     </div>
   `;
-
-  reservationDetailEl.querySelectorAll("[data-confirm-reservation]").forEach((button) => {
-    button.addEventListener("click", () => updateReservationStatus(button.dataset.confirmReservation, "confirmed"));
-  });
 
   reservationDetailEl.querySelectorAll("[data-cancel-reservation]").forEach((button) => {
     button.addEventListener("click", () => updateReservationStatus(button.dataset.cancelReservation, "cancelled"));
@@ -590,12 +585,11 @@ async function updateReservationStatus(id, status) {
       throw new Error(data.error || "No se pudo actualizar la reserva.");
     }
 
-    const statusText = status === "confirmed" ? "confirmada" : "cancelada";
     await loadAll();
     const syncError = data.reservation?.googleSyncError || data.reservation?.google_sync_error;
     setStatus(
       statusEl,
-      syncError ? `Reserva ${statusText}. Error de sincronizacion con Google Calendar.` : `Reserva ${statusText}.`,
+      syncError ? "Reserva cancelada. Error de sincronizacion con Google Calendar." : "Reserva cancelada.",
       Boolean(syncError),
     );
   } catch (error) {
@@ -636,7 +630,7 @@ function statusLabel(status) {
 }
 
 function statusClass(status) {
-  return `badge-${status || "pending"}`;
+  return `badge-${status || "confirmed"}`;
 }
 
 function syncStatusMarkup(reservation) {
@@ -681,24 +675,60 @@ function formatWeekday(date) {
 }
 
 function reservationDateKey(reservation) {
-  return String(reservation.start_at || reservation.datetime || "").slice(0, 10);
+  return String(reservation.datetime || madridDateTimeParts(reservation.start_at).date || "").slice(0, 10);
 }
 
 function reservationStartTime(reservation) {
-  return String(reservation.start_at || reservation.datetime || "T00:00").slice(11, 16) || "00:00";
+  if (reservation.datetime) {
+    return String(reservation.datetime).slice(11, 16) || "00:00";
+  }
+
+  return madridDateTimeParts(reservation.start_at).time || "00:00";
 }
 
 function reservationEndTime(reservation) {
-  if (reservation.end_at) {
-    return String(reservation.end_at).slice(11, 16);
+  if (reservation.datetime) {
+    return addMinutesToTime(reservationStartTime(reservation), 30);
   }
 
-  return addMinutesToTime(reservationStartTime(reservation), 30);
+  return madridDateTimeParts(reservation.end_at).time || addMinutesToTime(reservationStartTime(reservation), 30);
 }
 
 function reservationStartMinutes(reservation) {
   const [hours, minutes] = reservationStartTime(reservation).split(":").map(Number);
   return (hours || 0) * 60 + (minutes || 0);
+}
+
+function madridDateTimeParts(value) {
+  if (!value) {
+    return { date: "", time: "" };
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    const text = String(value);
+    return {
+      date: text.slice(0, 10),
+      time: text.slice(11, 16),
+    };
+  }
+
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Europe/Madrid",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).formatToParts(date);
+  const byType = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+
+  return {
+    date: `${byType.year}-${byType.month}-${byType.day}`,
+    time: `${byType.hour}:${byType.minute}`,
+  };
 }
 
 function addMinutesToTime(time, minutesToAdd) {

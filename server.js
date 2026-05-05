@@ -499,7 +499,7 @@ async function readSupabaseReservations(month) {
     mascota: reservation.mascota,
     servicio: reservation.servicio,
     datetime: reservation.datetime,
-    status: reservation.status || "pending",
+    status: reservation.status || "confirmed",
     notes: reservation.notes,
     workerId: reservation.worker_id,
     googleEventId: reservation.google_event_id,
@@ -507,6 +507,7 @@ async function readSupabaseReservations(month) {
     googleSyncedAt: reservation.google_synced_at,
     startAt: reservation.start_at,
     endAt: reservation.end_at,
+    clientId: reservation.client_id,
     updatedAt: reservation.updated_at,
     createdAt: reservation.created_at,
   }));
@@ -526,7 +527,7 @@ async function readPublicSupabaseReservationSlots(month) {
 
   return (data || []).map((reservation) => ({
     datetime: reservation.datetime,
-    status: reservation.status || "pending",
+    status: reservation.status || "confirmed",
   }));
 }
 
@@ -547,6 +548,7 @@ function reservationSelectFields() {
     "google_synced_at",
     "start_at",
     "end_at",
+    "client_id",
     "updated_at",
     "created_at",
   ].join(",");
@@ -945,7 +947,7 @@ function mapReservationRow(reservation) {
     mascota: reservation.mascota,
     servicio: reservation.servicio,
     datetime: reservation.datetime,
-    status: reservation.status || "pending",
+    status: reservation.status || "confirmed",
     notes: reservation.notes,
     workerId: reservation.worker_id,
     googleEventId: reservation.google_event_id,
@@ -953,6 +955,7 @@ function mapReservationRow(reservation) {
     googleSyncedAt: reservation.google_synced_at,
     startAt: reservation.start_at,
     endAt: reservation.end_at,
+    clientId: reservation.client_id,
     updatedAt: reservation.updated_at,
     createdAt: reservation.created_at,
   };
@@ -968,32 +971,35 @@ async function saveReservation(reservation) {
   }
 
   const reservations = await readReservations(reservation.datetime.slice(0, 7));
-  reservations.push({
+  const savedReservation = {
     ...reservation,
     id: reservation.id,
-    status: "pending",
+    status: "confirmed",
     ...buildReservationTimestamps(reservation.datetime),
     createdAt: new Date().toISOString(),
-  });
+  };
+  reservations.push(savedReservation);
   await fs.writeFile(reservationsFilePath, JSON.stringify(reservations, null, 2));
-  return reservation;
+  return savedReservation;
 }
 
 async function saveSupabaseReservation(reservation) {
   const timestamps = buildReservationTimestamps(reservation.datetime);
+  const databaseReservation = {
+    id: reservation.id,
+    nombre: reservation.nombre,
+    telefono: reservation.telefono,
+    email: reservation.email || null,
+    mascota: reservation.mascota,
+    servicio: reservation.servicio,
+    datetime: reservation.datetime,
+    status: "confirmed",
+    start_at: timestamps.startAt,
+    end_at: timestamps.endAt,
+  };
   const { error } = await supabase
     .from("reservations")
-    .insert({
-      id: reservation.id,
-      nombre: reservation.nombre,
-      telefono: reservation.telefono,
-      email: reservation.email || null,
-      mascota: reservation.mascota,
-      servicio: reservation.servicio,
-      datetime: reservation.datetime,
-      start_at: timestamps.startAt,
-      end_at: timestamps.endAt,
-    });
+    .insert(databaseReservation);
 
   if (error) {
     if (error.code === "23505") {
@@ -1005,6 +1011,8 @@ async function saveSupabaseReservation(reservation) {
     throw new Error(`Supabase no pudo guardar la reserva: ${error.message}`);
   }
 
+  const calendarSync = await syncNewConfirmedReservation(databaseReservation);
+
   return {
     id: reservation.id,
     code: reservation.code,
@@ -1014,17 +1022,52 @@ async function saveSupabaseReservation(reservation) {
     mascota: reservation.mascota,
     servicio: reservation.servicio,
     datetime: reservation.datetime,
-    status: "pending",
+    status: "confirmed",
     notes: null,
     workerId: null,
-    googleEventId: null,
-    googleSyncError: null,
-    googleSyncedAt: null,
+    googleEventId: calendarSync.googleEventId,
+    googleSyncError: calendarSync.error,
+    googleSyncedAt: calendarSync.syncedAt,
     startAt: timestamps.startAt,
     endAt: timestamps.endAt,
     updatedAt: null,
     createdAt: new Date().toISOString(),
   };
+}
+
+async function syncNewConfirmedReservation(databaseReservation) {
+  if (!supabaseServiceRoleKey) {
+    return {
+      googleEventId: null,
+      error: null,
+      syncedAt: null,
+    };
+  }
+
+  const calendarSync = await syncReservationCalendar({
+    ...databaseReservation,
+    google_event_id: null,
+    google_synced_at: null,
+  }, databaseReservation);
+  const { error } = await supabase
+    .from("reservations")
+    .update({
+      google_event_id: calendarSync.googleEventId,
+      google_sync_error: calendarSync.error,
+      google_synced_at: calendarSync.syncedAt,
+    })
+    .eq("id", databaseReservation.id);
+
+  if (error) {
+    console.error("Reservation Google sync update error:", error);
+    return {
+      googleEventId: calendarSync.googleEventId,
+      error: error.message || calendarSync.error,
+      syncedAt: calendarSync.syncedAt,
+    };
+  }
+
+  return calendarSync;
 }
 
 function buildMonthAvailability(month, reservations) {
@@ -1150,7 +1193,7 @@ async function sendReservationEmailIfRequested(reservation, emailCopy) {
       requested: true,
       sent: false,
       pending: true,
-      message: "Reserva creada. El envio por email esta pendiente de configuracion.",
+      message: "Reserva creada. No se ha enviado la copia por email porque falta configurar RESEND_API_KEY en el backend.",
     };
   }
 
@@ -1164,7 +1207,7 @@ async function sendReservationEmailIfRequested(reservation, emailCopy) {
       body: JSON.stringify({
         from: reservationFromEmail,
         to: reservation.email,
-        subject: `Reserva solicitada ${reservation.code} - Clínica Veterinaria Vetusta`,
+        subject: `Reserva confirmada ${reservation.code} - Clínica Veterinaria Vetusta`,
         text: reservationEmailText(reservation),
         html: reservationEmailHtml(reservation),
       }),
@@ -1183,7 +1226,7 @@ async function sendReservationEmailIfRequested(reservation, emailCopy) {
       requested: true,
       sent: false,
       pending: true,
-      message: "Reserva creada. El envio por email esta pendiente de configuracion.",
+      message: "Reserva creada. No se ha podido enviar la copia por email. Revisa RESEND_API_KEY, RESERVATION_FROM_EMAIL y el dominio verificado en Resend.",
     };
   }
 }
@@ -1192,14 +1235,14 @@ function reservationEmailText(reservation) {
   return [
     `Hola ${reservation.nombre},`,
     "",
-    "Tu reserva esta solicitada en Clínica Veterinaria Vetusta.",
+    "Tu reserva esta confirmada en Clínica Veterinaria Vetusta.",
     `Codigo de reserva: ${reservation.code}`,
     `Fecha y hora: ${formatReservationDateTime(reservation.datetime)}`,
     `Mascota: ${formatPetType(reservation.mascota)}`,
     `Servicio: ${formatReservationServiceForCalendar(reservation.servicio)}`,
     `Telefono de la clinica: ${clinicPhone}`,
     "",
-    "Te contactaremos lo antes posible para confirmar definitivamente la cita.",
+    "Tu cita queda confirmada. Si necesitamos ajustar algun detalle, te contactaremos lo antes posible.",
   ].join("\n");
 }
 
@@ -1207,13 +1250,13 @@ function reservationEmailHtml(reservation) {
   return `
     <div style="font-family:Arial,sans-serif;color:#1b1c1c;line-height:1.5">
       <h1 style="color:#1b4332">Clínica Veterinaria Vetusta</h1>
-      <p>Hola ${escapeHtmlText(reservation.nombre)}, tu reserva está solicitada.</p>
+      <p>Hola ${escapeHtmlText(reservation.nombre)}, tu reserva está confirmada.</p>
       <p><strong>Código de reserva:</strong> ${escapeHtmlText(reservation.code)}</p>
       <p><strong>Fecha y hora:</strong> ${escapeHtmlText(formatReservationDateTime(reservation.datetime))}</p>
       <p><strong>Mascota:</strong> ${escapeHtmlText(formatPetType(reservation.mascota))}</p>
       <p><strong>Servicio:</strong> ${escapeHtmlText(formatReservationServiceForCalendar(reservation.servicio))}</p>
       <p><strong>Teléfono de la clínica:</strong> ${escapeHtmlText(clinicPhone)}</p>
-      <p>Te contactaremos lo antes posible para confirmar definitivamente la cita.</p>
+      <p>Tu cita queda confirmada. Si necesitamos ajustar algun detalle, te contactaremos lo antes posible.</p>
     </div>
   `;
 }
