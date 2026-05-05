@@ -24,7 +24,8 @@ const reservationsFilePath = process.env.VERCEL
   ? path.join(os.tmpdir(), "reservations.json")
   : path.join(__dirname, "reservations.json");
 const supabaseUrl = cleanEnvValue(process.env.SUPABASE_URL);
-const supabaseKey = cleanEnvValue(process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY);
+const supabaseServiceRoleKey = cleanEnvValue(process.env.SUPABASE_SERVICE_ROLE_KEY);
+const supabaseKey = cleanEnvValue(supabaseServiceRoleKey || process.env.SUPABASE_ANON_KEY);
 const supabaseAnonKey = cleanEnvValue(process.env.SUPABASE_ANON_KEY);
 const gaId = cleanEnvValue(process.env.NEXT_PUBLIC_GA_ID || process.env.VITE_GA_ID);
 const googleCalendarId = cleanEnvValue(process.env.GOOGLE_CALENDAR_ID || "clinicavetusta@gmail.com");
@@ -469,6 +470,10 @@ async function readReservations(month) {
 }
 
 async function readSupabaseReservations(month) {
+  if (!supabaseServiceRoleKey) {
+    return readPublicSupabaseReservationSlots(month);
+  }
+
   const [year, monthNumber] = month.split("-").map(Number);
   const startDate = `${month}-01T00:00`;
   const endDate = `${year}-${String(monthNumber + 1).padStart(2, "0")}-01T00:00`;
@@ -504,6 +509,24 @@ async function readSupabaseReservations(month) {
     endAt: reservation.end_at,
     updatedAt: reservation.updated_at,
     createdAt: reservation.created_at,
+  }));
+}
+
+async function readPublicSupabaseReservationSlots(month) {
+  const { data, error } = await supabase.rpc("get_reserved_reservation_slots", {
+    p_month: month,
+  });
+
+  if (error) {
+    throw new Error(
+      "Supabase no pudo leer reservas. Anade SUPABASE_SERVICE_ROLE_KEY al backend/Vercel o vuelve a ejecutar supabase-reservations.sql para crear la funcion publica de disponibilidad: "
+      + error.message,
+    );
+  }
+
+  return (data || []).map((reservation) => ({
+    datetime: reservation.datetime,
+    status: reservation.status || "pending",
   }));
 }
 

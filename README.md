@@ -115,6 +115,11 @@ El formulario de reserva usa un calendario real:
 
 Las reservas se guardan en Supabase si existen `SUPABASE_URL` y `SUPABASE_ANON_KEY` o `SUPABASE_SERVICE_ROLE_KEY` en el entorno. Si faltan esas variables, se usa `reservations.json` solo como fallback local de desarrollo.
 
+El calendario de disponibilidad necesita leer los huecos ya ocupados. Hay dos formas soportadas:
+
+- Recomendado en produccion: configurar `SUPABASE_SERVICE_ROLE_KEY` solo en el backend/Vercel.
+- Alternativa con anon key: ejecutar `supabase-reservations.sql`, que crea la funcion `get_reserved_reservation_slots` para devolver solo fecha y estado, sin exponer nombres, telefonos ni emails.
+
 Para crear la tabla en Supabase:
 
 1. Abre Supabase > SQL Editor.
@@ -124,9 +129,10 @@ Para crear la tabla en Supabase:
 ```env
 SUPABASE_URL=tu_url_de_supabase
 SUPABASE_ANON_KEY=tu_anon_key
+SUPABASE_SERVICE_ROLE_KEY=tu_service_role_key_solo_backend
 ```
 
-Para produccion, es preferible usar `SUPABASE_SERVICE_ROLE_KEY` solo en el backend/Vercel y ajustar las politicas RLS.
+No pongas nunca `SUPABASE_SERVICE_ROLE_KEY` en HTML o JavaScript del navegador.
 
 ### Sincronizar reservas con Google Calendar
 

@@ -99,11 +99,41 @@ create index if not exists reservations_google_event_id_idx
 create index if not exists reservations_google_synced_at_idx
   on public.reservations (google_synced_at);
 
+create or replace function public.get_reserved_reservation_slots(p_month text)
+returns table (
+  datetime text,
+  status text
+)
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  month_start text;
+  month_end text;
+begin
+  if p_month !~ '^\d{4}-\d{2}$' then
+    raise exception 'El mes debe tener formato YYYY-MM';
+  end if;
+
+  month_start := p_month || '-01T00:00';
+  month_end := to_char((p_month || '-01')::date + interval '1 month', 'YYYY-MM-DD') || 'T00:00';
+
+  return query
+    select reservations.datetime, reservations.status
+    from public.reservations
+    where reservations.datetime >= month_start
+      and reservations.datetime < month_end
+      and reservations.status <> 'cancelled';
+end;
+$$;
+
 grant usage on schema public to anon, authenticated;
 revoke all on table public.reservations from anon;
 revoke all on table public.reservations from authenticated;
 grant insert on table public.reservations to anon;
 grant select, update, delete on table public.reservations to authenticated;
+grant execute on function public.get_reserved_reservation_slots(text) to anon, authenticated;
 
 -- Recomendado para produccion:
 -- 1. Mantener RLS activado.
