@@ -1,86 +1,52 @@
-# Clinica Veterinaria Vetusta
+# Clínica Veterinaria Vetusta
 
-Web dinamica con Express. Ahora usa resenas locales para no depender de pago en Google Cloud, y queda preparada para activar Google Places API (New) en el futuro.
+Web dinámica para una clínica veterinaria en Oviedo. Incluye página pública, reseñas, formulario de reserva online, área privada de clientes, panel de administración, integración opcional con Supabase, envío de emails y sincronización opcional con Google Calendar.
 
-## Configuracion
+## Funcionalidades
 
-1. Instala Node.js 18 o superior.
-2. Crea un archivo `.env`.
-3. Deja `GOOGLE_ENABLE_LIVE_REVIEWS=false` para usar `reviews.local.json` sin llamadas a Google.
+- Página pública responsive con información de servicios, equipo, reseñas, contacto y mapa.
+- SEO local básico con metadata, JSON-LD `VeterinaryCare` y `FAQPage`.
+- Reserva online con calendario, horarios reales y bloqueo de huecos pasados u ocupados.
+- Área privada para clientes: login, mascotas, historial y documentación.
+- Panel de administración para gestionar clientes, mascotas, historiales y reservas.
+- Persistencia en Supabase con Row Level Security.
+- Envío opcional de copia de reserva por email mediante Resend.
+- Sincronización opcional de reservas confirmadas con Google Calendar.
+- Reseñas locales por defecto, con opción futura de activar Google Places API.
 
-Las coordenadas de la clinica ya estan configuradas:
+## Stack
 
-```text
-GOOGLE_PLACE_LATITUDE=43.36443719850797
-GOOGLE_PLACE_LONGITUDE=-5.833903884657452
-```
+- Node.js 18+
+- Express
+- Supabase
+- HTML, CSS con Tailwind CDN y JavaScript vanilla
+- Vercel para despliegue
 
-Con esas coordenadas, cuando actives Google en el futuro, el backend buscara automaticamente el negocio cercano de tipo `veterinary_care` y usara su Place ID para pedir las resenas. Si prefieres fijarlo manualmente, anade `GOOGLE_PLACE_ID` en `.env` y se saltara la busqueda por coordenadas.
-
-## Seguridad y limites de demo
-
-`.env` esta ignorado por Git y no debe subirse nunca. No se incluye `.env.example` para evitar publicar plantillas de configuracion.
-
-La clave de demostracion de Maps no esta pensada para produccion. Ahora las llamadas reales a Google estan apagadas:
-
-```env
-REVIEWS_CACHE_TTL_SECONDS=21600
-GOOGLE_DAILY_REQUEST_LIMIT=25
-GOOGLE_ENABLE_LIVE_REVIEWS=false
-```
-
-- `REVIEWS_CACHE_TTL_SECONDS`: guarda la respuesta en memoria durante 6 horas.
-- `GOOGLE_DAILY_REQUEST_LIMIT`: limite local de llamadas reales a Google por dia.
-- `GOOGLE_ENABLE_LIVE_REVIEWS=false`: corta todas las llamadas reales a Google y usa `reviews.local.json`.
-
-El contador local se guarda en `.google-usage.json`, tambien ignorado por Git.
-
-## Activar Google Places en el futuro
-
-1. Activa facturacion en Google Cloud.
-2. Habilita Places API (New).
-3. Pon una API key restringida en `.env`.
-4. Cambia:
-
-```env
-GOOGLE_ENABLE_LIVE_REVIEWS=true
-```
-
-5. Reinicia el servidor.
-
-## Ejecutar en localhost
+## Instalación local
 
 ```bash
 npm install
 npm run dev
 ```
 
-Abre:
+Abre la web en:
 
 ```text
 http://127.0.0.1:3000
 ```
 
-El endpoint dinamico queda disponible en:
+Endpoints útiles:
 
 ```text
 http://127.0.0.1:3000/api/google-reviews
+http://127.0.0.1:3000/api/availability?month=2026-05
 ```
 
-La API key se lee solo desde `.env` en el backend. No se inyecta en el HTML.
+## Variables de entorno
 
-## Publicar en Vercel de forma privada
+Crea un archivo `.env` en local. No subas `.env` a GitHub.
 
-El proyecto ya incluye `vercel.json` y esta preparado para desplegar `server.js` como funcion serverless en Vercel.
-
-1. Sube los ultimos cambios a GitHub.
-2. Entra en https://vercel.com/new.
-3. Importa el repositorio `jorgearcenic7/clinica_veterinaria_vetusta`.
-4. Framework Preset: `Other`.
-5. Build Command: dejar vacio.
-6. Output Directory: dejar vacio.
-7. Install Command: `npm install`.
-8. En Environment Variables, anade como minimo:
+### Mínimo recomendado para desarrollo
 
 ```env
 GOOGLE_ENABLE_LIVE_REVIEWS=false
@@ -88,68 +54,59 @@ REVIEWS_CACHE_TTL_SECONDS=21600
 GOOGLE_DAILY_REQUEST_LIMIT=25
 ```
 
-No subas `.env` a GitHub. Si en el futuro activas Google Places, anade `GOOGLE_PLACES_API_KEY` solo en las variables de entorno de Vercel.
+Con esta configuración, la web usa reseñas locales y no hace llamadas reales a Google Places.
 
-### Privacidad
-
-Si el repositorio es privado en GitHub, el codigo no sera publico. Eso no significa automaticamente que la URL desplegada sea privada.
-
-Para que la web desplegada sea privada en Vercel:
-
-- En el proyecto de Vercel, entra en Settings > Deployment Protection.
-- Activa Vercel Authentication.
-- En plan Hobby, Standard Protection protege previews y URLs de deployment, pero el dominio de produccion sigue siendo publico.
-- Para proteger tambien produccion, necesitas All Deployments, disponible en planes Pro/Enterprise.
-
-Mientras quieras mantenerla privada sin pagar, usa una Preview Deployment protegida y no compartas ni promociones el dominio de produccion.
-
-## Reservas online
-
-El formulario de reserva usa un calendario real:
-
-- Lunes a viernes: 10:30-13:30 y 17:00-20:00.
-- Sabados: 11:00-13:30.
-- Domingos: cerrado.
-- Huecos de 30 minutos.
-- Los horarios reservados aparecen en rojo y no se pueden elegir.
-
-Las reservas se guardan en Supabase si existen `SUPABASE_URL` y `SUPABASE_ANON_KEY` o `SUPABASE_SERVICE_ROLE_KEY` en el entorno. Si faltan esas variables, se usa `reservations.json` solo como fallback local de desarrollo.
-
-El calendario de disponibilidad necesita leer los huecos ya ocupados. Hay dos formas soportadas:
-
-- Recomendado en produccion: configurar `SUPABASE_SERVICE_ROLE_KEY` solo en el backend/Vercel.
-- Alternativa con anon key: ejecutar `supabase-reservations.sql`, que crea la funcion `get_reserved_reservation_slots` para devolver solo fecha y estado, sin exponer nombres, telefonos ni emails.
-
-Para crear la tabla en Supabase:
-
-1. Abre Supabase > SQL Editor.
-2. Ejecuta el contenido de `supabase-reservations.sql`.
-3. En Vercel, anade estas variables:
+### Supabase
 
 ```env
-SUPABASE_URL=tu_url_de_supabase
-SUPABASE_ANON_KEY=tu_anon_key
+SUPABASE_URL=https://TU-PROYECTO.supabase.co
+SUPABASE_ANON_KEY=tu_anon_key_publica
 SUPABASE_SERVICE_ROLE_KEY=tu_service_role_key_solo_backend
 ```
 
-No pongas nunca `SUPABASE_SERVICE_ROLE_KEY` en HTML o JavaScript del navegador.
+Notas:
 
-### Enviar copia de reserva por email
+- `SUPABASE_ANON_KEY` es pública y puede usarse en el frontend con RLS.
+- `SUPABASE_SERVICE_ROLE_KEY` nunca debe ir en HTML ni JavaScript del navegador.
+- Si falta Supabase, el backend puede usar `reservations.json` como fallback local de desarrollo.
 
-La casilla "Quiero recibir una copia de la reserva por email" usa Resend desde el backend. Si no configuras estas variables, la reserva se crea igualmente, pero se muestra un aviso indicando que el email no se ha enviado.
+### Emails con Resend
 
 ```env
 RESEND_API_KEY=tu_api_key_de_resend
-RESERVATION_FROM_EMAIL="Clinica Veterinaria Vetusta <reservas@tudominio.com>"
+RESERVATION_FROM_EMAIL="Clínica Veterinaria Vetusta <reservas@tudominio.com>"
 ```
 
-En Resend, el dominio del remitente debe estar verificado. En local ponlo en `.env`; en produccion ponlo en Vercel > Project Settings > Environment Variables y redepliega.
+Si estas variables no existen, la reserva se crea igualmente, pero no se envía copia por email.
 
-### Sincronizar reservas con Google Calendar
+### Google Places API
 
-La sincronizacion de reservas se ejecuta solo desde `server.js`. Las credenciales de Google no se exponen al frontend.
+Por defecto las reseñas reales están desactivadas:
 
-Comparte el calendario de Google con el email de la service account y anade estas variables al entorno:
+```env
+GOOGLE_ENABLE_LIVE_REVIEWS=false
+```
+
+Para activar Google Places en el futuro:
+
+```env
+GOOGLE_ENABLE_LIVE_REVIEWS=true
+GOOGLE_PLACES_API_KEY=tu_api_key_restringida
+GOOGLE_PLACE_LATITUDE=43.36443719850797
+GOOGLE_PLACE_LONGITUDE=-5.833903884657452
+GOOGLE_PLACE_SEARCH_RADIUS_METERS=80
+GOOGLE_LANGUAGE_CODE=es
+```
+
+También puedes fijar manualmente el Place ID:
+
+```env
+GOOGLE_PLACE_ID=tu_place_id
+```
+
+### Google Calendar
+
+La sincronización se ejecuta solo en el backend.
 
 ```env
 GOOGLE_CALENDAR_ID=clinicavetusta@gmail.com
@@ -157,59 +114,58 @@ GOOGLE_CLIENT_EMAIL=service-account@proyecto.iam.gserviceaccount.com
 GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
 ```
 
-Zona horaria usada para los eventos: `Europe/Madrid`.
+Antes de usarlo, comparte el calendario de Google con el email de la service account.
 
-Flujo:
+### Analytics
 
-- Al crear una reserva, queda confirmada automaticamente. Si el backend usa `SUPABASE_SERVICE_ROLE_KEY`, tambien crea el evento y guarda `google_event_id` en Supabase.
-- Si una reserva confirmada cambia de hora, el backend actualiza el evento existente.
-- Al cancelar una reserva, el backend elimina el evento y borra `google_event_id`.
-
-## Area privada de clientes
-
-Se han anadido tres paginas:
-
-- `/auth`: registro, login y recuperacion de contrasena.
-- `/dashboard`: panel privado del cliente para ver mascotas, historial y proximas vacunas/tratamientos.
-- `/dashboard/pets/:id`: ficha privada de cada mascota con historial oficial y documentacion.
-- `/admin`: panel privado del veterinario para gestionar clientes, mascotas e historiales.
-
-Archivos creados o modificados:
-
-- `auth.html`, `dashboard.html`, `admin.html`
-- `pet-detail.html`, `auth.js`, `dashboard.js`, `pet-detail.js`, `admin.js`, `supabase-client.js`
-- `client-area.css`
-- `supabase-client-area.sql`
-- `server.js`, `code.html`, `vercel.json`
-
-### Variables de entorno
-
-El frontend solo recibe la clave publica `anon`. No pongas nunca la service role key en HTML o JavaScript del navegador.
+El proyecto ya deja preparado GA4 desde el backend:
 
 ```env
-SUPABASE_URL=https://TU-PROYECTO.supabase.co
-SUPABASE_ANON_KEY=tu_anon_key_publica
+NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
 ```
 
-Puedes seguir usando `SUPABASE_SERVICE_ROLE_KEY` en el backend para las reservas si quieres, pero el area privada funciona con `SUPABASE_ANON_KEY` y RLS.
+También acepta:
 
-### Crear tablas y politicas RLS
+```env
+VITE_GA_ID=G-XXXXXXXXXX
+```
 
-1. Entra en Supabase > SQL Editor.
-2. Ejecuta completo el archivo `supabase-client-area.sql`.
-3. Ve a Authentication > URL Configuration.
-4. Anade tu dominio local y de produccion a Site URL / Redirect URLs, por ejemplo:
+Si no hay ID, `/analytics.js` devuelve un script vacío.
+
+### Otras variables
+
+```env
+PORT=3000
+CLINIC_PHONE="985 20 65 58"
+```
+
+## Base de datos Supabase
+
+Hay dos archivos SQL principales:
+
+- `supabase-reservations.sql`: tabla de reservas, índices, políticas RLS y función de disponibilidad pública.
+- `supabase-client-area.sql`: perfiles, mascotas, historiales, documentos, storage privado y políticas RLS del área privada.
+
+Para configurar Supabase:
+
+1. Crea un proyecto en Supabase.
+2. Abre SQL Editor.
+3. Ejecuta completo `supabase-reservations.sql`.
+4. Ejecuta completo `supabase-client-area.sql`.
+5. En Authentication > URL Configuration, añade tus URLs locales y de producción.
+
+Ejemplos de URLs:
 
 ```text
 http://127.0.0.1:3000
 http://127.0.0.1:3000/auth
 http://127.0.0.1:3000/dashboard
+https://tu-dominio.com
 https://tu-dominio.com/auth
 https://tu-dominio.com/dashboard
 ```
 
-5. Crea una cuenta desde `/auth`.
-6. Convierte esa cuenta en admin desde SQL Editor:
+Para convertir una cuenta en admin:
 
 ```sql
 update public.profiles
@@ -219,31 +175,112 @@ where id = 'UUID_DEL_USUARIO';
 
 Puedes encontrar el UUID en Supabase > Authentication > Users.
 
-### Seguridad incluida
+## Reservas online
 
-- `profiles`, `pets`, `pet_records`, `pet_documents` y `document_upload_logs` tienen RLS activo.
-- Los clientes autenticados solo leen su perfil, sus mascotas y los registros de sus mascotas.
-- Los clientes pueden cambiar la imagen de sus propias mascotas actualizando solo `pets.image_url`; un trigger impide modificar datos oficiales.
-- Los clientes pueden ver documentos asociados a sus mascotas, pero no pueden subirlos ni borrarlos; la documentacion la gestiona solo el admin/veterinario.
-- Los clientes no pueden editar datos medicos oficiales ni `pet_records`.
-- Los admins pueden leer, crear, editar y borrar mascotas, historiales y documentos.
-- En `/admin`, las mascotas se crean para el cliente seleccionado: `pets.owner_id` es el `id` del cliente, no el `auth.uid()` del veterinario/admin.
-- Los buckets `pet-images` y `pet-documents` son privados y se consultan con URLs firmadas.
-- Los documentos estan limitados a JPG, PNG, WEBP y PDF, con un maximo de 10MB.
-- Las imagenes de mascota solo aceptan JPG, PNG o WEBP, con un maximo de 5MB en frontend, y se guardan en `pet-images` con path `{ownerId}/{petId}/{timestamp}-{nombre}`. La base de datos guarda solo ese path relativo en `pets.image_url`.
-- El registro y cambio de contrasena exigen contrasena fuerte: minimo 12 caracteres, mayuscula, minuscula, numero y simbolo.
-- Los cambios de `role` quedan bloqueados para usuarios que no sean admin mediante trigger en Supabase.
-- Las paginas privadas se sirven con `Cache-Control: no-store`.
-- El frontend usa solo `SUPABASE_ANON_KEY`; no uses `SUPABASE_SERVICE_ROLE_KEY` en HTML ni JavaScript del navegador.
-- El perfil se crea automaticamente al registrarse mediante trigger sobre `auth.users`.
+Horarios configurados:
 
-Si ya ejecutaste una version anterior de `supabase-client-area.sql`, vuelve a ejecutarlo completo para aplicar `document_upload_logs`, validaciones de Storage, trigger de rol, `set_pet_image` y politicas actualizadas.
+- Lunes a viernes: 10:30-13:30 y 17:00-20:00.
+- Sábados: 11:00-13:30.
+- Domingos: cerrado.
+- Huecos de 30 minutos.
+- Cirugía ocupa 60 minutos.
 
-### Ejecutar
+El calendario:
 
-```bash
-npm install
-npm run dev
+- Muestra días pasados como no disponibles.
+- Bloquea horas pasadas del día actual.
+- Marca huecos ocupados.
+- Evita solapamientos.
+- Revalida la fecha y hora también en el backend.
+
+Zona horaria usada para reservas y Google Calendar:
+
+```text
+Europe/Madrid
 ```
 
-Abre `http://127.0.0.1:3000/auth`.
+## Rutas principales
+
+```text
+/                      Página pública
+/auth                  Registro, login y recuperación de contraseña
+/dashboard             Área privada del cliente
+/dashboard/pets/:id    Ficha privada de mascota
+/admin                 Panel de administración
+```
+
+## Despliegue en Vercel
+
+El proyecto incluye `vercel.json` y está preparado para desplegar `server.js`.
+
+Configuración recomendada:
+
+- Framework Preset: `Other`
+- Build Command: vacío
+- Output Directory: vacío
+- Install Command: `npm install`
+
+Después añade las variables de entorno necesarias en:
+
+```text
+Vercel > Project Settings > Environment Variables
+```
+
+Variables mínimas para producción con Supabase:
+
+```env
+SUPABASE_URL=https://TU-PROYECTO.supabase.co
+SUPABASE_ANON_KEY=tu_anon_key_publica
+SUPABASE_SERVICE_ROLE_KEY=tu_service_role_key_solo_backend
+GOOGLE_ENABLE_LIVE_REVIEWS=false
+REVIEWS_CACHE_TTL_SECONDS=21600
+GOOGLE_DAILY_REQUEST_LIMIT=25
+```
+
+## Seguridad
+
+- No subas `.env`, claves privadas ni service role keys a GitHub.
+- Usa `SUPABASE_SERVICE_ROLE_KEY` solo en backend/Vercel.
+- El frontend recibe únicamente `SUPABASE_ANON_KEY`.
+- Las tablas privadas usan Row Level Security.
+- Las páginas privadas se sirven con `Cache-Control: no-store`.
+- Los buckets `pet-images` y `pet-documents` son privados.
+- Los documentos se sirven mediante URLs firmadas.
+- El registro exige contraseña fuerte.
+- Los cambios de rol están protegidos por trigger en Supabase.
+- Las reservas se validan en frontend y backend.
+
+## Archivos importantes
+
+```text
+server.js                    Backend Express y APIs
+code.html                    Página pública
+booking.js                   Calendario y formulario de reservas
+reviews.js                   Carga de reseñas
+i18n.js                      Traducciones
+auth.html / auth.js          Login y registro
+dashboard.html / dashboard.js Área privada del cliente
+admin.html / admin.js        Panel de administración
+supabase-client.js           Configuración pública de Supabase
+supabase-reservations.sql    SQL de reservas
+supabase-client-area.sql     SQL del área privada
+client-area.css              Estilos del área privada
+vercel.json                  Configuración de despliegue
+```
+
+## Notas para repositorio público
+
+Este repositorio no debe incluir:
+
+- `.env`
+- `.google-usage.json`
+- `reservations.json` con datos reales
+- claves privadas de Google
+- service role keys de Supabase
+- API keys de Resend o Google Places
+
+Si publicas capturas o datos de prueba, revisa que no contengan nombres, teléfonos, emails ni información médica real.
+
+## Licencia
+
+Proyecto desarrollado para Clínica Veterinaria Vetusta. Añade aquí la licencia que quieras aplicar antes de publicar el repositorio.
