@@ -283,4 +283,25 @@ Si publicas capturas o datos de prueba, revisa que no contengan nombres, teléfo
 
 ## Licencia
 
-Proyecto desarrollado para Clínica Veterinaria Vetusta. Añade aquí la licencia que quieras aplicar antes de publicar el repositorio.
+Copyright (c) 2025 Clínica Veterinaria Vetusta
+
+Todos los derechos reservados.
+
+Este proyecto y su código fuente han sido desarrollados para Clínica Veterinaria Vetusta. Queda prohibida la reproducción, distribución, modificación o reutilización total o parcial del código, diseño, textos, imágenes o cualquier otro recurso del proyecto sin autorización previa por escrito.
+
+## Posibles mejoras futuras
+
+- Integración completa con Google Analytics 4, con eventos personalizados para llamadas, reservas y formularios.
+- Configuración de Google Search Console y seguimiento periódico de cobertura, rendimiento y consultas locales.
+- Evolución del sistema de gestión de citas con reglas avanzadas, reprogramación, cancelaciones y disponibilidad por profesional.
+- Panel de administración para editar contenidos públicos sin tocar el código.
+- Blog veterinario optimizado para SEO local con artículos sobre salud, prevención y cuidados de perros y gatos en Oviedo.
+- Páginas individuales para cada servicio veterinario, como vacunación, urgencias, cirugía o peluquería.
+- Optimización avanzada de Core Web Vitals, incluyendo revisión de carga de fuentes, imágenes críticas y scripts externos.
+- Sistema automático de recordatorios de vacunas, revisiones y tratamientos preventivos.
+- Integración con WhatsApp Business para contacto rápido, avisos y confirmaciones.
+- Ampliación del área privada para clientes con más autoservicio, documentos descargables y seguimiento de citas.
+- Ampliación del soporte multiidioma, especialmente español/inglés, con contenido SEO adaptado por idioma.
+- Integración con CRM o herramientas de email marketing para comunicaciones segmentadas.
+- Sistema dinámico de reseñas de Google con controles de caché, moderación visual y métricas de rendimiento.
+- Sincronización automática de reseñas mediante Google Business Profile API si el acceso y las políticas de Google lo permiten.
