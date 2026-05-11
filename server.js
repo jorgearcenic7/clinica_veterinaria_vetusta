@@ -1093,7 +1093,8 @@ async function syncNewConfirmedReservation(databaseReservation) {
 function buildMonthAvailability(month, reservations) {
   const [year, monthNumber] = month.split("-").map(Number);
   const daysInMonth = new Date(year, monthNumber, 0).getDate();
-  const todayKey = toDateKey(new Date());
+  const nowDateTimeKey = getMadridNowDateTimeKey();
+  const todayKey = nowDateTimeKey.slice(0, 10);
   const days = [];
 
   for (let day = 1; day <= daysInMonth; day += 1) {
@@ -1102,6 +1103,7 @@ function buildMonthAvailability(month, reservations) {
     const schedule = getScheduleForDate(date);
     const slots = buildSlots(dateKey, schedule).map((slot) => ({
       ...slot,
+      isPast: slot.datetime <= nowDateTimeKey,
       reserved: reservations.some((reservation) => reservationOccupiesSlot(reservation, slot.datetime)),
     }));
 
@@ -1111,7 +1113,7 @@ function buildMonthAvailability(month, reservations) {
       weekday: date.getDay(),
       isOpen: schedule.length > 0,
       isPast: dateKey < todayKey,
-      fullyBooked: slots.length > 0 && slots.every((slot) => slot.reserved),
+      fullyBooked: slots.length > 0 && slots.every((slot) => slot.reserved || slot.isPast),
       slots,
     });
   }
@@ -1160,9 +1162,8 @@ function isBookableDateTime(datetime, service = "consulta") {
   const [dateKey, time] = datetime.split("T");
   const [year, month, day] = dateKey.split("-").map(Number);
   const date = new Date(year, month - 1, day);
-  const todayKey = toDateKey(new Date());
 
-  if (dateKey < todayKey) {
+  if (datetime <= getMadridNowDateTimeKey()) {
     return false;
   }
 
@@ -1174,6 +1175,20 @@ function isBookableDateTime(datetime, service = "consulta") {
     && endMinutes <= toMinutes(end)
     && (startMinutes - toMinutes(start)) % 30 === 0
   ));
+}
+
+function getMadridNowDateTimeKey() {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/Madrid",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(new Date());
+  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${values.year}-${values.month}-${values.day}T${values.hour}:${values.minute}`;
 }
 
 function reservationOverlaps(existingReservation, requestedReservation) {

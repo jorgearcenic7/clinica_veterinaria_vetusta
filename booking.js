@@ -41,6 +41,7 @@ function initBookingCalendar() {
   serviceSelect?.addEventListener("change", handleServiceChange);
   confirmationContainer?.addEventListener("click", handleConfirmationAction);
   document.addEventListener("vetusta:languagechange", renderBookingTexts);
+  window.setInterval(refreshCurrentSlotAvailability, 60 * 1000);
   updateEmailField();
   loadAvailability();
 }
@@ -248,6 +249,23 @@ function handleServiceChange() {
   renderSlots();
 }
 
+function refreshCurrentSlotAvailability() {
+  if (!bookingState.availability) {
+    return;
+  }
+
+  if (
+    bookingState.selectedSlot
+    && slotAvailabilityForSelectedService(bookingState.selectedSlot) !== "available"
+  ) {
+    bookingState.selectedSlot = null;
+    hiddenDateInput.value = "";
+  }
+
+  renderCalendar();
+  renderSlots();
+}
+
 function selectedServiceDurationMinutes() {
   return serviceSelect?.value === "cirugia" ? 60 : 30;
 }
@@ -255,6 +273,10 @@ function selectedServiceDurationMinutes() {
 function slotAvailabilityForSelectedService(slot) {
   if (!bookingState.selectedDay || slot.reserved) {
     return "reserved";
+  }
+
+  if (slot.isPast || isPastSlot(slot)) {
+    return "unavailable";
   }
 
   const neededSlots = selectedServiceDurationMinutes() / 30;
@@ -272,7 +294,11 @@ function slotAvailabilityForSelectedService(slot) {
     return "unavailable";
   }
 
-  return requiredSlots.some((item) => item.reserved) ? "reserved" : "available";
+  return requiredSlots.some((item) => item.reserved)
+    ? "reserved"
+    : requiredSlots.some((item) => item.isPast || isPastSlot(item))
+      ? "unavailable"
+      : "available";
 }
 
 function formatSlotLabel(slot) {
@@ -294,6 +320,14 @@ async function submitBooking(event) {
   event.preventDefault();
 
   if (!bookingState.selectedSlot) {
+    setStatus(translate("booking.selectSlot"));
+    return;
+  }
+
+  if (slotAvailabilityForSelectedService(bookingState.selectedSlot) !== "available") {
+    bookingState.selectedSlot = null;
+    hiddenDateInput.value = "";
+    renderSlots();
     setStatus(translate("booking.selectSlot"));
     return;
   }
@@ -453,6 +487,18 @@ function toDateKey(date) {
 function parseDateKey(dateKey) {
   const [year, month, day] = dateKey.split("-").map(Number);
   return new Date(year, month - 1, day);
+}
+
+function isPastSlot(slot) {
+  if (!slot?.datetime) {
+    return false;
+  }
+
+  return slot.datetime <= toLocalDateTimeKey(new Date());
+}
+
+function toLocalDateTimeKey(date) {
+  return `${toDateKey(date)}T${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
 }
 
 function capitalize(text) {
