@@ -49,7 +49,7 @@ GET /api/availability?month=YYYY-MM
 
 ## Variables De Entorno
 
-Crea un archivo `.env` en local. No subas `.env` a GitHub.
+Copia `.env.example` como `.env` en local y completa solo las integraciones que vayas a usar. No subas `.env` a GitHub.
 
 ### Base
 
@@ -232,9 +232,16 @@ GOOGLE_DAILY_REQUEST_LIMIT=25
 - No subas `.env`, claves privadas ni secretos de backend al repositorio.
 - Mantén `SUPABASE_SERVICE_ROLE_KEY` exclusivamente en entorno de servidor.
 - Usa RLS en Supabase para proteger los datos privados.
+- Ejecuta operaciones sensibles desde el backend, no desde JavaScript del navegador.
 - Sirve páginas privadas sin caché persistente.
 - Valida reservas tanto en frontend como en backend.
 - Revisa que capturas o datos de prueba no incluyan información real de clientes, mascotas o historiales médicos.
+
+## Nota Para Portfolio
+
+Este repositorio puede usarse como demostración técnica o portfolio de un proyecto fullstack para una clínica veterinaria. Algunas integraciones requieren configuración externa en servicios como Supabase, Vercel, Resend o Google Cloud.
+
+No se incluyen secretos, credenciales reales ni datos privados de clientes. Antes de publicar forks, capturas o datos de prueba, revisa que no contengan información sensible.
 
 ## Estructura Del Proyecto
 
@@ -260,6 +267,7 @@ vercel.json                   Configuración de despliegue
 Este repositorio no debe incluir:
 
 - `.env`
+- archivos `.pem`, `.key` o `.p12`
 - `.google-usage.json`
 - `reservations.json` con datos reales
 - claves privadas de Google
