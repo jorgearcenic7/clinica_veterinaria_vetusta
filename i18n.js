@@ -51,6 +51,8 @@
       "team.patricia.text": "Con más de 15 años de experiencia, Patricia lidera el equipo con una filosofía basada en la honestidad y el trato humano. Su pasión es el bienestar integral de cada paciente.",
       "team.victor.role": "Auxiliar Veterinario",
       "team.victor.text": "Especialista en cuidados preventivos y manejo amable. Víctor se asegura de que cada mascota se sienta tranquila y segura durante su visita a la clínica.",
+      "reviews.googleVerified": "Opiniones verificadas en Google",
+      "reviews.googleReview": "Reseña de Google",
       "reviews.title": "Lo que dicen de nosotros",
       "reviews.one": "\"Víctor es un veterinario de verdad, se nota la vocación y el cariño que le pone. Llevamos a nuestro perro desde cachorro y siempre ha sido un acierto.\"",
       "reviews.two": "\"Trato inigualable. Tuvimos una urgencia un sábado y nos atendieron con muchísima empatía y profesionalidad. Salvaron a nuestra gata.\"",
@@ -173,6 +175,8 @@
       "team.patricia.text": "With more than 15 years of experience, Patricia leads the team with a philosophy based on honesty and human care. Her passion is every patient's overall wellbeing.",
       "team.victor.role": "Veterinary Assistant",
       "team.victor.text": "A specialist in preventive care and gentle handling, Víctor makes sure every pet feels calm and safe during their visit.",
+      "reviews.googleVerified": "Verified Google reviews",
+      "reviews.googleReview": "Google review",
       "reviews.title": "What people say about us",
       "reviews.one": "\"Víctor is a real veterinarian; you can feel the vocation and care he puts into his work. We have brought our dog since he was a puppy and it has always been the right choice.\"",
       "reviews.two": "\"Unbeatable care. We had an emergency on a Saturday and they helped us with so much empathy and professionalism. They saved our cat.\"",
@@ -295,6 +299,8 @@
       "team.patricia.text": "Avec plus de 15 ans d'expérience, Patricia dirige l'équipe avec une philosophie fondée sur l'honnêteté et l'approche humaine. Sa passion est le bien-être global de chaque patient.",
       "team.victor.role": "Auxiliaire vétérinaire",
       "team.victor.text": "Spécialiste des soins préventifs et de la manipulation douce, Víctor veille à ce que chaque animal se sente calme et en sécurité pendant sa visite.",
+      "reviews.googleVerified": "Avis vérifiés sur Google",
+      "reviews.googleReview": "Avis Google",
       "reviews.title": "Ce que l'on dit de nous",
       "reviews.one": "\"Víctor est un vrai vétérinaire ; on sent sa vocation et l'attention qu'il met dans son travail. Nous amenons notre chien depuis qu'il est chiot et cela a toujours été un bon choix.\"",
       "reviews.two": "\"Un accueil incomparable. Nous avons eu une urgence un samedi et ils nous ont aidés avec beaucoup d'empathie et de professionnalisme. Ils ont sauvé notre chatte.\"",
@@ -417,6 +423,8 @@
       "team.patricia.text": "Com mais de 15 anos de experiência, Patricia lidera a equipa com uma filosofia baseada na honestidade e no atendimento humano. A sua paixão é o bem-estar integral de cada paciente.",
       "team.victor.role": "Auxiliar Veterinário",
       "team.victor.text": "Especialista em cuidados preventivos e manuseamento gentil, Víctor garante que cada animal se sinta tranquilo e seguro durante a visita.",
+      "reviews.googleVerified": "Opiniões verificadas no Google",
+      "reviews.googleReview": "Opinião do Google",
       "reviews.title": "O que dizem sobre nós",
       "reviews.one": "\"Víctor é um veterinário de verdade; nota-se a vocação e o carinho que coloca no trabalho. Trazemos o nosso cão desde cachorro e sempre foi uma boa escolha.\"",
       "reviews.two": "\"Atendimento imbatível. Tivemos uma urgência num sábado e ajudaram-nos com muita empatia e profissionalismo. Salvaram a nossa gata.\"",
@@ -573,6 +581,7 @@
       ["[data-google-hero-copy]", "hero.reviewCopy"],
       ["[data-google-review-count]", "hero.reviewCount"],
       ["[data-google-trust-copy]", "trust.reviews"],
+      ["[data-google-section-summary]", "reviews.googleVerified"],
     ];
 
     dynamicGoogleCopies.forEach(([selector, key]) => {

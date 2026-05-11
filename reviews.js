@@ -3,6 +3,7 @@
   const countElement = document.querySelector("[data-google-review-count]");
   const heroCopyElement = document.querySelector("[data-google-hero-copy]");
   const trustCopyElement = document.querySelector("[data-google-trust-copy]");
+  const sectionSummaryElement = document.querySelector("[data-google-section-summary]");
   const reviewsListElement = document.querySelector("[data-google-reviews-list]");
   const mapsLinkElement = document.querySelector("[data-google-maps-link]");
 
@@ -35,6 +36,10 @@
       trustCopyElement.textContent = `Más de ${formattedCount} reseñas ${formattedRating || 5} estrellas`;
     }
 
+    if (reviewCount && sectionSummaryElement) {
+      sectionSummaryElement.textContent = `${formattedRating || 5}/5 en Google · ${formattedCount} reseñas`;
+    }
+
     if (data.googleMapsUri && mapsLinkElement) {
       mapsLinkElement.href = data.googleMapsUri;
     }
@@ -63,6 +68,26 @@ function createReviewCard(review) {
     stars.append(star);
   }
 
+  const source = document.createElement("div");
+  source.className = "flex flex-wrap items-center justify-between gap-4";
+
+  const sourceBrand = document.createElement("div");
+  sourceBrand.className = "flex items-center gap-3";
+
+  const googleLogo = document.createElement("img");
+  googleLogo.src = "/google-logo.svg";
+  googleLogo.alt = "Google";
+  googleLogo.loading = "lazy";
+  googleLogo.className = "h-7 w-7 shrink-0";
+
+  const sourceText = document.createElement("span");
+  sourceText.className = "font-label-caps text-label-caps text-on-surface-variant";
+  sourceText.dataset.i18n = "reviews.googleReview";
+  sourceText.textContent = window.VetustaI18n?.t("reviews.googleReview") || "Reseña de Google";
+
+  sourceBrand.append(googleLogo, sourceText);
+  source.append(sourceBrand, stars);
+
   const text = document.createElement("p");
   text.className = "font-body-md text-body-md text-on-surface-variant flex-grow italic";
   text.textContent = `“${review.text}”`;
@@ -85,7 +110,7 @@ function createReviewCard(review) {
   }
 
   footer.append(initials, author);
-  card.append(stars, text, footer);
+  card.append(source, text, footer);
 
   return card;
 }
