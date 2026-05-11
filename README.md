@@ -1,9 +1,9 @@
 # Clínica Veterinaria Vetusta
 
-![Node.js 18+](https://img.shields.io/badge/Node.js-18%2B-339933?logo=node.js&logoColor=white)
-![Supabase](https://img.shields.io/badge/Supabase-ready-3FCF8E?logo=supabase&logoColor=white)
-![Vercel](https://img.shields.io/badge/Vercel-deployable-000000?logo=vercel&logoColor=white)
-![License: Private](https://img.shields.io/badge/License-Private-red)
+![Node.js](https://img.shields.io/badge/Node.js-18+-green)
+![Supabase](https://img.shields.io/badge/Supabase-Backend-3ECF8E)
+![Vercel](https://img.shields.io/badge/Vercel-Deployed-black)
+![License](https://img.shields.io/badge/License-Private-red)
 
 Web dinámica para una clínica veterinaria en Oviedo. Incluye página pública, reservas online, reseñas, área privada de clientes, panel de administración e integraciones opcionales con Supabase, Resend, Google Calendar y Google Places.
 
@@ -294,7 +294,6 @@ Este proyecto y su código fuente han sido desarrollados para Clínica Veterinar
 - Sistema automático de recordatorios de vacunas, revisiones y tratamientos preventivos.
 - Integración con WhatsApp Business para contacto rápido, avisos y confirmaciones.
 - Ampliación del área privada para clientes con más autoservicio, documentos descargables y seguimiento de citas.
-- Ampliación del soporte multiidioma, especialmente español/inglés, con contenido SEO adaptado por idioma.
 - Integración con CRM o herramientas de email marketing para comunicaciones segmentadas.
 - Sistema dinámico de reseñas de Google con controles de caché, moderación visual y métricas de rendimiento.
 - Sincronización automática de reseñas mediante Google Business Profile API si el acceso y las políticas de Google lo permiten.
