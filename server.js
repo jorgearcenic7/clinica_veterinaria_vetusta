@@ -91,6 +91,7 @@ const publicFiles = {
   "/admin.js": "admin.js",
   "/client-area.css": "client-area.css",
   "/screen.png": "screen.png",
+  "/google-logo.svg": "google-logo.svg",
   "/robots.txt": "robots.txt",
   "/sitemap.xml": "sitemap.xml",
   "/favicon.svg": "favicon.svg",
