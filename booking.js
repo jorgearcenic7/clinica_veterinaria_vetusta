@@ -202,10 +202,14 @@ function renderSlots() {
 
     button.type = "button";
     button.disabled = !isAvailable;
+    button.setAttribute("aria-pressed", String(isSelected));
+    button.setAttribute("aria-label", isAvailable
+      ? `${slotLabel}${isSelected ? ", hora seleccionada" : ""}`
+      : `${slotLabel}, ${translate(availability === "reserved" ? "booking.reserved" : "booking.unavailable")}`);
     button.className = [
-      "rounded-xl border px-4 py-4 text-base font-label-caps transition-all",
+      "rounded-xl border px-4 py-4 text-base font-label-caps transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
       !isAvailable ? "bg-error-container border-error/40 text-on-error-container cursor-not-allowed" : "bg-white border-outline-variant text-primary hover:border-primary hover:bg-primary-fixed hover:-translate-y-0.5",
-      isSelected ? "!bg-primary !text-white !border-primary ring-2 ring-primary shadow-md shadow-primary/20 scale-[1.02]" : "",
+      isSelected ? "!bg-primary !text-white !border-primary ring-4 ring-primary/25 shadow-md shadow-primary/20 scale-[1.02]" : "",
     ].join(" ");
     button.textContent = isAvailable
       ? slotLabel
@@ -340,6 +344,7 @@ async function submitBooking(event) {
     emailCopy: formData.get("email_copy") === "on",
     mascota: formData.get("mascota"),
     servicio: formData.get("servicio"),
+    notes: formData.get("motivo"),
     datetime: bookingState.selectedSlot.datetime,
   };
 
@@ -376,7 +381,10 @@ function updateEmailField() {
 
   emailFieldWrapper.classList.remove("hidden");
   emailFieldWrapper.classList.add("flex");
-  emailInput.required = true;
+  emailInput.required = emailCopyToggle.checked;
+  if (!emailCopyToggle.checked) {
+    emailInput.setCustomValidity("");
+  }
 }
 
 function showBookingConfirmation(reservation, emailResult = {}) {
@@ -394,7 +402,7 @@ function showBookingConfirmation(reservation, emailResult = {}) {
     <article class="mx-auto max-w-[720px] overflow-hidden rounded-2xl border border-outline-variant bg-white soft-shadow">
       <div class="bg-primary px-8 py-7 text-white">
         <p class="font-label-caps text-label-caps text-white/80">Clínica Veterinaria Vetusta</p>
-        <h3 class="mt-2 font-h2 text-[32px] leading-tight">Gracias, ${escapeHtml(reservation?.nombre || "cliente")}, tu reserva está confirmada</h3>
+        <h3 class="mt-2 font-h2 text-[32px] leading-tight">Reserva registrada</h3>
       </div>
       <div class="grid gap-5 p-8">
         <div class="rounded-xl bg-primary-fixed/60 p-4">
@@ -407,7 +415,7 @@ function showBookingConfirmation(reservation, emailResult = {}) {
           <div><dt class="font-label-caps text-primary">Servicio</dt><dd>${escapeHtml(formatService(reservation?.servicio))}</dd></div>
           <div><dt class="font-label-caps text-primary">Teléfono clínica</dt><dd>985 20 65 58</dd></div>
         </dl>
-        <p class="text-on-surface-variant">Tu cita queda confirmada. Si necesitamos ajustar algun detalle, te contactaremos lo antes posible.</p>
+        <p class="text-on-surface-variant">Tu solicitud de cita se ha recibido correctamente. Te contactaremos si necesitamos ajustar algún detalle.</p>
         ${emailMessage}
         <div class="flex flex-col gap-3 sm:flex-row">
           <a class="button-like flex-1 rounded-lg bg-primary px-6 py-4 text-center font-label-caps text-white" href="#inicio" data-confirmation-home>Volver a la web</a>

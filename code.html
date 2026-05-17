@@ -26,7 +26,7 @@
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://images.pexels.com" rel="preconnect"/>
 <link as="image" href="https://images.pexels.com/photos/6234626/pexels-photo-6234626.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=2400&amp;h=1600&amp;q=90" rel="preload"/>
-<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,700&amp;family=Lexend:wght@400;600&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/>
 <!-- TODO SEO: añade aquí la verificación de Google Search Console cuando tengas el código:
 <meta name="google-site-verification" content="TU_CODIGO_DE_VERIFICACION"/>
 -->
@@ -300,6 +300,20 @@
             padding: 0 20px;
         }
 
+        .hero-title {
+            max-width: 980px;
+            line-height: 1.05;
+        }
+
+        .hero-title-accent {
+            color: #ffe088;
+            font-family: "Cormorant Garamond", Georgia, serif;
+            font-style: italic;
+            font-weight: 700;
+            text-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+            white-space: nowrap;
+        }
+
         @media (max-width: 767px) {
             .hero {
                 min-height: 80vh;
@@ -310,6 +324,11 @@
 
             .hero-content {
                 padding: 0 20px;
+            }
+
+            .hero-title {
+                font-size: clamp(44px, 13vw, 64px);
+                line-height: 1.02;
             }
         }
 
@@ -362,7 +381,7 @@
 <option value="pt">PT</option>
 </select>
 <a class="header-cta hidden md:flex items-center justify-center bg-primary text-on-primary font-label-caps text-label-caps px-7 py-4 rounded-lg hover:bg-surface-tint transition-colors duration-200 active:scale-95" href="#reserva" data-i18n="nav.appointment">
-                Pedir cita · 985 20 65 58
+                Reservar cita
             </a>
 </div>
 <button class="md:hidden text-primary p-2">
@@ -379,17 +398,18 @@
 <span class="text-tertiary-fixed" data-google-rating>⭐ 4,9/5</span>
 <span class="text-white font-label-caps text-label-caps" data-google-review-count>· +560 reseñas en Google</span>
 </div>
-                    <h1 class="font-h1 text-h1 text-white drop-shadow-md" data-i18n="hero.title">Tu mascota merece lo mejor. Y en Vetusta lo saben.</h1>
+<p class="text-sm text-white/75 -mt-5 drop-shadow-sm">Datos de Google recopilados en la última actualización de la web.</p>
+                    <h1 class="hero-title font-h1 text-h1 text-white drop-shadow-md">Tu mascota merece lo <span class="hero-title-accent">mejor.</span></h1>
 <p class="font-body-lg text-body-lg text-white/90 drop-shadow-sm">
                         <span data-i18n="hero.prefix">Clínica veterinaria en Oviedo con</span> <span data-google-hero-copy>más de 560 opiniones de 5 estrellas</span>. <span data-i18n="hero.suffix">Trato humano, honesto y a precios justos.</span>
                     </p>
-<p class="font-body-md text-body-md text-white/85 drop-shadow-sm max-w-3xl">Veterinario en Oviedo para perros y gatos, con consulta veterinaria, vacunas, revisiones veterinarias y atención cercana para el cuidado preventivo de tu mascota.</p>
+<p class="font-body-md text-body-md text-white/85 drop-shadow-sm max-w-3xl">Una experiencia digital pensada para que los clientes pidan cita fácilmente y la clínica organice mejor su día a día: reservas, clientes, mascotas e historiales siempre a mano.</p>
 <div class="flex flex-col sm:flex-row gap-4 mt-4">
-<a class="flex items-center justify-center bg-primary text-on-primary font-label-caps text-label-caps px-8 py-4 rounded-lg hover:bg-surface-tint transition-colors duration-200 hover:scale-105" href="tel:985206558" data-i18n="hero.call">
-                            Llámanos ahora
+<a class="flex items-center justify-center bg-primary text-on-primary font-label-caps text-label-caps px-8 py-4 rounded-lg hover:bg-surface-tint transition-colors duration-200 hover:scale-105" href="#reserva">
+                            Reservar cita
                         </a>
-<a class="flex items-center justify-center bg-white text-primary border-2 border-white font-label-caps text-label-caps px-8 py-4 rounded-lg hover:bg-gray-100 transition-colors duration-200 shadow-lg hover:scale-105" href="#servicios" data-i18n="hero.services">
-                            Ver servicios
+<a class="flex items-center justify-center bg-white text-primary border-2 border-white font-label-caps text-label-caps px-8 py-4 rounded-lg hover:bg-gray-100 transition-colors duration-200 shadow-lg hover:scale-105" href="https://wa.me/34984000000?text=Hola%2C%20me%20gustar%C3%ADa%20pedir%20informaci%C3%B3n%20o%20reservar%20una%20cita." target="_blank" rel="noopener noreferrer">
+                            Escribir por WhatsApp
                         </a>
 </div>
 </div>
@@ -481,10 +501,29 @@
 </div>
 <div class="text-center mt-8">
 <p class="font-body-md text-body-md text-on-surface-variant mb-4" data-i18n="services.notFound">¿No encuentras lo que buscas?</p>
-<a class="inline-flex items-center justify-center border-2 border-primary text-primary font-label-caps text-label-caps px-8 py-3 rounded-lg hover:bg-primary-fixed transition-colors duration-200 hover:scale-105" href="tel:985206558" data-i18n="services.call">
-                        Llámanos
+<a class="inline-flex items-center justify-center border-2 border-primary text-primary font-label-caps text-label-caps px-8 py-3 rounded-lg hover:bg-primary-fixed transition-colors duration-200 hover:scale-105" href="#reserva">
+                        Reservar cita
                     </a>
 </div>
+</div>
+</section>
+<!-- Indicative Prices -->
+<section class="py-xl px-md bg-surface-container-low">
+<div class="max-w-[1480px] mx-auto w-full">
+<div class="text-center max-w-4xl mx-auto mb-12">
+<p class="font-label-caps text-label-caps text-primary mb-3">Precios orientativos</p>
+<h2 class="font-h2 text-h2 text-on-background mb-4">Referencias claras antes de venir</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Una guía sencilla para que puedas valorar la visita con más tranquilidad. El presupuesto final se confirma tras la valoración veterinaria.</p>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+<div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-6 soft-shadow flex items-center justify-between gap-4"><span class="font-label-caps text-label-caps text-on-background">Consulta general</span><strong class="text-primary text-xl">desde 35 €</strong></div>
+<div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-6 soft-shadow flex items-center justify-between gap-4"><span class="font-label-caps text-label-caps text-on-background">Vacunación</span><strong class="text-primary text-xl">desde 28 €</strong></div>
+<div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-6 soft-shadow flex items-center justify-between gap-4"><span class="font-label-caps text-label-caps text-on-background">Desparasitación</span><strong class="text-primary text-xl">desde 12 €</strong></div>
+<div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-6 soft-shadow flex items-center justify-between gap-4"><span class="font-label-caps text-label-caps text-on-background">Peluquería canina</span><strong class="text-primary text-xl">desde 25 €</strong></div>
+<div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-6 soft-shadow flex items-center justify-between gap-4"><span class="font-label-caps text-label-caps text-on-background">Analítica básica</span><strong class="text-primary text-xl">desde 45 €</strong></div>
+<div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-6 soft-shadow flex items-center justify-between gap-4"><span class="font-label-caps text-label-caps text-on-background">Cirugía</span><strong class="text-primary text-xl">presupuesto personalizado</strong></div>
+</div>
+<p class="mt-8 rounded-xl border border-outline-variant bg-surface-container-lowest p-5 text-center text-sm text-on-surface-variant">Los precios son orientativos y pueden variar según el tamaño de la mascota, tratamiento necesario y valoración veterinaria.</p>
 </div>
 </section>
 <!-- Why Choose Us -->
@@ -556,9 +595,10 @@
 <div class="text-center flex flex-col items-center gap-4">
 <div class="inline-flex items-center gap-3 rounded-full border border-outline-variant bg-surface-container-lowest px-5 py-3 soft-shadow">
 <img alt="Google" class="h-6 w-6 shrink-0" loading="lazy" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath fill='%23FFC107' d='M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.4-.4-3.5z'/%3E%3Cpath fill='%23FF3D00' d='M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 16.2 4 9.5 8.5 6.3 14.7z'/%3E%3Cpath fill='%234CAF50' d='M24 44c5.2 0 9.9-2 13.5-5.2l-6.2-5.2C29.3 35.1 26.8 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.4 39.6 16.1 44 24 44z'/%3E%3Cpath fill='%231976D2' d='M43.6 20.5H42V20H24v8h11.3c-.8 2.4-2.3 4.3-4.1 5.6l6.2 5.2C36.9 39.3 44 34 44 24c0-1.3-.1-2.4-.4-3.5z'/%3E%3C/svg%3E"/>
-<span class="font-label-caps text-label-caps text-on-surface-variant" data-google-section-summary data-i18n="reviews.googleVerified">Opiniones verificadas en Google</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant" data-google-section-summary data-i18n="reviews.googleVerified">4,9/5 en Google · datos recopilados en la última actualización</span>
 </div>
 <h2 class="font-h2 text-h2 text-on-background mb-4" data-i18n="reviews.title">Lo que dicen de nosotros</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-3xl">Valoración tomada de Google en la última actualización de la web. Puede variar con el tiempo. Actualización dinámica disponible mediante integración con Google Places API.</p>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-8" data-google-reviews-list>
 <div class="bg-surface-container-lowest p-8 rounded-xl border border-outline-variant soft-shadow flex flex-col gap-5">
@@ -636,7 +676,10 @@
 <p class="font-body-lg text-body-lg text-white/85 max-w-4xl">Reserva cita con un veterinario en Oviedo para consulta veterinaria, vacunas, revisiones, urgencias dentro del horario o peluquería canina y felina.</p>
 <div class="flex flex-col gap-4 items-center">
 <a class="text-4xl md:text-6xl font-bold text-primary-fixed hover:text-white transition-colors duration-300" href="tel:985206558">985 20 65 58</a>
-<a class="bg-primary-fixed text-on-primary-fixed font-label-caps text-label-caps px-8 py-4 rounded-lg hover:bg-white transition-colors duration-200 shadow-xl hover:scale-105" href="#reserva" data-i18n="cta.online">Reservar online</a>
+<div class="flex flex-col sm:flex-row gap-3">
+<a class="bg-primary-fixed text-on-primary-fixed font-label-caps text-label-caps px-8 py-4 rounded-lg hover:bg-white transition-colors duration-200 shadow-xl hover:scale-105" href="#reserva" data-i18n="cta.online">Reservar cita</a>
+<a class="border border-white/50 text-white font-label-caps text-label-caps px-8 py-4 rounded-lg hover:bg-white hover:text-primary transition-colors duration-200" href="https://wa.me/34984000000?text=Hola%2C%20me%20gustar%C3%ADa%20pedir%20informaci%C3%B3n%20o%20reservar%20una%20cita." target="_blank" rel="noopener noreferrer">Escribir por WhatsApp</a>
+</div>
 </div>
 <div class="bg-black/20 p-8 rounded-xl border border-white/10 w-full max-w-3xl">
 <h4 class="font-label-caps text-label-caps text-white/80 mb-4 uppercase tracking-widest" data-i18n="cta.hoursTitle">Horario de atención</h4>
@@ -649,17 +692,19 @@
 <div class="max-w-[1600px] mx-auto w-full">
 <div class="text-center mb-12">
 <h2 class="font-h2 text-h2 text-on-background mb-4" data-i18n="booking.title">Reserva de cita online</h2>
-<p class="font-body-lg text-body-lg text-on-surface-variant" data-i18n="booking.subtitle">Completa el formulario y tu cita quedará confirmada.</p>
+<p class="font-body-lg text-body-lg text-on-surface-variant" data-i18n="booking.subtitle">Completa el formulario y tu solicitud quedará registrada. La clínica podrá confirmarla o contactarte si necesita más información.</p>
 <p class="font-body-md text-body-md text-on-surface-variant mt-4">Elige día y hora para una consulta veterinaria, revisión, vacunación, cirugía o peluquería. Si necesitas atención urgente, llámanos para valorar el caso cuanto antes.</p>
 </div>
 <form class="bg-surface-container-lowest p-10 md:p-14 rounded-2xl border border-outline-variant soft-shadow grid grid-cols-1 md:grid-cols-2 gap-8" data-booking-form>
 <div class="flex flex-col gap-2">
 <label class="font-label-caps text-label-caps text-on-surface" for="nombre" data-i18n="booking.name">Nombre completo</label>
 <input class="rounded-lg border-outline-variant focus:border-primary focus:ring-primary bg-background" id="nombre" name="nombre" placeholder="Tu nombre" required="" type="text" data-i18n-placeholder="booking.namePlaceholder"/>
+<p class="text-sm text-on-surface-variant">Campo obligatorio para identificar la solicitud.</p>
 </div>
 <div class="flex flex-col gap-2">
 <label class="font-label-caps text-label-caps text-on-surface" for="telefono" data-i18n="booking.phone">Teléfono</label>
 <input class="rounded-lg border-outline-variant focus:border-primary focus:ring-primary bg-background" id="telefono" name="telefono" placeholder="Tu teléfono" required="" type="tel" data-i18n-placeholder="booking.phonePlaceholder"/>
+<p class="text-sm text-on-surface-variant">Lo usaremos solo para confirmar o ajustar la cita.</p>
 </div>
 <div class="md:col-span-2 flex flex-col gap-3 rounded-xl border border-outline-variant bg-background p-4">
 <label class="flex items-center gap-3 font-label-caps text-label-caps text-on-surface" for="email-copy">
@@ -667,8 +712,9 @@
 <span>Quiero recibir una copia de la reserva por email</span>
 </label>
 <div class="flex flex-col gap-2" data-email-field-wrapper>
-<label class="font-label-caps text-label-caps text-on-surface" for="email">Email</label>
-<input class="rounded-lg border-outline-variant focus:border-primary focus:ring-primary bg-background" id="email" name="email" placeholder="tu@email.com" required="" type="email" data-email-input/>
+<label class="font-label-caps text-label-caps text-on-surface" for="email">Email <span class="text-on-surface-variant normal-case">(opcional)</span></label>
+<input class="rounded-lg border-outline-variant focus:border-primary focus:ring-primary bg-background" id="email" name="email" placeholder="tu@email.com" type="email" data-email-input/>
+<p class="text-sm text-on-surface-variant">Añádelo si quieres recibir una copia o facilitar el contacto por escrito.</p>
 </div>
 </div>
 <div class="flex flex-col gap-2">
@@ -687,6 +733,11 @@
 <option value="cirugia" data-i18n="booking.service.surgery">Cirugía</option>
 <option value="peluqueria" data-i18n="booking.service.grooming">Peluquería</option>
 </select>
+</div>
+<div class="md:col-span-2 flex flex-col gap-2">
+<label class="font-label-caps text-label-caps text-on-surface" for="motivo">Motivo de la visita <span class="text-on-surface-variant normal-case">(opcional)</span></label>
+<textarea class="min-h-[120px] rounded-lg border-outline-variant focus:border-primary focus:ring-primary bg-background" id="motivo" name="motivo" placeholder="Cuéntanos brevemente qué le ocurre a tu mascota o el motivo de la cita."></textarea>
+<p class="text-sm text-on-surface-variant">Ayuda al equipo a preparar mejor la visita, pero puedes dejarlo en blanco.</p>
 </div>
 <div class="flex flex-col gap-4 md:col-span-2">
 <label class="font-label-caps text-label-caps text-on-surface" for="fecha" data-i18n="booking.date">Fecha y hora preferida</label>
@@ -718,7 +769,7 @@
 </div>
 <div class="md:col-span-2 mt-4">
 <button class="w-full bg-[#D4AF37] text-black font-label-caps text-label-caps py-5 rounded-lg hover:bg-[#c29e32] transition-all duration-200 active:scale-[0.98] shadow-lg flex items-center justify-center gap-2" type="submit">
-<span class="material-symbols-outlined">event_available</span> <span data-i18n="booking.confirm">Confirmar reserva</span>
+<span class="material-symbols-outlined">event_available</span> <span data-i18n="booking.confirm">Registrar solicitud</span>
 </button>
 </div>
 </form>
@@ -808,6 +859,7 @@
 <h4 class="font-h3 text-[22px] text-on-background mb-1" data-i18n="contact.phone">Teléfono</h4>
 <a class="text-primary hover:underline font-semibold" href="tel:985206558">985 20 65 58</a>
 <p class="text-sm text-on-surface-variant mt-1">Llámanos para reservar cita o consultar una urgencia veterinaria durante el horario.</p>
+<a class="mt-3 inline-flex items-center justify-center rounded-lg border border-primary px-5 py-3 font-label-caps text-label-caps text-primary hover:bg-primary-fixed transition-colors" href="https://wa.me/34984000000?text=Hola%2C%20me%20gustar%C3%ADa%20pedir%20informaci%C3%B3n%20o%20reservar%20una%20cita." target="_blank" rel="noopener noreferrer">Escribir por WhatsApp</a>
 </div>
 </div>
 <div class="flex items-start gap-4">
@@ -855,8 +907,8 @@
 <a class="text-white hover:text-primary-fixed" href="#contacto" aria-label="Facebook de Clínica Veterinaria Vetusta, pendiente de URL real" title="Facebook pendiente de URL real"><svg class="w-5 h-5" fill="currentColor" viewbox="0 0 24 24" aria-hidden="true"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"></path></svg></a>
 </div>
 </div>
-<p class="font-['Plus_Jakarta_Sans'] text-xs leading-relaxed text-emerald-50 text-center md:text-left max-w-xl" data-i18n="footer.copy">
-                © 2024 Clínica Veterinaria Vetusta. Cuidado profesional con un toque humano en el corazón de Oviedo.
+<p class="font-['Plus_Jakarta_Sans'] text-xs leading-relaxed text-emerald-50 text-center md:text-left max-w-xl">
+                © <span id="current-year"></span> Clínica Veterinaria Vetusta. Cuidado profesional con un toque humano en el corazón de Oviedo.
             </p>
 <nav class="flex flex-wrap justify-center gap-4">
 <a class="text-emerald-100/70 hover:text-white transition-colors font-['Plus_Jakarta_Sans'] text-xs leading-relaxed" href="/aviso-legal.html" data-i18n="footer.legal">Aviso Legal</a>
@@ -866,9 +918,12 @@
 </nav>
 </div>
 </footer>
-<a class="md:hidden fixed bottom-4 right-4 left-4 z-50 bg-[#1B4332] text-white py-4 rounded-xl font-label-caps text-center shadow-2xl flex items-center justify-center gap-2 hover:scale-[1.02]" href="tel:985206558">
-<span class="material-symbols-outlined">call</span> <span data-i18n="footer.call">Llamar ahora</span>
+<a class="md:hidden fixed bottom-4 right-4 left-4 z-50 bg-[#1B4332] text-white py-4 rounded-xl font-label-caps text-center shadow-2xl flex items-center justify-center gap-2 hover:scale-[1.02]" href="#reserva">
+<span class="material-symbols-outlined">event_available</span> <span>Reservar cita</span>
 </a>
+<script>
+document.getElementById("current-year").textContent = new Date().getFullYear();
+</script>
 <script src="/reviews.js"></script>
 <script src="/booking.js?v=20260511-slots"></script>
 <script defer src="/i18n.js"></script>

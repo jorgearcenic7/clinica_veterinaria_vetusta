@@ -1013,6 +1013,7 @@ async function saveSupabaseReservation(reservation) {
     mascota: reservation.mascota,
     servicio: reservation.servicio,
     datetime: reservation.datetime,
+    notes: reservation.notes || null,
     status: "confirmed",
     start_at: timestamps.startAt,
     end_at: timestamps.endAt,
@@ -1043,7 +1044,7 @@ async function saveSupabaseReservation(reservation) {
     servicio: reservation.servicio,
     datetime: reservation.datetime,
     status: "confirmed",
-    notes: null,
+    notes: reservation.notes || null,
     workerId: null,
     googleEventId: calendarSync.googleEventId,
     googleSyncError: calendarSync.error,
@@ -1240,18 +1241,19 @@ function normalizeReservation(body) {
     email: cleanText(body?.email),
     mascota: cleanText(body?.mascota),
     servicio: cleanText(body?.servicio),
+    notes: cleanLongText(body?.notes || body?.motivo),
     datetime: cleanText(body?.datetime),
     emailCopy,
   };
   reservation.code = reservation.id.slice(0, 8).toUpperCase();
 
-  if (!reservation.nombre || !reservation.telefono || !reservation.email || !reservation.mascota || !reservation.servicio || !reservation.datetime) {
-    const error = new Error("Nombre, telefono, email, mascota, servicio y fecha/hora son obligatorios.");
+  if (!reservation.nombre || !reservation.telefono || !reservation.mascota || !reservation.servicio || !reservation.datetime) {
+    const error = new Error("Nombre, telefono, mascota, servicio y fecha/hora son obligatorios.");
     error.statusCode = 400;
     throw error;
   }
 
-  if (!isValidEmail(reservation.email)) {
+  if (reservation.email && !isValidEmail(reservation.email)) {
     const error = new Error("Indica un email valido.");
     error.statusCode = 400;
     throw error;
@@ -1269,6 +1271,15 @@ function normalizeReservation(body) {
 async function sendReservationEmailIfRequested(reservation, emailCopy) {
   if (!emailCopy) {
     return { requested: false, sent: false, pending: false };
+  }
+
+  if (!reservation.email) {
+    return {
+      requested: true,
+      sent: false,
+      pending: true,
+      message: "Reserva creada. No se ha enviado la copia por email porque no se indico una direccion de email.",
+    };
   }
 
   if (!resendApiKey) {
@@ -1290,7 +1301,7 @@ async function sendReservationEmailIfRequested(reservation, emailCopy) {
       body: JSON.stringify({
         from: reservationFromEmail,
         to: reservation.email,
-        subject: `Reserva confirmada ${reservation.code} - Clínica Veterinaria Vetusta`,
+        subject: `Reserva registrada ${reservation.code} - Clínica Veterinaria Vetusta`,
         text: reservationEmailText(reservation),
         html: reservationEmailHtml(reservation),
       }),
@@ -1318,28 +1329,30 @@ function reservationEmailText(reservation) {
   return [
     `Hola ${reservation.nombre},`,
     "",
-    "Tu reserva esta confirmada en Clínica Veterinaria Vetusta.",
+    "Tu solicitud de cita se ha recibido correctamente en Clínica Veterinaria Vetusta.",
     `Codigo de reserva: ${reservation.code}`,
     `Fecha y hora: ${formatReservationDateTime(reservation.datetime)}`,
     `Mascota: ${formatPetType(reservation.mascota)}`,
     `Servicio: ${formatReservationServiceForCalendar(reservation.servicio)}`,
+    reservation.notes ? `Motivo de la visita: ${reservation.notes}` : null,
     `Telefono de la clinica: ${clinicPhone}`,
     "",
-    "Tu cita queda confirmada. Si necesitamos ajustar algun detalle, te contactaremos lo antes posible.",
-  ].join("\n");
+    "Te contactaremos si necesitamos ajustar algun detalle.",
+  ].filter(Boolean).join("\n");
 }
 
 function reservationEmailHtml(reservation) {
   return `
     <div style="font-family:Arial,sans-serif;color:#1b1c1c;line-height:1.5">
       <h1 style="color:#1b4332">Clínica Veterinaria Vetusta</h1>
-      <p>Hola ${escapeHtmlText(reservation.nombre)}, tu reserva está confirmada.</p>
+      <p>Hola ${escapeHtmlText(reservation.nombre)}, tu solicitud de cita se ha recibido correctamente.</p>
       <p><strong>Código de reserva:</strong> ${escapeHtmlText(reservation.code)}</p>
       <p><strong>Fecha y hora:</strong> ${escapeHtmlText(formatReservationDateTime(reservation.datetime))}</p>
       <p><strong>Mascota:</strong> ${escapeHtmlText(formatPetType(reservation.mascota))}</p>
       <p><strong>Servicio:</strong> ${escapeHtmlText(formatReservationServiceForCalendar(reservation.servicio))}</p>
+      ${reservation.notes ? `<p><strong>Motivo de la visita:</strong> ${escapeHtmlText(reservation.notes)}</p>` : ""}
       <p><strong>Teléfono de la clínica:</strong> ${escapeHtmlText(clinicPhone)}</p>
-      <p>Tu cita queda confirmada. Si necesitamos ajustar algun detalle, te contactaremos lo antes posible.</p>
+      <p>Te contactaremos si necesitamos ajustar algún detalle.</p>
     </div>
   `;
 }

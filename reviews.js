@@ -39,7 +39,7 @@ const googleLogoSrc = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
     }
 
     if (reviewCount && sectionSummaryElement) {
-      sectionSummaryElement.textContent = `${formattedRating || 5}/5 en Google · ${formattedCount} reseñas`;
+      sectionSummaryElement.textContent = `${formattedRating || 5}/5 en Google · ${formattedCount} reseñas · datos recopilados en la última actualización`;
     }
 
     if (data.googleMapsUri && mapsLinkElement) {
