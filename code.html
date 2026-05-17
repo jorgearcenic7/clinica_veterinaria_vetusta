@@ -26,7 +26,7 @@
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://images.pexels.com" rel="preconnect"/>
 <link as="image" href="https://images.pexels.com/photos/6234626/pexels-photo-6234626.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=2400&amp;h=1600&amp;q=90" rel="preload"/>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,700&amp;family=Lexend:wght@400;600&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,700;1,700&amp;family=Lexend:wght@400;600&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/>
 <!-- TODO SEO: añade aquí la verificación de Google Search Console cuando tengas el código:
 <meta name="google-site-verification" content="TU_CODIGO_DE_VERIFICACION"/>
 -->
@@ -285,19 +285,55 @@
             background-repeat: no-repeat;
         }
 
+        /* Editorial hero inspired by fashion lookbooks: oversized type, image-led, minimal copy. */
+        .zara-hero {
+            min-height: calc(100vh - 72px);
+            align-items: stretch;
+        }
+
         .hero-overlay {
-            background: linear-gradient(
-                to right,
-                rgba(0, 0, 0, 0.6),
-                rgba(0, 0, 0, 0.2)
-            );
+            background:
+                linear-gradient(90deg, rgba(1, 45, 29, 0.48), rgba(1, 45, 29, 0.10) 45%, rgba(1, 45, 29, 0.46)),
+                linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.36));
         }
 
         .hero-content {
-            max-width: 1200px;
+            max-width: 1760px;
             width: 100%;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: clamp(40px, 7vw, 96px);
+        }
+
+        .zara-hero-title {
+            margin-left: auto;
+            max-width: min(900px, 62vw);
+            color: #ffffff;
+            font-family: "Cormorant Garamond", Georgia, serif;
+            font-size: clamp(4.5rem, 12.5vw, 13.5rem);
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            line-height: 0.78;
+            text-align: right;
+            text-transform: uppercase;
+            text-shadow: 0 18px 42px rgba(0, 0, 0, 0.26);
+        }
+
+        .zara-hero-copy {
+            max-width: 640px;
+            color: #ffffff;
+        }
+
+        .zara-hero-title span {
+            display: block;
+        }
+
+        .zara-hero-subtitle {
+            max-width: 520px;
+            color: rgba(255, 255, 255, 0.86);
+            font-family: "Lexend", system-ui, sans-serif;
+            font-size: clamp(1rem, 1.45vw, 1.35rem);
+            line-height: 1.55;
+            text-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
         }
 
         .hero-title {
@@ -323,12 +359,27 @@
             }
 
             .hero-content {
-                padding: 0 20px;
+                padding: 32px 20px 48px;
             }
 
-            .hero-title {
-                font-size: clamp(44px, 13vw, 64px);
-                line-height: 1.02;
+            .zara-hero {
+                min-height: 82vh;
+            }
+
+            .zara-hero-title {
+                max-width: 100%;
+                font-size: clamp(3.9rem, 18vw, 6.8rem);
+                letter-spacing: 0.01em;
+                line-height: 0.82;
+            }
+
+            .zara-hero-copy {
+                max-width: 100%;
+            }
+
+            .zara-hero-subtitle {
+                max-width: 86%;
+                margin-top: auto;
             }
         }
 
@@ -361,12 +412,48 @@
         }
 
         .pricing-hero {
-            min-height: 680px;
-            background-image:
-                linear-gradient(90deg, rgba(1, 45, 29, 0.86), rgba(1, 45, 29, 0.48), rgba(1, 45, 29, 0.10)),
-                url("https://images.pexels.com/photos/6234608/pexels-photo-6234608.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=2200&h=1200&q=85");
-            background-size: cover;
-            background-position: center;
+            background: #fbf7f2;
+        }
+
+        .premium-packs-editorial {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .premium-packs-title {
+            position: absolute;
+            z-index: 2;
+            top: clamp(28px, 4.5vw, 76px);
+            right: clamp(-22px, 2vw, 64px);
+            width: min(760px, 64vw);
+            color: #012d1d;
+            font-family: "Cormorant Garamond", Georgia, serif;
+            font-size: clamp(4.2rem, 13vw, 12rem);
+            font-weight: 700;
+            letter-spacing: 0.025em;
+            line-height: 0.78;
+            text-align: right;
+            text-transform: uppercase;
+        }
+
+        .premium-packs-title span {
+            display: block;
+        }
+
+        .premium-packs-image-wrap {
+            max-width: 1180px;
+            margin: clamp(130px, 16vw, 250px) auto clamp(28px, 5vw, 64px);
+            overflow: hidden;
+            border-radius: 0;
+            background: #ffffff;
+        }
+
+        .premium-packs-image-wrap img {
+            width: 100%;
+            aspect-ratio: 16 / 7;
+            object-fit: cover;
+            object-position: center;
+            display: block;
         }
 
         .pricing-wordmark {
@@ -419,7 +506,7 @@
 
         .pricing-scroll {
             display: grid;
-            grid-template-columns: repeat(5, minmax(280px, 1fr));
+            grid-template-columns: repeat(4, minmax(250px, 1fr));
             gap: 24px;
         }
 
@@ -461,8 +548,25 @@
 
         @media (max-width: 767px) {
             .pricing-hero {
-                min-height: 760px;
-                background-position: 58% center;
+                background: #fbf7f2;
+            }
+
+            .premium-packs-title {
+                position: relative;
+                top: auto;
+                right: auto;
+                width: 100%;
+                font-size: clamp(4rem, 22vw, 7rem);
+                line-height: 0.82;
+                margin-bottom: -0.14em;
+            }
+
+            .premium-packs-image-wrap {
+                margin: 0 0 28px;
+            }
+
+            .premium-packs-image-wrap img {
+                aspect-ratio: 4 / 5;
             }
 
             .pricing-scroll {
@@ -481,6 +585,12 @@
             .floating-whatsapp {
                 right: 18px;
                 bottom: 86px;
+            }
+        }
+
+        @media (min-width: 768px) and (max-width: 1279px) {
+            .pricing-scroll {
+                grid-template-columns: repeat(2, minmax(260px, 1fr));
             }
         }
     </style>
@@ -520,20 +630,16 @@
 </header>
 <main>
 <!-- Hero Section -->
-<section class="hero relative flex flex-col justify-center overflow-hidden" id="inicio" role="img" aria-label="Una veterinaria sonriente cuidando con cariño a un perro en una clínica moderna y acogedora, con iluminación natural y tonos cálidos.">
+<section class="hero zara-hero relative flex flex-col justify-center overflow-hidden" id="inicio" role="img" aria-label="Una veterinaria sonriente cuidando con cariño a un perro en una clínica moderna y acogedora, con iluminación natural y tonos cálidos.">
 <div class="hero-overlay absolute inset-0 z-0"></div>
-<div class="hero-content relative z-10 flex flex-col gap-8">
+<div class="hero-content relative z-10 flex min-h-[inherit] flex-col justify-between gap-10">
+<div class="zara-hero-copy flex flex-col gap-6">
 <div class="inline-flex items-center gap-2 bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full w-fit border border-white/20">
 <span class="text-tertiary-fixed" data-google-rating>⭐ 4,9/5</span>
 <span class="text-white font-label-caps text-label-caps" data-google-review-count>· +560 reseñas en Google</span>
 </div>
-<p class="text-sm text-white/75 -mt-5 drop-shadow-sm">Datos de Google recopilados en la última actualización de la web.</p>
-                    <h1 class="hero-title font-h1 text-h1 text-white drop-shadow-md">Tu mascota merece lo <span class="hero-title-accent">mejor.</span></h1>
-<p class="font-body-lg text-body-lg text-white/90 drop-shadow-sm">
-                        <span data-i18n="hero.prefix">Clínica veterinaria en Oviedo con</span> <span data-google-hero-copy>más de 560 opiniones de 5 estrellas</span>. <span data-i18n="hero.suffix">Trato humano, honesto y a precios justos.</span>
-                    </p>
-<p class="font-body-md text-body-md text-white/85 drop-shadow-sm max-w-3xl">Una experiencia digital pensada para que los clientes pidan cita fácilmente y la clínica organice mejor su día a día: reservas, clientes, mascotas e historiales siempre a mano.</p>
-<div class="flex flex-col sm:flex-row gap-4 mt-4">
+<h2 class="hero-title font-h1 text-h1 text-white drop-shadow-md">Tu mascota merece lo <span class="hero-title-accent">mejor.</span></h2>
+<div class="flex flex-col sm:flex-row gap-4 mt-2">
 <a class="flex items-center justify-center bg-primary text-on-primary font-label-caps text-label-caps px-8 py-4 rounded-lg hover:bg-surface-tint transition-colors duration-200 hover:scale-105" href="#reserva">
                             Reservar cita
                         </a>
@@ -542,81 +648,27 @@
                         </a>
 </div>
 </div>
-</section>
-<!-- Trust Bar -->
-<section class="bg-surface-container-low border-y border-outline-variant py-8 px-md">
-<div class="max-w-[1760px] mx-auto w-full">
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-<div class="flex items-center gap-3">
-<span class="material-symbols-outlined text-primary-container text-[32px]">star</span>
-<span class="font-label-caps text-label-caps text-on-surface-variant" data-google-trust-copy data-i18n="trust.reviews">Más de 560 reseñas 5 estrellas</span>
-</div>
-<div class="flex items-center gap-3">
-<span class="material-symbols-outlined text-primary-container text-[32px]">favorite</span>
-<span class="font-label-caps text-label-caps text-on-surface-variant" data-i18n="trust.care">Trato cercano y sin rodeos</span>
-</div>
-<div class="flex items-center gap-3">
-<span class="material-symbols-outlined text-primary-container text-[32px]">payments</span>
-<span class="font-label-caps text-label-caps text-on-surface-variant" data-i18n="trust.prices">Precios transparentes</span>
-</div>
-<div class="flex items-center gap-3">
-<span class="material-symbols-outlined text-primary-container text-[32px]">location_on</span>
-<span class="font-label-caps text-label-caps text-on-surface-variant" data-i18n="trust.location">En Oviedo desde hace años</span>
-</div>
-</div>
+<h1 class="zara-hero-title" aria-label="Clínica Veterinaria Vetusta">
+<span>Clínica</span>
+<span>Veterinaria</span>
+<span>Vetusta</span>
+</h1>
 </div>
 </section>
 <!-- Visual Pricing Landing -->
 <section class="pricing-landing" id="servicios">
-<div class="pricing-hero relative flex items-center px-md py-xl">
-<div class="relative z-10 max-w-[1760px] mx-auto w-full">
-<div class="max-w-5xl text-white">
-<p class="pricing-pill mb-6 inline-flex rounded-full px-5 py-3 font-label-caps text-label-caps text-white">PROMOCIÓN VETERINARIA · ESTE MES</p>
-<h2 class="font-h1 text-h1 drop-shadow-md">Cuida de tu mascota con <span class="pricing-wordmark">packs veterinarios</span> pensados para cada etapa</h2>
-<p class="mt-6 max-w-3xl font-body-lg text-body-lg text-white/90">Revisiones, vacunas, desparasitación, peluquería y urgencias en una clínica cercana y profesional.</p>
-<div class="mt-8 flex flex-col gap-4 sm:flex-row">
-<a class="inline-flex items-center justify-center rounded-lg bg-[#D4AF37] px-8 py-4 font-label-caps text-label-caps text-black shadow-xl transition-transform hover:scale-105" href="#reserva">Reservar cita</a>
-<a class="inline-flex items-center justify-center rounded-lg border border-white/55 px-8 py-4 font-label-caps text-label-caps text-white backdrop-blur-sm transition-colors hover:bg-white hover:text-primary" href="#packs-veterinarios">Ver packs</a>
-</div>
-<div class="mt-8 flex flex-wrap gap-3 text-sm text-white/90">
-<span class="pricing-pill rounded-full px-4 py-2">Consulta desde 35€</span>
-<span class="pricing-pill rounded-full px-4 py-2">Atención para perros y gatos</span>
-<span class="pricing-pill rounded-full px-4 py-2">Reserva online</span>
-</div>
-</div>
-</div>
-</div>
-<div class="px-md py-xl" id="packs-veterinarios">
+<div class="pricing-hero premium-packs-editorial px-md py-xl">
 <div class="max-w-[1760px] mx-auto w-full">
-<div class="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-<div>
-<p class="font-label-caps text-label-caps text-primary">Packs destacados</p>
-<h3 class="font-h2 text-h2 text-on-background">Nuestros packs más reservados</h3>
+<div class="premium-packs-title" aria-label="Packs premium">
+<span>Packs</span>
+<span>Premium</span>
 </div>
-<p class="max-w-2xl text-on-surface-variant">Opciones orientativas para empezar rápido. El equipo puede ajustar cada pack según edad, tamaño, historial y necesidades de tu mascota.</p>
+<div class="premium-packs-image-wrap">
+<img alt="Perro durante un cuidado veterinario premium" loading="lazy" src="https://images.pexels.com/photos/6234608/pexels-photo-6234608.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=1800&amp;h=900&amp;q=85"/>
 </div>
+<div id="packs-veterinarios">
 <div class="pricing-scroll" data-pricing-packs></div>
 </div>
-</div>
-<div class="px-md pb-xl">
-<div class="max-w-[1760px] mx-auto grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
-<article class="visual-banner grid min-h-[420px] lg:grid-cols-2">
-<img alt="Veterinaria revisando a un perro tranquilo" loading="lazy" src="https://images.pexels.com/photos/6234608/pexels-photo-6234608.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=1100&amp;h=900&amp;q=85"/>
-<div class="flex flex-col justify-center gap-5 p-8 md:p-12 text-white">
-<p class="font-label-caps text-label-caps text-primary-fixed">Valoración guiada</p>
-<h3 class="font-h2 text-h2">¿No sabes qué necesita tu mascota?</h3>
-<p class="text-white/86">Reserva una valoración y nuestro equipo te recomendará el pack más adecuado.</p>
-<a class="w-fit rounded-lg bg-primary-fixed px-7 py-4 font-label-caps text-label-caps text-on-primary-fixed transition-transform hover:scale-105" href="#reserva">Reservar valoración</a>
-</div>
-</article>
-<article class="visual-banner flex min-h-[420px] flex-col justify-end bg-[linear-gradient(135deg,#ffe088,#c1ecd4)] p-8 md:p-12 text-primary">
-<div class="max-w-xl">
-<p class="font-label-caps text-label-caps">Cuidado preventivo</p>
-<h3 class="mt-3 font-h2 text-h2">Prevención hoy, tranquilidad mañana</h3>
-<p class="mt-4 text-on-primary-fixed/80">Revisiones, vacunas y controles para detectar problemas a tiempo.</p>
-<a class="mt-7 inline-flex rounded-lg bg-primary px-7 py-4 font-label-caps text-label-caps text-white transition-transform hover:scale-105" href="#packs-veterinarios">Ver packs preventivos</a>
-</div>
-</article>
 </div>
 </div>
 <div class="px-md pb-xl">
@@ -736,17 +788,6 @@ const pricingPacks = [
     badge: "Ahorro",
     image: "https://images.pexels.com/photos/6816860/pexels-photo-6816860.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=700&q=85",
     benefits: ["Baño", "Higiene básica", "Cepillado", "Revisión del manto"],
-    featured: false,
-  },
-  {
-    title: "Pack urgencia",
-    category: "Atención prioritaria",
-    description: "Valoración rápida durante el horario para casos que necesitan atención cuanto antes.",
-    price: "según valoración",
-    oldPrice: "",
-    badge: "Prioritario",
-    image: "https://images.pexels.com/photos/6234608/pexels-photo-6234608.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=700&q=85",
-    benefits: ["Valoración inicial", "Priorización del caso", "Primeras indicaciones", "Derivación si es necesario"],
     featured: false,
   },
 ];
