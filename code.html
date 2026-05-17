@@ -354,6 +354,135 @@
             white-space: nowrap;
             min-width: max-content;
         }
+
+        .pricing-landing {
+            background: #fbf7f2;
+            color: #1b1c1c;
+        }
+
+        .pricing-hero {
+            min-height: 680px;
+            background-image:
+                linear-gradient(90deg, rgba(1, 45, 29, 0.86), rgba(1, 45, 29, 0.48), rgba(1, 45, 29, 0.10)),
+                url("https://images.pexels.com/photos/6234608/pexels-photo-6234608.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=2200&h=1200&q=85");
+            background-size: cover;
+            background-position: center;
+        }
+
+        .pricing-wordmark {
+            font-family: "Cormorant Garamond", Georgia, serif;
+            font-style: italic;
+            color: #ffe088;
+            white-space: nowrap;
+        }
+
+        .pricing-pill {
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            background: rgba(255, 255, 255, 0.14);
+            backdrop-filter: blur(10px);
+        }
+
+        .pricing-card {
+            background: #ffffff;
+            border: 1px solid rgba(27, 67, 50, 0.13);
+            box-shadow: 0 22px 54px rgba(27, 67, 50, 0.10);
+            transition: transform 180ms ease, box-shadow 180ms ease;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 30px 70px rgba(27, 67, 50, 0.16);
+        }
+
+        .pricing-card.featured {
+            border: 2px solid #d4af37;
+            background: linear-gradient(180deg, #fff8dd 0%, #ffffff 38%);
+        }
+
+        .pricing-image {
+            aspect-ratio: 4 / 3;
+            object-fit: cover;
+        }
+
+        .price-current {
+            font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+            font-size: clamp(44px, 7vw, 72px);
+            line-height: 0.95;
+            letter-spacing: 0;
+            color: #012d1d;
+        }
+
+        .pricing-check {
+            background: #c1ecd4;
+            color: #012d1d;
+        }
+
+        .pricing-scroll {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .visual-banner {
+            overflow: hidden;
+            border-radius: 28px;
+            background: #012d1d;
+            box-shadow: 0 24px 64px rgba(27, 67, 50, 0.14);
+        }
+
+        .visual-banner img,
+        .gallery-tile img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .benefit-tile {
+            background: rgba(255, 255, 255, 0.82);
+            border: 1px solid rgba(27, 67, 50, 0.12);
+            box-shadow: 0 16px 38px rgba(27, 67, 50, 0.08);
+        }
+
+        .pricing-faq summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .pricing-faq details[open] summary {
+            color: #012d1d;
+        }
+
+        .floating-whatsapp {
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            z-index: 60;
+            box-shadow: 0 18px 36px rgba(18, 140, 76, 0.32);
+        }
+
+        @media (max-width: 767px) {
+            .pricing-hero {
+                min-height: 760px;
+                background-position: 58% center;
+            }
+
+            .pricing-scroll {
+                display: flex;
+                overflow-x: auto;
+                scroll-snap-type: x mandatory;
+                padding: 4px 24px 24px;
+                margin: 0 -24px;
+            }
+
+            .pricing-scroll > article {
+                flex: 0 0 min(88vw, 380px);
+                scroll-snap-align: start;
+            }
+
+            .floating-whatsapp {
+                right: 18px;
+                bottom: 86px;
+            }
+        }
     </style>
 </head>
 <body class="bg-background text-on-background font-body-md text-body-md antialiased overflow-x-hidden pb-24 md:pb-0">
@@ -437,95 +566,316 @@
 </div>
 </div>
 </section>
-<!-- Services Grid -->
-<section class="py-xl px-md bg-background" id="servicios">
-<div class="max-w-[1760px] mx-auto w-full flex flex-col gap-14">
-<div class="text-center max-w-4xl mx-auto">
-<h2 class="font-h2 text-h2 text-on-background mb-4" data-i18n="services.title">¿Qué podemos hacer por tu mascota?</h2>
-<p class="font-body-lg text-body-lg text-on-surface-variant" data-i18n="services.subtitle">Cuidado integral para asegurar la salud y felicidad de tu compañero de vida.</p>
-<p class="font-body-md text-body-md text-on-surface-variant mt-4">En nuestra clínica veterinaria en Oviedo atendemos consulta veterinaria, vacunas para perros y gatos, revisiones veterinarias, cirugía, análisis, urgencias veterinarias en Oviedo dentro del horario y peluquería canina y felina.</p>
+<!-- Visual Pricing Landing -->
+<section class="pricing-landing" id="servicios">
+<div class="pricing-hero relative flex items-center px-md py-xl">
+<div class="relative z-10 max-w-[1760px] mx-auto w-full">
+<div class="max-w-5xl text-white">
+<p class="pricing-pill mb-6 inline-flex rounded-full px-5 py-3 font-label-caps text-label-caps text-white">PROMOCIÓN VETERINARIA · ESTE MES</p>
+<h2 class="font-h1 text-h1 drop-shadow-md">Cuida de tu mascota con <span class="pricing-wordmark">packs veterinarios</span> pensados para cada etapa</h2>
+<p class="mt-6 max-w-3xl font-body-lg text-body-lg text-white/90">Revisiones, vacunas, desparasitación, peluquería y urgencias en una clínica cercana y profesional.</p>
+<div class="mt-8 flex flex-col gap-4 sm:flex-row">
+<a class="inline-flex items-center justify-center rounded-lg bg-[#D4AF37] px-8 py-4 font-label-caps text-label-caps text-black shadow-xl transition-transform hover:scale-105" href="#reserva">Reservar cita</a>
+<a class="inline-flex items-center justify-center rounded-lg border border-white/55 px-8 py-4 font-label-caps text-label-caps text-white backdrop-blur-sm transition-colors hover:bg-white hover:text-primary" href="#packs-veterinarios">Ver packs</a>
 </div>
-<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-<!-- Service 1 -->
-<div class="bg-surface-container-lowest rounded-xl p-8 border border-outline-variant soft-shadow flex flex-col gap-5 hover:shadow-[0_10px_20px_rgba(27,67,50,0.08)] transition-shadow">
-<div class="w-12 h-12 bg-primary-fixed rounded-lg flex items-center justify-center">
-<span class="material-symbols-outlined text-on-primary-fixed">stethoscope</span>
-</div>
-<h3 class="font-h3 text-h3 text-on-background" data-i18n="services.general.title">Consulta médica general</h3>
-<p class="font-body-md text-body-md text-on-surface-variant flex-grow" data-i18n="services.general.text">Revisiones completas para mantener la salud de tu mascota en óptimas condiciones, detectando problemas a tiempo.</p>
-<p class="text-sm text-on-surface-variant">Consulta veterinaria orientada al diagnóstico temprano y al cuidado preventivo.</p>
-</div>
-<!-- Service 2 -->
-<div class="bg-surface-container-lowest rounded-xl p-8 border border-outline-variant soft-shadow flex flex-col gap-5 hover:shadow-[0_10px_20px_rgba(27,67,50,0.08)] transition-shadow">
-<div class="w-12 h-12 bg-primary-fixed rounded-lg flex items-center justify-center">
-<span class="material-symbols-outlined text-on-primary-fixed">vaccines</span>
-</div>
-<h3 class="font-h3 text-h3 text-on-background" data-i18n="services.vaccine.title">Vacunación y desparasitación</h3>
-<p class="font-body-md text-body-md text-on-surface-variant flex-grow" data-i18n="services.vaccine.text">Planes preventivos personalizados para proteger a tu animal de enfermedades comunes y parásitos.</p>
-<p class="text-sm text-on-surface-variant">Vacunas para perros y gatos adaptadas a edad, salud y estilo de vida.</p>
-</div>
-<!-- Service 3 -->
-<div class="bg-surface-container-lowest rounded-xl p-8 border border-outline-variant soft-shadow flex flex-col gap-5 hover:shadow-[0_10px_20px_rgba(27,67,50,0.08)] transition-shadow">
-<div class="w-12 h-12 bg-primary-fixed rounded-lg flex items-center justify-center">
-<span class="material-symbols-outlined text-on-primary-fixed">surgical</span>
-</div>
-<h3 class="font-h3 text-h3 text-on-background" data-i18n="services.surgery.title">Cirugía</h3>
-<p class="font-body-md text-body-md text-on-surface-variant flex-grow" data-i18n="services.surgery.text">Intervenciones quirúrgicas seguras con monitorización constante y quirófano equipado.</p>
-</div>
-<!-- Service 4 -->
-<div class="bg-surface-container-lowest rounded-xl p-8 border border-outline-variant soft-shadow flex flex-col gap-5 hover:shadow-[0_10px_20px_rgba(27,67,50,0.08)] transition-shadow">
-<div class="w-12 h-12 bg-primary-fixed rounded-lg flex items-center justify-center">
-<span class="material-symbols-outlined text-on-primary-fixed">science</span>
-</div>
-<h3 class="font-h3 text-h3 text-on-background" data-i18n="services.lab.title">Análisis de laboratorio</h3>
-<p class="font-body-md text-body-md text-on-surface-variant flex-grow" data-i18n="services.lab.text">Diagnósticos rápidos y precisos gracias a nuestro equipamiento de laboratorio in situ.</p>
-</div>
-<!-- Service 5 -->
-<div class="bg-surface-container-lowest rounded-xl p-8 border border-outline-variant soft-shadow flex flex-col gap-5 hover:shadow-[0_10px_20px_rgba(27,67,50,0.08)] transition-shadow">
-<div class="w-12 h-12 bg-primary-fixed rounded-lg flex items-center justify-center">
-<span class="material-symbols-outlined text-on-primary-fixed">content_cut</span>
-</div>
-<h3 class="font-h3 text-h3 text-on-background" data-i18n="services.grooming.title">Peluquería canina y felina</h3>
-<p class="font-body-md text-body-md text-on-surface-variant flex-grow" data-i18n="services.grooming.text">Servicios de higiene y estética adaptados a las necesidades de cada raza y tipo de pelo.</p>
-<p class="text-sm text-on-surface-variant">Baño, higiene y mantenimiento de pelo con cita previa.</p>
-</div>
-<!-- Service 6 -->
-<div class="bg-surface-container-lowest rounded-xl p-8 border border-outline-variant soft-shadow flex flex-col gap-5 hover:shadow-[0_10px_20px_rgba(27,67,50,0.08)] transition-shadow">
-<div class="w-12 h-12 bg-error-container rounded-lg flex items-center justify-center">
-<span class="material-symbols-outlined text-on-error-container">emergency</span>
-</div>
-<h3 class="font-h3 text-h3 text-on-background" data-i18n="services.emergency.title">Urgencias veterinarias</h3>
-<p class="font-body-md text-body-md text-on-surface-variant flex-grow" data-i18n="services.emergency.text">Atención rápida para casos críticos, priorizando siempre el bienestar inmediato del animal.</p>
-<p class="text-sm text-on-surface-variant">Urgencias veterinarias en Oviedo durante nuestro horario de atención.</p>
+<div class="mt-8 flex flex-wrap gap-3 text-sm text-white/90">
+<span class="pricing-pill rounded-full px-4 py-2">Consulta desde 35€</span>
+<span class="pricing-pill rounded-full px-4 py-2">Atención para perros y gatos</span>
+<span class="pricing-pill rounded-full px-4 py-2">Reserva online</span>
 </div>
 </div>
-<div class="text-center mt-8">
-<p class="font-body-md text-body-md text-on-surface-variant mb-4" data-i18n="services.notFound">¿No encuentras lo que buscas?</p>
-<a class="inline-flex items-center justify-center border-2 border-primary text-primary font-label-caps text-label-caps px-8 py-3 rounded-lg hover:bg-primary-fixed transition-colors duration-200 hover:scale-105" href="#reserva">
-                        Reservar cita
-                    </a>
+</div>
+</div>
+<div class="px-md py-xl" id="packs-veterinarios">
+<div class="max-w-[1760px] mx-auto w-full">
+<div class="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+<div>
+<p class="font-label-caps text-label-caps text-primary">Packs destacados</p>
+<h3 class="font-h2 text-h2 text-on-background">Nuestros packs más reservados</h3>
+</div>
+<p class="max-w-2xl text-on-surface-variant">Opciones orientativas para empezar rápido. El equipo puede ajustar cada pack según edad, tamaño, historial y necesidades de tu mascota.</p>
+</div>
+<div class="pricing-scroll" data-pricing-packs></div>
+</div>
+</div>
+<div class="px-md pb-xl">
+<div class="max-w-[1760px] mx-auto grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
+<article class="visual-banner grid min-h-[420px] lg:grid-cols-2">
+<img alt="Veterinaria revisando a un perro tranquilo" loading="lazy" src="https://images.pexels.com/photos/6234608/pexels-photo-6234608.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=1100&amp;h=900&amp;q=85"/>
+<div class="flex flex-col justify-center gap-5 p-8 md:p-12 text-white">
+<p class="font-label-caps text-label-caps text-primary-fixed">Valoración guiada</p>
+<h3 class="font-h2 text-h2">¿No sabes qué necesita tu mascota?</h3>
+<p class="text-white/86">Reserva una valoración y nuestro equipo te recomendará el pack más adecuado.</p>
+<a class="w-fit rounded-lg bg-primary-fixed px-7 py-4 font-label-caps text-label-caps text-on-primary-fixed transition-transform hover:scale-105" href="#reserva">Reservar valoración</a>
+</div>
+</article>
+<article class="visual-banner flex min-h-[420px] flex-col justify-end bg-[linear-gradient(135deg,#ffe088,#c1ecd4)] p-8 md:p-12 text-primary">
+<div class="max-w-xl">
+<p class="font-label-caps text-label-caps">Cuidado preventivo</p>
+<h3 class="mt-3 font-h2 text-h2">Prevención hoy, tranquilidad mañana</h3>
+<p class="mt-4 text-on-primary-fixed/80">Revisiones, vacunas y controles para detectar problemas a tiempo.</p>
+<a class="mt-7 inline-flex rounded-lg bg-primary px-7 py-4 font-label-caps text-label-caps text-white transition-transform hover:scale-105" href="#packs-veterinarios">Ver packs preventivos</a>
+</div>
+</article>
+</div>
+</div>
+<div class="px-md pb-xl">
+<div class="max-w-[1760px] mx-auto">
+<div class="mb-10 text-center">
+<p class="font-label-caps text-label-caps text-primary">Más fácil para ti</p>
+<h3 class="font-h2 text-h2 text-on-background">Todo pensado para reservar sin complicarte</h3>
+</div>
+<div class="grid gap-5 md:grid-cols-4">
+<div class="benefit-tile rounded-2xl p-7 text-center"><span class="material-symbols-outlined rounded-full bg-primary-fixed p-3 text-primary">event_available</span><h4 class="mt-4 font-h3 text-[24px]">Reserva online fácil</h4><p class="mt-2 text-sm text-on-surface-variant">Elige día y hora en pocos pasos.</p></div>
+<div class="benefit-tile rounded-2xl p-7 text-center"><span class="material-symbols-outlined rounded-full bg-primary-fixed p-3 text-primary">pets</span><h4 class="mt-4 font-h3 text-[24px]">Perros y gatos</h4><p class="mt-2 text-sm text-on-surface-variant">Atención adaptada a cada especie.</p></div>
+<div class="benefit-tile rounded-2xl p-7 text-center"><span class="material-symbols-outlined rounded-full bg-primary-fixed p-3 text-primary">tune</span><h4 class="mt-4 font-h3 text-[24px]">Planes adaptados</h4><p class="mt-2 text-sm text-on-surface-variant">Cada caso se ajusta tras valoración.</p></div>
+<div class="benefit-tile rounded-2xl p-7 text-center"><span class="material-symbols-outlined rounded-full bg-primary-fixed p-3 text-primary">verified</span><h4 class="mt-4 font-h3 text-[24px]">Equipo profesional</h4><p class="mt-2 text-sm text-on-surface-variant">Criterio veterinario y trato cercano.</p></div>
+</div>
+</div>
+</div>
+<div class="px-md pb-xl">
+<div class="max-w-[1760px] mx-auto">
+<div class="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+<div>
+<p class="font-label-caps text-label-caps text-primary">Servicios individuales</p>
+<h3 class="font-h2 text-h2 text-on-background">Elige el servicio que necesitas</h3>
+</div>
+<p class="max-w-2xl text-on-surface-variant">Si prefieres reservar un servicio concreto, estas son las opciones principales de la clínica.</p>
+</div>
+<div class="grid gap-7 md:grid-cols-2 xl:grid-cols-3" data-pricing-services></div>
+</div>
+</div>
+<div class="px-md pb-xl">
+<div class="max-w-[1760px] mx-auto grid gap-8 lg:grid-cols-[0.85fr_1.15fr] items-center">
+<div>
+<p class="font-label-caps text-label-caps text-primary">Confianza y cercanía</p>
+<h3 class="font-h2 text-h2 text-on-background">Cuidamos de ellos como parte de tu familia</h3>
+<p class="mt-4 text-on-surface-variant">Una clínica pensada para que cada visita sea clara, tranquila y útil para el bienestar de tu mascota.</p>
+<a class="mt-7 inline-flex rounded-lg bg-primary px-7 py-4 font-label-caps text-label-caps text-white transition-transform hover:scale-105" href="#reserva">Reservar cita</a>
+</div>
+<div class="grid h-[560px] grid-cols-2 gap-4">
+<div class="gallery-tile overflow-hidden rounded-3xl"><img alt="Perro feliz durante una visita veterinaria" loading="lazy" src="https://images.pexels.com/photos/5731866/pexels-photo-5731866.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=900&amp;h=1200&amp;q=85"/></div>
+<div class="gallery-tile overflow-hidden rounded-3xl"><img alt="Gato tranquilo en una consulta veterinaria" loading="lazy" src="https://images.pexels.com/photos/6816854/pexels-photo-6816854.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=900&amp;h=900&amp;q=85"/></div>
+<div class="gallery-tile col-span-2 overflow-hidden rounded-3xl"><img alt="Veterinaria cuidando a una mascota" loading="lazy" src="https://images.pexels.com/photos/6234626/pexels-photo-6234626.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=1400&amp;h=700&amp;q=85"/></div>
+</div>
+</div>
+</div>
+<div class="pricing-faq px-md pb-xl">
+<div class="max-w-[1100px] mx-auto">
+<div class="mb-8 text-center">
+<p class="font-label-caps text-label-caps text-primary">Dudas frecuentes</p>
+<h3 class="font-h2 text-h2 text-on-background">Antes de reservar</h3>
+</div>
+<div class="grid gap-4">
+<details class="rounded-2xl border border-outline-variant bg-white p-6 shadow-sm"><summary class="flex cursor-pointer items-center justify-between gap-4 font-h3 text-[24px]"><span>¿Qué incluye cada pack?</span><span class="material-symbols-outlined">expand_more</span></summary><p class="mt-4 text-on-surface-variant">Cada pack indica sus beneficios principales. En consulta ajustamos pruebas, vacunas o tratamientos según la mascota.</p></details>
+<details class="rounded-2xl border border-outline-variant bg-white p-6 shadow-sm"><summary class="flex cursor-pointer items-center justify-between gap-4 font-h3 text-[24px]"><span>¿Puedo reservar online?</span><span class="material-symbols-outlined">expand_more</span></summary><p class="mt-4 text-on-surface-variant">Sí. Puedes elegir día y hora desde el formulario de reserva y la clínica podrá contactarte si necesita ajustar algún detalle.</p></details>
+<details class="rounded-2xl border border-outline-variant bg-white p-6 shadow-sm"><summary class="flex cursor-pointer items-center justify-between gap-4 font-h3 text-[24px]"><span>¿El precio puede variar?</span><span class="material-symbols-outlined">expand_more</span></summary><p class="mt-4 text-on-surface-variant">Sí. Los precios son orientativos y pueden variar por tamaño, tratamiento necesario, pruebas y valoración veterinaria.</p></details>
+<details class="rounded-2xl border border-outline-variant bg-white p-6 shadow-sm"><summary class="flex cursor-pointer items-center justify-between gap-4 font-h3 text-[24px]"><span>¿Atendéis urgencias?</span><span class="material-symbols-outlined">expand_more</span></summary><p class="mt-4 text-on-surface-variant">Atendemos urgencias dentro del horario. Si es grave o fuera de horario, orientamos la derivación a un centro 24 h.</p></details>
+<details class="rounded-2xl border border-outline-variant bg-white p-6 shadow-sm"><summary class="flex cursor-pointer items-center justify-between gap-4 font-h3 text-[24px]"><span>¿Trabajáis con perros y gatos?</span><span class="material-symbols-outlined">expand_more</span></summary><p class="mt-4 text-on-surface-variant">Sí, la clínica está orientada principalmente a perros y gatos.</p></details>
+</div>
+</div>
+</div>
+<div class="px-md pb-xl">
+<div class="visual-banner relative overflow-hidden p-8 md:p-14">
+<div class="absolute inset-0 opacity-28"><img alt="Perro con su familia tras una visita veterinaria" loading="lazy" src="https://images.pexels.com/photos/5731864/pexels-photo-5731864.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=1800&amp;h=700&amp;q=85"/></div>
+<div class="relative z-10 mx-auto flex max-w-[1200px] flex-col items-center text-center text-white">
+<h3 class="font-h1 text-h2 md:text-h1">Dale a tu mascota el cuidado que se merece</h3>
+<p class="mt-4 max-w-3xl text-white/86">Reserva una cita y te ayudamos a elegir el servicio más adecuado.</p>
+<div class="mt-8 flex flex-col gap-4 sm:flex-row">
+<a class="rounded-lg bg-primary-fixed px-8 py-4 font-label-caps text-label-caps text-on-primary-fixed transition-transform hover:scale-105" href="#reserva">Reservar cita</a>
+<a class="rounded-lg border border-white/60 px-8 py-4 font-label-caps text-label-caps text-white transition-colors hover:bg-white hover:text-primary" href="https://wa.me/34984000000?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20los%20packs%20veterinarios." target="_blank" rel="noopener noreferrer">Consultar por WhatsApp</a>
+</div>
+</div>
 </div>
 </div>
 </section>
-<!-- Indicative Prices -->
-<section class="py-xl px-md bg-surface-container-low">
-<div class="max-w-[1480px] mx-auto w-full">
-<div class="text-center max-w-4xl mx-auto mb-12">
-<p class="font-label-caps text-label-caps text-primary mb-3">Precios orientativos</p>
-<h2 class="font-h2 text-h2 text-on-background mb-4">Referencias claras antes de venir</h2>
-<p class="font-body-lg text-body-lg text-on-surface-variant">Una guía sencilla para que puedas valorar la visita con más tranquilidad. El presupuesto final se confirma tras la valoración veterinaria.</p>
-</div>
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-<div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-6 soft-shadow flex items-center justify-between gap-4"><span class="font-label-caps text-label-caps text-on-background">Consulta general</span><strong class="text-primary text-xl">desde 35 €</strong></div>
-<div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-6 soft-shadow flex items-center justify-between gap-4"><span class="font-label-caps text-label-caps text-on-background">Vacunación</span><strong class="text-primary text-xl">desde 28 €</strong></div>
-<div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-6 soft-shadow flex items-center justify-between gap-4"><span class="font-label-caps text-label-caps text-on-background">Desparasitación</span><strong class="text-primary text-xl">desde 12 €</strong></div>
-<div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-6 soft-shadow flex items-center justify-between gap-4"><span class="font-label-caps text-label-caps text-on-background">Peluquería canina</span><strong class="text-primary text-xl">desde 25 €</strong></div>
-<div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-6 soft-shadow flex items-center justify-between gap-4"><span class="font-label-caps text-label-caps text-on-background">Analítica básica</span><strong class="text-primary text-xl">desde 45 €</strong></div>
-<div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-6 soft-shadow flex items-center justify-between gap-4"><span class="font-label-caps text-label-caps text-on-background">Cirugía</span><strong class="text-primary text-xl">presupuesto personalizado</strong></div>
-</div>
-<p class="mt-8 rounded-xl border border-outline-variant bg-surface-container-lowest p-5 text-center text-sm text-on-surface-variant">Los precios son orientativos y pueden variar según el tamaño de la mascota, tratamiento necesario y valoración veterinaria.</p>
-</div>
-</section>
+<script>
+const VETUSTA_WHATSAPP_NUMBER = "34984000000";
+const VETUSTA_WHATSAPP_PACK_MESSAGE = "Hola, quiero información sobre los packs veterinarios.";
+
+const pricingPacks = [
+  {
+    title: "Pack cachorro",
+    category: "Primeras visitas",
+    description: "Primera revisión, vacunas iniciales y desparasitación para empezar con buen pie.",
+    price: "39€",
+    oldPrice: "55€",
+    badge: "Pack completo",
+    image: "https://images.pexels.com/photos/5255200/pexels-photo-5255200.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=700&q=85",
+    benefits: ["Revisión general", "Vacunación inicial", "Desparasitación", "Consejos de cuidados"],
+    featured: false,
+  },
+  {
+    title: "Pack adulto saludable",
+    category: "Prevención anual",
+    description: "Control preventivo para mantener al día la salud de perros y gatos adultos.",
+    price: "49€",
+    oldPrice: "69€",
+    badge: "Más popular",
+    image: "https://images.pexels.com/photos/6235233/pexels-photo-6235233.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=700&q=85",
+    benefits: ["Exploración completa", "Revisión de vacunas", "Plan preventivo", "Recomendaciones personalizadas"],
+    featured: true,
+  },
+  {
+    title: "Pack senior",
+    category: "Mascotas mayores",
+    description: "Seguimiento para detectar cambios a tiempo y cuidar mejor cada etapa.",
+    price: "69€",
+    oldPrice: "89€",
+    badge: "Cuidado avanzado",
+    image: "https://images.pexels.com/photos/5731866/pexels-photo-5731866.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=700&q=85",
+    benefits: ["Revisión senior", "Control preventivo", "Orientación nutricional", "Recomendación de pruebas"],
+    featured: false,
+  },
+  {
+    title: "Pack higiene",
+    category: "Peluquería",
+    description: "Baño, higiene y mantenimiento del manto para que tu mascota esté cómoda.",
+    price: "29€",
+    oldPrice: "39€",
+    badge: "Ahorro",
+    image: "https://images.pexels.com/photos/6816860/pexels-photo-6816860.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=700&q=85",
+    benefits: ["Baño", "Higiene básica", "Cepillado", "Revisión del manto"],
+    featured: false,
+  },
+  {
+    title: "Pack urgencia",
+    category: "Atención prioritaria",
+    description: "Valoración rápida durante el horario para casos que necesitan atención cuanto antes.",
+    price: "según valoración",
+    oldPrice: "",
+    badge: "Prioritario",
+    image: "https://images.pexels.com/photos/6234608/pexels-photo-6234608.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=700&q=85",
+    benefits: ["Valoración inicial", "Priorización del caso", "Primeras indicaciones", "Derivación si es necesario"],
+    featured: false,
+  },
+];
+
+const pricingServices = [
+  {
+    title: "Consulta médica general",
+    category: "Consulta",
+    description: "Exploración, diagnóstico inicial y recomendaciones para cuidar mejor a tu mascota.",
+    price: "desde 35€",
+    oldPrice: "",
+    badge: "Disponible",
+    image: "https://images.pexels.com/photos/6234626/pexels-photo-6234626.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=700&q=85",
+    benefits: ["Exploración", "Orientación veterinaria", "Plan de actuación"],
+  },
+  {
+    title: "Vacunación y desparasitación",
+    category: "Prevención",
+    description: "Pautas preventivas adaptadas a edad, especie, historial y estilo de vida.",
+    price: "desde 12€",
+    oldPrice: "",
+    badge: "Preventivo",
+    image: "https://images.pexels.com/photos/6235233/pexels-photo-6235233.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=700&q=85",
+    benefits: ["Vacunación desde 28€", "Desparasitación desde 12€", "Calendario preventivo"],
+  },
+  {
+    title: "Cirugía",
+    category: "Quirófano",
+    description: "Intervenciones con explicación previa, monitorización y cuidados posteriores.",
+    price: "presupuesto personalizado",
+    oldPrice: "",
+    badge: "Valoración previa",
+    image: "https://images.pexels.com/photos/6234608/pexels-photo-6234608.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=700&q=85",
+    benefits: ["Estudio del caso", "Presupuesto previo", "Seguimiento posterior"],
+  },
+  {
+    title: "Análisis de laboratorio",
+    category: "Diagnóstico",
+    description: "Pruebas para valorar síntomas, controles preventivos y seguimiento de tratamientos.",
+    price: "desde 45€",
+    oldPrice: "",
+    badge: "Diagnóstico",
+    image: "https://images.pexels.com/photos/8460094/pexels-photo-8460094.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=700&q=85",
+    benefits: ["Analítica básica", "Resultados ágiles", "Revisión veterinaria"],
+  },
+  {
+    title: "Peluquería canina y felina",
+    category: "Higiene",
+    description: "Servicio adaptado al tamaño, tipo de pelo y necesidades de cada mascota.",
+    price: "desde 25€",
+    oldPrice: "",
+    badge: "Con cita previa",
+    image: "https://images.pexels.com/photos/6816860/pexels-photo-6816860.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=700&q=85",
+    benefits: ["Baño", "Cepillado", "Mantenimiento del manto"],
+  },
+  {
+    title: "Urgencias veterinarias",
+    category: "Urgencias",
+    description: "Atención durante el horario para casos que requieren una valoración rápida.",
+    price: "según valoración",
+    oldPrice: "",
+    badge: "Llamar antes",
+    image: "https://images.pexels.com/photos/5731864/pexels-photo-5731864.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=700&q=85",
+    benefits: ["Valoración inicial", "Atención prioritaria", "Derivación si procede"],
+  },
+];
+
+function buildPricingCard(item, mode = "pack") {
+  const article = document.createElement("article");
+  article.className = `pricing-card ${item.featured ? "featured" : ""} flex h-full flex-col overflow-hidden rounded-3xl`;
+  const benefits = item.benefits.map((benefit) => `
+    <li class="flex items-start gap-3">
+      <span class="pricing-check mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-sm">✓</span>
+      <span>${benefit}</span>
+    </li>
+  `).join("");
+  article.innerHTML = `
+    <div class="relative">
+      <img class="pricing-image w-full" alt="${item.title}" loading="lazy" src="${item.image}">
+      <span class="absolute left-4 top-4 rounded-full bg-white/90 px-4 py-2 font-label-caps text-xs text-primary shadow">${item.badge}</span>
+    </div>
+    <div class="flex flex-1 flex-col gap-5 p-6">
+      <div>
+        <p class="font-label-caps text-label-caps text-primary">${item.category}</p>
+        <h4 class="mt-2 font-h3 text-[30px] leading-tight text-on-background">${item.title}</h4>
+        <p class="mt-3 text-sm text-on-surface-variant">${item.description}</p>
+      </div>
+      <div>
+        ${item.oldPrice ? `<p class="text-sm text-on-surface-variant line-through">antes ${item.oldPrice}</p>` : ""}
+        <p class="price-current">${item.price}</p>
+        <p class="text-sm text-on-surface-variant">${mode === "pack" ? "precio orientativo" : "servicio individual"}</p>
+      </div>
+      <ul class="grid gap-2 text-sm text-on-surface-variant">${benefits}</ul>
+      <div class="mt-auto grid gap-3">
+        <a class="rounded-lg bg-primary px-6 py-4 text-center font-label-caps text-label-caps text-white transition-transform hover:scale-[1.02]" href="#reserva">Reservar ahora</a>
+        <details class="pricing-faq rounded-lg bg-surface-container-low px-4 py-3">
+          <summary class="flex cursor-pointer items-center justify-between gap-3 font-label-caps text-sm text-primary">
+            <span>Ver qué incluye</span>
+            <span class="material-symbols-outlined text-[20px]">expand_more</span>
+          </summary>
+          <p class="mt-3 text-sm text-on-surface-variant">Incluye los puntos indicados y puede ajustarse tras la valoración veterinaria.</p>
+        </details>
+      </div>
+    </div>
+  `;
+  return article;
+}
+
+function updateVetustaWhatsAppLinks() {
+  document.querySelectorAll("[data-floating-whatsapp]").forEach((link) => {
+    link.href = `https://wa.me/${VETUSTA_WHATSAPP_NUMBER}?text=${encodeURIComponent(VETUSTA_WHATSAPP_PACK_MESSAGE)}`;
+  });
+}
+
+function renderPricingLanding() {
+  const packsTarget = document.querySelector("[data-pricing-packs]");
+  const servicesTarget = document.querySelector("[data-pricing-services]");
+  if (packsTarget) {
+    packsTarget.replaceChildren(...pricingPacks.map((pack) => buildPricingCard(pack, "pack")));
+  }
+  if (servicesTarget) {
+    servicesTarget.replaceChildren(...pricingServices.map((service) => buildPricingCard(service, "service")));
+  }
+  updateVetustaWhatsAppLinks();
+}
+
+renderPricingLanding();
+document.addEventListener("DOMContentLoaded", updateVetustaWhatsAppLinks);
+</script>
 <!-- Why Choose Us -->
 <section class="py-xl px-md bg-surface-container-low">
 <div class="max-w-[1760px] mx-auto w-full text-center">
@@ -920,6 +1270,9 @@
 </footer>
 <a class="md:hidden fixed bottom-4 right-4 left-4 z-50 bg-[#1B4332] text-white py-4 rounded-xl font-label-caps text-center shadow-2xl flex items-center justify-center gap-2 hover:scale-[1.02]" href="#reserva">
 <span class="material-symbols-outlined">event_available</span> <span>Reservar cita</span>
+</a>
+<a class="floating-whatsapp flex h-16 w-16 items-center justify-center rounded-full bg-[#25D366] text-white transition-transform hover:scale-110" href="https://wa.me/34984000000?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20los%20packs%20veterinarios." target="_blank" rel="noopener noreferrer" aria-label="Consultar packs veterinarios por WhatsApp" data-floating-whatsapp>
+<span class="material-symbols-outlined text-[32px]">chat</span>
 </a>
 <script>
 document.getElementById("current-year").textContent = new Date().getFullYear();
