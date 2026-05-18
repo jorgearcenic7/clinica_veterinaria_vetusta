@@ -26,7 +26,7 @@
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://images.pexels.com" rel="preconnect"/>
 <link as="image" href="https://images.pexels.com/photos/6234626/pexels-photo-6234626.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=2400&amp;h=1600&amp;q=90" rel="preload"/>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,700;1,700&amp;family=Lexend:wght@400;600&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Anton&amp;family=Bodoni+Moda:opsz,wght@6..96,700;6..96,900&amp;family=Cormorant+Garamond:ital,wght@0,700;1,700&amp;family=Lexend:wght@400;600&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/>
 <!-- TODO SEO: añade aquí la verificación de Google Search Console cuando tengas el código:
 <meta name="google-site-verification" content="TU_CODIGO_DE_VERIFICACION"/>
 -->
@@ -277,17 +277,17 @@
 
         .hero {
             width: 100%;
-            height: 90vh;
-            min-height: 720px;
+            min-height: clamp(34rem, 82svh, 54rem);
+            height: auto;
             background-image: url("https://images.pexels.com/photos/6234626/pexels-photo-6234626.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=2400&h=1600&q=90");
             background-size: cover;
-            background-position: center;
+            background-position: 58% center;
             background-repeat: no-repeat;
         }
 
         /* Editorial hero inspired by fashion lookbooks: oversized type, image-led, minimal copy. */
         .zara-hero {
-            min-height: calc(100vh - 72px);
+            min-height: clamp(34rem, calc(100svh - 72px), 54rem);
             align-items: stretch;
         }
 
@@ -301,26 +301,51 @@
             max-width: 1760px;
             width: 100%;
             margin: 0 auto;
-            padding: clamp(40px, 7vw, 96px);
+            min-height: inherit;
+            display: grid;
+            grid-template-columns: minmax(280px, 0.68fr) minmax(420px, 1.82fr);
+            align-content: start;
+            align-items: start;
+            justify-content: space-between;
+            gap: clamp(24px, 4vw, 64px);
+            padding: clamp(48px, 7vh, 96px) clamp(8px, 0.8vw, 16px) clamp(48px, 7vh, 96px) clamp(32px, 5vw, 80px);
         }
 
         .zara-hero-title {
+            justify-self: end;
+            align-self: start;
             margin-left: auto;
-            max-width: min(900px, 62vw);
+            min-width: 0;
+            max-width: min(1260px, 70vw);
             color: #ffffff;
-            font-family: "Cormorant Garamond", Georgia, serif;
-            font-size: clamp(4.5rem, 12.5vw, 13.5rem);
+            font-family: "Thunder", "Anton", "Arial Narrow", Impact, sans-serif;
+            font-size: clamp(4.5rem, 8.3vw, 10.5rem);
             font-weight: 700;
             letter-spacing: 0.02em;
-            line-height: 0.78;
+            line-height: 0.92;
             text-align: right;
             text-transform: uppercase;
             text-shadow: 0 18px 42px rgba(0, 0, 0, 0.26);
+            text-wrap: balance;
         }
 
         .zara-hero-copy {
-            max-width: 640px;
+            justify-self: start;
+            min-width: 0;
+            max-width: min(680px, 100%);
             color: #ffffff;
+        }
+
+        .zara-hero-copy > div:first-child {
+            font-size: clamp(0.9rem, 0.75vw + 0.7rem, 1rem);
+        }
+
+        .zara-hero-copy a {
+            min-height: 3.5rem;
+            min-width: min(100%, 11.5rem);
+            padding: clamp(0.9rem, 1vw, 1rem) clamp(1.25rem, 2vw, 2rem);
+            font-size: clamp(0.95rem, 0.55vw + 0.78rem, 1.05rem);
+            line-height: 1.2;
         }
 
         .zara-hero-title span {
@@ -337,49 +362,69 @@
         }
 
         .hero-title {
-            max-width: 980px;
-            line-height: 1.05;
+            max-width: min(980px, 100%);
+            font-size: clamp(2.75rem, 5.25vw, 5.8rem);
+            line-height: 1.08;
         }
 
         .hero-title-accent {
             color: #ffe088;
-            font-family: "Cormorant Garamond", Georgia, serif;
+            font-family: "Bodoni Moda", Didot, "Bodoni 72", "Cormorant Garamond", Georgia, serif;
             font-style: italic;
             font-weight: 700;
             text-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
             white-space: nowrap;
         }
 
-        @media (max-width: 767px) {
+        @media (max-width: 1023px) {
             .hero {
-                min-height: 80vh;
-                height: auto;
-                background-position: center;
-                padding: 96px 0 48px;
-            }
-
-            .hero-content {
-                padding: 32px 20px 48px;
+                min-height: clamp(38rem, 84svh, 48rem);
+                background-position: 60% center;
             }
 
             .zara-hero {
-                min-height: 82vh;
+                min-height: clamp(38rem, 84svh, 48rem);
+            }
+
+            .hero-content {
+                grid-template-columns: 1fr;
+            }
+
+            .zara-hero-title {
+                max-width: min(880px, 100%);
+                font-size: clamp(4.4rem, 14vw, 8.4rem);
+            }
+        }
+
+        @media (max-width: 767px) {
+            .hero {
+                min-height: max(38rem, 100svh);
+                background-position: 62% center;
+                padding: 0;
+            }
+
+            .hero-content {
+                grid-template-columns: 1fr;
+                gap: clamp(20px, 7vw, 36px);
+                padding: clamp(28px, 8vw, 48px) 20px;
+            }
+
+            .zara-hero {
+                min-height: max(38rem, 100svh);
             }
 
             .zara-hero-title {
                 max-width: 100%;
-                font-size: clamp(3.9rem, 18vw, 6.8rem);
-                letter-spacing: 0.01em;
-                line-height: 0.82;
+                font-size: clamp(3.25rem, 16vw, 5.6rem);
+                line-height: 0.92;
             }
 
             .zara-hero-copy {
                 max-width: 100%;
             }
 
-            .zara-hero-subtitle {
-                max-width: 86%;
-                margin-top: auto;
+            .hero-title {
+                font-size: clamp(2.35rem, 11vw, 4.2rem);
             }
         }
 
@@ -423,15 +468,15 @@
         .premium-packs-title {
             position: absolute;
             z-index: 2;
-            top: clamp(28px, 4.5vw, 76px);
-            right: clamp(-22px, 2vw, 64px);
-            width: min(760px, 64vw);
-            color: #012d1d;
-            font-family: "Cormorant Garamond", Georgia, serif;
-            font-size: clamp(4.2rem, 13vw, 12rem);
-            font-weight: 700;
-            letter-spacing: 0.025em;
-            line-height: 0.78;
+            top: clamp(250px, 25vw, 420px);
+            right: clamp(12px, 2vw, 36px);
+            width: min(720px, 58vw);
+            color: #000000;
+            font-family: "Thunder", "Anton", "Arial Narrow", Impact, sans-serif;
+            font-size: clamp(3.4rem, 9.6vw, 8.8rem);
+            font-weight: 900;
+            letter-spacing: 0.02em;
+            line-height: 0.92;
             text-align: right;
             text-transform: uppercase;
         }
@@ -442,7 +487,7 @@
 
         .premium-packs-image-wrap {
             max-width: 1180px;
-            margin: clamp(130px, 16vw, 250px) auto clamp(28px, 5vw, 64px);
+            margin: clamp(70px, 9vw, 150px) auto clamp(28px, 5vw, 64px);
             overflow: hidden;
             border-radius: 0;
             background: #ffffff;
@@ -630,10 +675,10 @@
 </header>
 <main>
 <!-- Hero Section -->
-<section class="hero zara-hero relative flex flex-col justify-center overflow-hidden" id="inicio" role="img" aria-label="Una veterinaria sonriente cuidando con cariño a un perro en una clínica moderna y acogedora, con iluminación natural y tonos cálidos.">
+<section class="hero zara-hero relative overflow-hidden" id="inicio" role="img" aria-label="Una veterinaria sonriente cuidando con cariño a un perro en una clínica moderna y acogedora, con iluminación natural y tonos cálidos.">
 <div class="hero-overlay absolute inset-0 z-0"></div>
-<div class="hero-content relative z-10 flex min-h-[inherit] flex-col justify-between gap-10">
-<div class="zara-hero-copy flex flex-col gap-6">
+<div class="hero-content relative z-10">
+<div class="zara-hero-copy hero-left flex flex-col gap-6">
 <div class="inline-flex items-center gap-2 bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full w-fit border border-white/20">
 <span class="text-tertiary-fixed" data-google-rating>⭐ 4,9/5</span>
 <span class="text-white font-label-caps text-label-caps" data-google-review-count>· +560 reseñas en Google</span>
