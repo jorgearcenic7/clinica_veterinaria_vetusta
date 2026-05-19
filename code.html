@@ -365,6 +365,13 @@
             max-width: min(980px, 100%);
             font-size: clamp(2.75rem, 5.25vw, 5.8rem);
             line-height: 1.08;
+            overflow-wrap: normal;
+            word-break: normal;
+        }
+
+        .hero-title-line {
+            display: block;
+            white-space: nowrap;
         }
 
         .hero-title-accent {
@@ -451,6 +458,17 @@
             min-width: max-content;
         }
 
+        header nav a {
+            border-bottom: 2px solid transparent !important;
+            color: #475569 !important;
+            padding-bottom: 0.25rem;
+        }
+
+        header nav a.nav-active {
+            border-bottom-color: #1B4332 !important;
+            color: #1B4332 !important;
+        }
+
         .pricing-landing {
             background: #fbf7f2;
             color: #1b1c1c;
@@ -466,10 +484,10 @@
         }
 
         .premium-packs-title {
-            position: absolute;
+            position: relative;
             z-index: 2;
-            top: clamp(250px, 25vw, 420px);
-            right: clamp(12px, 2vw, 36px);
+            top: auto;
+            right: auto;
             width: min(720px, 58vw);
             color: #000000;
             font-family: "Thunder", "Anton", "Arial Narrow", Impact, sans-serif;
@@ -487,7 +505,7 @@
 
         .premium-packs-image-wrap {
             max-width: 1180px;
-            margin: clamp(70px, 9vw, 150px) auto clamp(28px, 5vw, 64px);
+            margin: 0 auto clamp(28px, 5vw, 64px);
             overflow: hidden;
             border-radius: 0;
             background: #ffffff;
@@ -638,6 +656,290 @@
                 grid-template-columns: repeat(2, minmax(260px, 1fr));
             }
         }
+
+        /* Responsive stability pass: keeps the editorial layout fluid at browser zoom levels. */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        img,
+        iframe {
+            max-width: 100%;
+        }
+
+        body {
+            overflow-wrap: break-word;
+        }
+
+        .px-md {
+            padding-left: clamp(1rem, 4vw, 2.5rem) !important;
+            padding-right: clamp(1rem, 4vw, 2.5rem) !important;
+        }
+
+        .py-xl {
+            padding-top: clamp(4rem, 8vw, 7.5rem) !important;
+            padding-bottom: clamp(4rem, 8vw, 7.5rem) !important;
+        }
+
+        .pb-xl {
+            padding-bottom: clamp(4rem, 8vw, 7.5rem) !important;
+        }
+
+        .text-h1 {
+            font-size: clamp(3rem, 5.8vw, 5.8rem) !important;
+            line-height: 1.05 !important;
+        }
+
+        .hero-title.text-h1 {
+            font-size: clamp(2.9rem, 5.4vw, 5.6rem) !important;
+            line-height: 1.08 !important;
+        }
+
+        .text-h2 {
+            font-size: clamp(2.15rem, 4vw, 4.5rem) !important;
+            line-height: 1.12 !important;
+        }
+
+        .text-h3,
+        .font-h3.text-\[32px\],
+        h3.font-h3 {
+            font-size: clamp(1.45rem, 2vw, 2rem) !important;
+            line-height: 1.22 !important;
+        }
+
+        .text-body-lg {
+            font-size: clamp(1.05rem, 1.15vw, 1.35rem) !important;
+            line-height: 1.55 !important;
+        }
+
+        .text-body-md {
+            font-size: clamp(1rem, 0.95vw, 1.18rem) !important;
+            line-height: 1.55 !important;
+        }
+
+        .text-label-caps {
+            font-size: clamp(0.88rem, 0.55vw + 0.72rem, 1rem) !important;
+            line-height: 1.2 !important;
+        }
+
+        .premium-packs-editorial > .max-w-\[1760px\] {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            align-items: center;
+            padding-top: clamp(1rem, 2.5vw, 2.75rem);
+        }
+
+        .premium-packs-title,
+        .premium-packs-image-wrap {
+            grid-column: 1;
+            grid-row: 1;
+        }
+
+        .premium-packs-title {
+            justify-self: end;
+            align-self: center;
+            margin-top: clamp(4rem, 9vw, 9rem);
+            margin-right: clamp(0.75rem, 2vw, 2.25rem);
+            max-width: min(720px, 58vw);
+            pointer-events: none;
+        }
+
+        .premium-packs-image-wrap {
+            width: min(1180px, 100%);
+        }
+
+        .pricing-scroll {
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+        }
+
+        .pricing-card {
+            min-width: 0;
+        }
+
+        .pricing-image {
+            width: 100%;
+        }
+
+        .price-current {
+            font-size: clamp(2.6rem, 5vw, 4.5rem);
+        }
+
+        .benefit-tile,
+        .pricing-card,
+        details,
+        form,
+        .visual-banner {
+            min-width: 0;
+        }
+
+        .benefit-tile h4,
+        .pricing-card h4,
+        details summary,
+        [data-selected-date-title],
+        [data-calendar-title],
+        #contacto h4 {
+            font-size: clamp(1.25rem, 1.5vw, 1.65rem) !important;
+            line-height: 1.22 !important;
+        }
+
+        .gallery-tile {
+            min-height: 0;
+        }
+
+        .gallery-tile img,
+        .visual-banner img,
+        .pricing-image {
+            display: block;
+            object-fit: cover;
+        }
+
+        .lg\:grid-cols-\[0\.85fr_1\.15fr\] {
+            grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+        }
+
+        [data-booking-form] {
+            padding: clamp(1.25rem, 3vw, 3.5rem) !important;
+        }
+
+        [data-booking-form] input,
+        [data-booking-form] select,
+        [data-booking-form] textarea,
+        [data-booking-form] button {
+            min-width: 0;
+            font-size: clamp(1rem, 0.6vw + 0.86rem, 1.08rem);
+        }
+
+        [data-calendar-days],
+        [data-time-slots] {
+            min-width: 0;
+        }
+
+        [data-time-slots] {
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 8.75rem), 1fr));
+        }
+
+        #contacto iframe {
+            min-height: clamp(20rem, 38vw, 28rem);
+        }
+
+        #contacto .h-\[400px\] {
+            height: clamp(20rem, 38vw, 28rem) !important;
+        }
+
+        @media (max-width: 1279px) {
+            header nav {
+                gap: clamp(0.75rem, 1.4vw, 1.5rem) !important;
+            }
+
+            .header-actions {
+                gap: 0.75rem;
+                margin-left: 0.75rem;
+            }
+
+            .header-cta {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+            }
+
+            .premium-packs-title {
+                max-width: min(640px, 66vw);
+                font-size: clamp(3.2rem, 11vw, 7.8rem);
+            }
+        }
+
+        @media (max-width: 1180px) {
+            header nav,
+            .header-cta {
+                display: none !important;
+            }
+
+            header button.md\:hidden {
+                display: block !important;
+            }
+
+            header > div {
+                gap: 1rem;
+            }
+
+            header .font-h3 {
+                font-size: clamp(1.1rem, 2.4vw, 1.65rem) !important;
+                line-height: 1.15 !important;
+            }
+        }
+
+        @media (max-width: 1023px) {
+            .lg\:grid-cols-\[0\.85fr_1\.15fr\],
+            .lg\:grid-cols-\[1\.15fr_0\.85fr\] {
+                grid-template-columns: 1fr;
+            }
+
+            .grid.h-\[560px\] {
+                height: auto !important;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .gallery-tile {
+                aspect-ratio: 1 / 1;
+            }
+
+            .gallery-tile.col-span-2 {
+                aspect-ratio: 16 / 8;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .py-xl {
+                padding-top: clamp(3rem, 12vw, 5rem) !important;
+                padding-bottom: clamp(3rem, 12vw, 5rem) !important;
+            }
+
+            .pb-xl {
+                padding-bottom: clamp(3rem, 12vw, 5rem) !important;
+            }
+
+            .premium-packs-editorial > .max-w-\[1760px\] {
+                display: block;
+                padding-top: 0;
+            }
+
+            .premium-packs-title {
+                max-width: 100%;
+                margin: 0 0 -0.08em;
+                pointer-events: auto;
+                text-align: right;
+            }
+
+            .premium-packs-image-wrap {
+                width: 100%;
+            }
+
+            .grid.h-\[560px\] {
+                grid-template-columns: 1fr;
+            }
+
+            .gallery-tile,
+            .gallery-tile.col-span-2 {
+                grid-column: auto;
+                aspect-ratio: 4 / 3;
+            }
+
+            details summary {
+                align-items: flex-start;
+                gap: 1rem;
+                padding: clamp(1rem, 5vw, 1.5rem) !important;
+            }
+
+            #contacto .grid {
+                gap: clamp(2rem, 8vw, 3rem);
+            }
+
+            .floating-whatsapp {
+                width: 3.5rem;
+                height: 3.5rem;
+            }
+        }
     </style>
 </head>
 <body class="bg-background text-on-background font-body-md text-body-md antialiased overflow-x-hidden pb-24 md:pb-0">
@@ -683,7 +985,11 @@
 <span class="text-tertiary-fixed" data-google-rating>⭐ 4,9/5</span>
 <span class="text-white font-label-caps text-label-caps" data-google-review-count>· +560 reseñas en Google</span>
 </div>
-<h2 class="hero-title font-h1 text-h1 text-white drop-shadow-md">Tu mascota merece lo <span class="hero-title-accent">mejor.</span></h2>
+<h2 class="hero-title font-h1 text-h1 text-white drop-shadow-md">
+<span class="hero-title-line">Tu mascota</span>
+<span class="hero-title-line">merece</span>
+<span class="hero-title-line">lo <span class="hero-title-accent">mejor.</span></span>
+</h2>
 <div class="flex flex-col sm:flex-row gap-4 mt-2">
 <a class="flex items-center justify-center bg-primary text-on-primary font-label-caps text-label-caps px-8 py-4 rounded-lg hover:bg-surface-tint transition-colors duration-200 hover:scale-105" href="#reserva">
                             Reservar cita
@@ -1361,6 +1667,45 @@ document.addEventListener("DOMContentLoaded", updateVetustaWhatsAppLinks);
 <span class="material-symbols-outlined text-[32px]">chat</span>
 </a>
 <script>
+const navLinks = Array.from(document.querySelectorAll('header nav a[href^="#"]'));
+const navSections = navLinks
+  .map((link) => document.querySelector(link.getAttribute("href")))
+  .filter(Boolean);
+
+function setActiveNav(hash) {
+  navLinks.forEach((link) => {
+    const isActive = link.getAttribute("href") === hash;
+    link.classList.toggle("nav-active", isActive);
+    if (isActive) {
+      link.setAttribute("aria-current", "page");
+    } else {
+      link.removeAttribute("aria-current");
+    }
+  });
+}
+
+navLinks.forEach((link) => {
+  link.addEventListener("click", () => setActiveNav(link.getAttribute("href")));
+});
+
+if ("IntersectionObserver" in window) {
+  const navObserver = new IntersectionObserver((entries) => {
+    const visible = entries
+      .filter((entry) => entry.isIntersecting)
+      .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+    if (visible) {
+      setActiveNav(`#${visible.target.id}`);
+    }
+  }, {
+    rootMargin: "-25% 0px -55% 0px",
+    threshold: [0.15, 0.35, 0.6]
+  });
+
+  navSections.forEach((section) => navObserver.observe(section));
+}
+
+setActiveNav(window.location.hash || "#inicio");
 document.getElementById("current-year").textContent = new Date().getFullYear();
 </script>
 <script src="/reviews.js"></script>
