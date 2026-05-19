@@ -499,6 +499,54 @@
             text-transform: uppercase;
         }
 
+        .services-editorial {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            align-items: center;
+            margin-bottom: clamp(2.5rem, 5vw, 5rem);
+            padding-top: clamp(1rem, 2.5vw, 2.75rem);
+        }
+
+        .services-title,
+        .services-image-wrap {
+            grid-column: 1;
+            grid-row: 1;
+        }
+
+        .services-title {
+            position: relative;
+            z-index: 2;
+            justify-self: end;
+            align-self: center;
+            margin-top: clamp(3rem, 7vw, 7rem);
+            margin-right: clamp(0.75rem, 2vw, 2.25rem);
+            max-width: min(760px, 62vw);
+            color: #000000;
+            font-family: "Thunder", "Anton", "Arial Narrow", Impact, sans-serif;
+            font-size: clamp(4rem, 12vw, 10rem);
+            font-weight: 900;
+            letter-spacing: 0.02em;
+            line-height: 0.92;
+            text-align: right;
+            text-transform: uppercase;
+            pointer-events: none;
+        }
+
+        .services-image-wrap {
+            width: min(1180px, 100%);
+            margin: 0 auto;
+            overflow: hidden;
+            background: #ffffff;
+        }
+
+        .services-image-wrap img {
+            width: 100%;
+            aspect-ratio: 16 / 7;
+            object-fit: cover;
+            object-position: 54% center;
+            display: block;
+        }
+
         .premium-packs-title span {
             display: block;
         }
@@ -550,7 +598,7 @@
         }
 
         .pricing-image {
-            aspect-ratio: 4 / 3;
+            aspect-ratio: 16 / 10;
             object-fit: cover;
         }
 
@@ -560,6 +608,20 @@
             line-height: 0.95;
             letter-spacing: 0;
             color: #012d1d;
+        }
+
+        .pricing-card {
+            border-radius: 18px;
+        }
+
+        .pricing-card .pricing-faq summary {
+            font-size: clamp(0.95rem, 0.55vw + 0.78rem, 1.05rem) !important;
+            line-height: 1.15 !important;
+            font-weight: 600;
+        }
+
+        .pricing-card .pricing-faq {
+            padding: 0.75rem 0.9rem;
         }
 
         .pricing-check {
@@ -741,9 +803,13 @@
             justify-self: end;
             align-self: center;
             margin-top: clamp(4rem, 9vw, 9rem);
-            margin-right: clamp(0.75rem, 2vw, 2.25rem);
+            margin-right: calc(clamp(8px, 0.8vw, 16px) - clamp(1rem, 4vw, 2.5rem));
             max-width: min(720px, 58vw);
             pointer-events: none;
+        }
+
+        .services-title {
+            margin-right: calc(clamp(8px, 0.8vw, 16px) - clamp(1rem, 4vw, 2.5rem));
         }
 
         .premium-packs-image-wrap {
@@ -776,7 +842,7 @@
 
         .benefit-tile h4,
         .pricing-card h4,
-        details summary,
+        details:not(.pricing-faq) summary,
         [data-selected-date-title],
         [data-calendar-title],
         #contacto h4 {
@@ -847,6 +913,11 @@
                 max-width: min(640px, 66vw);
                 font-size: clamp(3.2rem, 11vw, 7.8rem);
             }
+
+            .services-title {
+                max-width: min(680px, 68vw);
+                font-size: clamp(3.4rem, 11vw, 8rem);
+            }
         }
 
         @media (max-width: 1180px) {
@@ -913,6 +984,29 @@
 
             .premium-packs-image-wrap {
                 width: 100%;
+            }
+
+            .services-editorial {
+                display: block;
+                padding-top: 0;
+                margin-bottom: clamp(2rem, 8vw, 3rem);
+            }
+
+            .services-title {
+                max-width: 100%;
+                margin: 0 0 -0.08em;
+                pointer-events: auto;
+                text-align: right;
+                font-size: clamp(4rem, 22vw, 7rem);
+            }
+
+            .services-image-wrap {
+                width: 100%;
+            }
+
+            .services-image-wrap img {
+                aspect-ratio: 4 / 5;
+                object-position: center;
             }
 
             .grid.h-\[560px\] {
@@ -1024,58 +1118,15 @@
 </div>
 <div class="px-md pb-xl">
 <div class="max-w-[1760px] mx-auto">
-<div class="mb-10 text-center">
-<p class="font-label-caps text-label-caps text-primary">Más fácil para ti</p>
-<h3 class="font-h2 text-h2 text-on-background">Todo pensado para reservar sin complicarte</h3>
+<div class="services-editorial" aria-label="Servicios">
+<div class="services-title">
+<span>Servicios</span>
 </div>
-<div class="grid gap-5 md:grid-cols-4">
-<div class="benefit-tile rounded-2xl p-7 text-center"><span class="material-symbols-outlined rounded-full bg-primary-fixed p-3 text-primary">event_available</span><h4 class="mt-4 font-h3 text-[24px]">Reserva online fácil</h4><p class="mt-2 text-sm text-on-surface-variant">Elige día y hora en pocos pasos.</p></div>
-<div class="benefit-tile rounded-2xl p-7 text-center"><span class="material-symbols-outlined rounded-full bg-primary-fixed p-3 text-primary">pets</span><h4 class="mt-4 font-h3 text-[24px]">Perros y gatos</h4><p class="mt-2 text-sm text-on-surface-variant">Atención adaptada a cada especie.</p></div>
-<div class="benefit-tile rounded-2xl p-7 text-center"><span class="material-symbols-outlined rounded-full bg-primary-fixed p-3 text-primary">tune</span><h4 class="mt-4 font-h3 text-[24px]">Planes adaptados</h4><p class="mt-2 text-sm text-on-surface-variant">Cada caso se ajusta tras valoración.</p></div>
-<div class="benefit-tile rounded-2xl p-7 text-center"><span class="material-symbols-outlined rounded-full bg-primary-fixed p-3 text-primary">verified</span><h4 class="mt-4 font-h3 text-[24px]">Equipo profesional</h4><p class="mt-2 text-sm text-on-surface-variant">Criterio veterinario y trato cercano.</p></div>
+<div class="services-image-wrap">
+<img alt="Veterinario revisando a un perro durante una consulta" loading="lazy" src="https://images.pexels.com/photos/6235233/pexels-photo-6235233.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=1800&amp;h=900&amp;q=85"/>
 </div>
-</div>
-</div>
-<div class="px-md pb-xl">
-<div class="max-w-[1760px] mx-auto">
-<div class="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-<div>
-<p class="font-label-caps text-label-caps text-primary">Servicios individuales</p>
-<h3 class="font-h2 text-h2 text-on-background">Elige el servicio que necesitas</h3>
-</div>
-<p class="max-w-2xl text-on-surface-variant">Si prefieres reservar un servicio concreto, estas son las opciones principales de la clínica.</p>
 </div>
 <div class="grid gap-7 md:grid-cols-2 xl:grid-cols-3" data-pricing-services></div>
-</div>
-</div>
-<div class="px-md pb-xl">
-<div class="max-w-[1760px] mx-auto grid gap-8 lg:grid-cols-[0.85fr_1.15fr] items-center">
-<div>
-<p class="font-label-caps text-label-caps text-primary">Confianza y cercanía</p>
-<h3 class="font-h2 text-h2 text-on-background">Cuidamos de ellos como parte de tu familia</h3>
-<p class="mt-4 text-on-surface-variant">Una clínica pensada para que cada visita sea clara, tranquila y útil para el bienestar de tu mascota.</p>
-<a class="mt-7 inline-flex rounded-lg bg-primary px-7 py-4 font-label-caps text-label-caps text-white transition-transform hover:scale-105" href="#reserva">Reservar cita</a>
-</div>
-<div class="grid h-[560px] grid-cols-2 gap-4">
-<div class="gallery-tile overflow-hidden rounded-3xl"><img alt="Perro feliz durante una visita veterinaria" loading="lazy" src="https://images.pexels.com/photos/5731866/pexels-photo-5731866.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=900&amp;h=1200&amp;q=85"/></div>
-<div class="gallery-tile overflow-hidden rounded-3xl"><img alt="Gato tranquilo en una consulta veterinaria" loading="lazy" src="https://images.pexels.com/photos/6816854/pexels-photo-6816854.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=900&amp;h=900&amp;q=85"/></div>
-<div class="gallery-tile col-span-2 overflow-hidden rounded-3xl"><img alt="Veterinaria cuidando a una mascota" loading="lazy" src="https://images.pexels.com/photos/6234626/pexels-photo-6234626.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=1400&amp;h=700&amp;q=85"/></div>
-</div>
-</div>
-</div>
-<div class="pricing-faq px-md pb-xl">
-<div class="max-w-[1100px] mx-auto">
-<div class="mb-8 text-center">
-<p class="font-label-caps text-label-caps text-primary">Dudas frecuentes</p>
-<h3 class="font-h2 text-h2 text-on-background">Antes de reservar</h3>
-</div>
-<div class="grid gap-4">
-<details class="rounded-2xl border border-outline-variant bg-white p-6 shadow-sm"><summary class="flex cursor-pointer items-center justify-between gap-4 font-h3 text-[24px]"><span>¿Qué incluye cada pack?</span><span class="material-symbols-outlined">expand_more</span></summary><p class="mt-4 text-on-surface-variant">Cada pack indica sus beneficios principales. En consulta ajustamos pruebas, vacunas o tratamientos según la mascota.</p></details>
-<details class="rounded-2xl border border-outline-variant bg-white p-6 shadow-sm"><summary class="flex cursor-pointer items-center justify-between gap-4 font-h3 text-[24px]"><span>¿Puedo reservar online?</span><span class="material-symbols-outlined">expand_more</span></summary><p class="mt-4 text-on-surface-variant">Sí. Puedes elegir día y hora desde el formulario de reserva y la clínica podrá contactarte si necesita ajustar algún detalle.</p></details>
-<details class="rounded-2xl border border-outline-variant bg-white p-6 shadow-sm"><summary class="flex cursor-pointer items-center justify-between gap-4 font-h3 text-[24px]"><span>¿El precio puede variar?</span><span class="material-symbols-outlined">expand_more</span></summary><p class="mt-4 text-on-surface-variant">Sí. Los precios son orientativos y pueden variar por tamaño, tratamiento necesario, pruebas y valoración veterinaria.</p></details>
-<details class="rounded-2xl border border-outline-variant bg-white p-6 shadow-sm"><summary class="flex cursor-pointer items-center justify-between gap-4 font-h3 text-[24px]"><span>¿Atendéis urgencias?</span><span class="material-symbols-outlined">expand_more</span></summary><p class="mt-4 text-on-surface-variant">Atendemos urgencias dentro del horario. Si es grave o fuera de horario, orientamos la derivación a un centro 24 h.</p></details>
-<details class="rounded-2xl border border-outline-variant bg-white p-6 shadow-sm"><summary class="flex cursor-pointer items-center justify-between gap-4 font-h3 text-[24px]"><span>¿Trabajáis con perros y gatos?</span><span class="material-symbols-outlined">expand_more</span></summary><p class="mt-4 text-on-surface-variant">Sí, la clínica está orientada principalmente a perros y gatos.</p></details>
-</div>
 </div>
 </div>
 <div class="px-md pb-xl">
@@ -1210,8 +1261,8 @@ function buildPricingCard(item, mode = "pack") {
   const article = document.createElement("article");
   article.className = `pricing-card ${item.featured ? "featured" : ""} flex h-full flex-col overflow-hidden rounded-3xl`;
   const benefits = item.benefits.map((benefit) => `
-    <li class="flex items-start gap-3">
-      <span class="pricing-check mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-sm">✓</span>
+    <li class="flex items-start gap-2">
+      <span class="pricing-check mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs">✓</span>
       <span>${benefit}</span>
     </li>
   `).join("");
@@ -1220,26 +1271,27 @@ function buildPricingCard(item, mode = "pack") {
       <img class="pricing-image w-full" alt="${item.title}" loading="lazy" src="${item.image}">
       <span class="absolute left-4 top-4 rounded-full bg-white/90 px-4 py-2 font-label-caps text-xs text-primary shadow">${item.badge}</span>
     </div>
-    <div class="flex flex-1 flex-col gap-5 p-6">
+    <div class="flex flex-1 flex-col gap-3 p-5">
       <div>
         <p class="font-label-caps text-label-caps text-primary">${item.category}</p>
-        <h4 class="mt-2 font-h3 text-[30px] leading-tight text-on-background">${item.title}</h4>
-        <p class="mt-3 text-sm text-on-surface-variant">${item.description}</p>
+        <h4 class="mt-1 font-h3 text-[26px] leading-tight text-on-background">${item.title}</h4>
+        <p class="mt-2 text-sm leading-snug text-on-surface-variant">${item.description}</p>
       </div>
       <div>
-        ${item.oldPrice ? `<p class="text-sm text-on-surface-variant line-through">antes ${item.oldPrice}</p>` : ""}
-        <p class="price-current">${item.price}</p>
+        <div class="flex flex-wrap items-end gap-x-3 gap-y-1">
+          <p class="price-current">${item.price}</p>
+        </div>
         <p class="text-sm text-on-surface-variant">${mode === "pack" ? "precio orientativo" : "servicio individual"}</p>
       </div>
-      <ul class="grid gap-2 text-sm text-on-surface-variant">${benefits}</ul>
-      <div class="mt-auto grid gap-3">
-        <a class="rounded-lg bg-primary px-6 py-4 text-center font-label-caps text-label-caps text-white transition-transform hover:scale-[1.02]" href="#reserva">Reservar ahora</a>
-        <details class="pricing-faq rounded-lg bg-surface-container-low px-4 py-3">
+      <ul class="grid gap-1.5 text-sm leading-snug text-on-surface-variant">${benefits}</ul>
+      <div class="mt-auto grid gap-2">
+        <a class="rounded-lg bg-primary px-6 py-3 text-center font-label-caps text-label-caps text-white transition-transform hover:scale-[1.02]" href="#reserva">Reservar ahora</a>
+        <details class="pricing-faq rounded-lg bg-surface-container-low">
           <summary class="flex cursor-pointer items-center justify-between gap-3 font-label-caps text-sm text-primary">
             <span>Ver qué incluye</span>
             <span class="material-symbols-outlined text-[20px]">expand_more</span>
           </summary>
-          <p class="mt-3 text-sm text-on-surface-variant">Incluye los puntos indicados y puede ajustarse tras la valoración veterinaria.</p>
+          <p class="mt-2 text-sm leading-snug text-on-surface-variant">Incluye los puntos indicados y puede ajustarse tras la valoración veterinaria.</p>
         </details>
       </div>
     </div>
