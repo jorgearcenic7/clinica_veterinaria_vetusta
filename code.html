@@ -129,21 +129,21 @@
                 extend: {
                     "colors": {
                         "tertiary": "#735c00",
-                        "background": "#fcf9f8",
+                        "background": "#ffffff",
                         "on-secondary-container": "#636260",
                         "tertiary-fixed": "#ffe088",
                         "surface-dim": "#dcd9d9",
                         "primary-fixed-dim": "#a5d0b9",
                         "on-secondary-fixed": "#1c1c1a",
                         "outline-variant": "#c1c8c2",
-                        "surface-bright": "#fcf9f8",
+                        "surface-bright": "#ffffff",
                         "tertiary-fixed-dim": "#e9c349",
                         "secondary-fixed-dim": "#c8c6c3",
                         "secondary-fixed": "#e5e2df",
                         "primary-fixed": "#c1ecd4",
                         "on-tertiary-fixed-variant": "#574500",
                         "on-primary-fixed-variant": "#274e3d",
-                        "surface": "#fcf9f8",
+                        "surface": "#ffffff",
                         "on-primary-fixed": "#002114",
                         "on-error-container": "#93000a",
                         "secondary-container": "#e2dfdc",
@@ -470,12 +470,12 @@
         }
 
         .pricing-landing {
-            background: #fbf7f2;
+            background: #ffffff;
             color: #1b1c1c;
         }
 
         .pricing-hero {
-            background: #fbf7f2;
+            background: #ffffff;
         }
 
         .premium-packs-editorial {
@@ -602,12 +602,88 @@
             object-fit: cover;
         }
 
+        .team-flip-card {
+            width: min(100%, 460px);
+            aspect-ratio: 4 / 5;
+            perspective: 1400px;
+            cursor: pointer;
+        }
+
+        .team-editorial-title {
+            color: #000000;
+            font-family: "Thunder", "Anton", "Arial Narrow", Impact, sans-serif;
+            font-size: clamp(4rem, 12vw, 10rem);
+            font-weight: 900;
+            letter-spacing: 0.02em;
+            line-height: 0.92;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .team-flip-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 520ms ease;
+            transform-style: preserve-3d;
+        }
+
+        .team-flip-card.is-flipped .team-flip-inner {
+            transform: rotateY(180deg);
+        }
+
+        .team-flip-face {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            border-radius: 8px;
+            border: 1px solid rgba(27, 67, 50, 0.13);
+            background: #ffffff;
+            box-shadow: 0 22px 54px rgba(27, 67, 50, 0.10);
+            backface-visibility: hidden;
+        }
+
+        .team-flip-face img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .team-flip-name {
+            position: absolute;
+            left: 7%;
+            right: 7%;
+            bottom: 8%;
+            background: #ffffff;
+            color: #012d1d;
+            padding: 1rem 1.25rem;
+            text-align: center;
+            text-transform: uppercase;
+            box-shadow: 0 14px 28px rgba(1, 45, 29, 0.12);
+        }
+
+        .team-flip-back {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 1rem;
+            padding: clamp(2rem, 4vw, 3.5rem);
+            transform: rotateY(180deg);
+        }
+
         .price-current {
             font-family: "Plus Jakarta Sans", system-ui, sans-serif;
             font-size: clamp(44px, 7vw, 72px);
             line-height: 0.95;
             letter-spacing: 0;
             color: #012d1d;
+        }
+
+        .pricing-card .price-current {
+            font-size: clamp(2.05rem, 3.4vw, 3.25rem);
+            line-height: 1;
+            overflow-wrap: anywhere;
         }
 
         .pricing-card {
@@ -635,14 +711,6 @@
             gap: 24px;
         }
 
-        .visual-banner {
-            overflow: hidden;
-            border-radius: 28px;
-            background: #012d1d;
-            box-shadow: 0 24px 64px rgba(27, 67, 50, 0.14);
-        }
-
-        .visual-banner img,
         .gallery-tile img {
             width: 100%;
             height: 100%;
@@ -673,7 +741,7 @@
 
         @media (max-width: 767px) {
             .pricing-hero {
-                background: #fbf7f2;
+                background: #ffffff;
             }
 
             .premium-packs-title {
@@ -812,6 +880,10 @@
             margin-right: calc(clamp(8px, 0.8vw, 16px) - clamp(1rem, 4vw, 2.5rem));
         }
 
+        .services-pricing-block {
+            padding-bottom: 0 !important;
+        }
+
         .premium-packs-image-wrap {
             width: min(1180px, 100%);
         }
@@ -835,8 +907,7 @@
         .benefit-tile,
         .pricing-card,
         details,
-        form,
-        .visual-banner {
+        form {
             min-width: 0;
         }
 
@@ -855,7 +926,6 @@
         }
 
         .gallery-tile img,
-        .visual-banner img,
         .pricing-image {
             display: block;
             object-fit: cover;
@@ -1102,21 +1172,7 @@
 </section>
 <!-- Visual Pricing Landing -->
 <section class="pricing-landing" id="servicios">
-<div class="pricing-hero premium-packs-editorial px-md py-xl">
-<div class="max-w-[1760px] mx-auto w-full">
-<div class="premium-packs-title" aria-label="Packs premium">
-<span>Packs</span>
-<span>Premium</span>
-</div>
-<div class="premium-packs-image-wrap">
-<img alt="Perro durante un cuidado veterinario premium" loading="lazy" src="https://images.pexels.com/photos/6234608/pexels-photo-6234608.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=1800&amp;h=900&amp;q=85"/>
-</div>
-<div id="packs-veterinarios">
-<div class="pricing-scroll" data-pricing-packs></div>
-</div>
-</div>
-</div>
-<div class="px-md pb-xl">
+<div class="services-pricing-block px-md py-xl">
 <div class="max-w-[1760px] mx-auto">
 <div class="services-editorial" aria-label="Servicios">
 <div class="services-title">
@@ -1129,16 +1185,17 @@
 <div class="grid gap-7 md:grid-cols-2 xl:grid-cols-3" data-pricing-services></div>
 </div>
 </div>
-<div class="px-md pb-xl">
-<div class="visual-banner relative overflow-hidden p-8 md:p-14">
-<div class="absolute inset-0 opacity-28"><img alt="Perro con su familia tras una visita veterinaria" loading="lazy" src="https://images.pexels.com/photos/5731864/pexels-photo-5731864.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=1800&amp;h=700&amp;q=85"/></div>
-<div class="relative z-10 mx-auto flex max-w-[1200px] flex-col items-center text-center text-white">
-<h3 class="font-h1 text-h2 md:text-h1">Dale a tu mascota el cuidado que se merece</h3>
-<p class="mt-4 max-w-3xl text-white/86">Reserva una cita y te ayudamos a elegir el servicio más adecuado.</p>
-<div class="mt-8 flex flex-col gap-4 sm:flex-row">
-<a class="rounded-lg bg-primary-fixed px-8 py-4 font-label-caps text-label-caps text-on-primary-fixed transition-transform hover:scale-105" href="#reserva">Reservar cita</a>
-<a class="rounded-lg border border-white/60 px-8 py-4 font-label-caps text-label-caps text-white transition-colors hover:bg-white hover:text-primary" href="https://wa.me/34984000000?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20los%20packs%20veterinarios." target="_blank" rel="noopener noreferrer">Consultar por WhatsApp</a>
+<div class="pricing-hero premium-packs-editorial px-md py-xl">
+<div class="max-w-[1760px] mx-auto w-full">
+<div class="premium-packs-title" aria-label="Packs premium">
+<span>Packs</span>
+<span>Premium</span>
 </div>
+<div class="premium-packs-image-wrap">
+<img alt="Perro durante un cuidado veterinario premium" loading="lazy" src="https://images.pexels.com/photos/6234608/pexels-photo-6234608.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=1800&amp;h=900&amp;q=85"/>
+</div>
+<div id="packs-veterinarios">
+<div class="pricing-scroll" data-pricing-packs></div>
 </div>
 </div>
 </div>
@@ -1155,7 +1212,7 @@ const pricingPacks = [
     price: "39€",
     oldPrice: "55€",
     badge: "Pack completo",
-    image: "https://images.pexels.com/photos/5255200/pexels-photo-5255200.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=700&q=85",
+    image: "./imagen-cachorro.png",
     benefits: ["Revisión general", "Vacunación inicial", "Desparasitación", "Consejos de cuidados"],
     featured: false,
   },
@@ -1259,7 +1316,7 @@ const pricingServices = [
 
 function buildPricingCard(item, mode = "pack") {
   const article = document.createElement("article");
-  article.className = `pricing-card ${item.featured ? "featured" : ""} flex h-full flex-col overflow-hidden rounded-3xl`;
+  article.className = `pricing-card ${mode === "service" ? "pricing-service-card" : ""} ${item.featured ? "featured" : ""} flex h-full flex-col overflow-hidden rounded-3xl`;
   const benefits = item.benefits.map((benefit) => `
     <li class="flex items-start gap-2">
       <span class="pricing-check mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs">✓</span>
@@ -1281,7 +1338,6 @@ function buildPricingCard(item, mode = "pack") {
         <div class="flex flex-wrap items-end gap-x-3 gap-y-1">
           <p class="price-current">${item.price}</p>
         </div>
-        <p class="text-sm text-on-surface-variant">${mode === "pack" ? "precio orientativo" : "servicio individual"}</p>
       </div>
       <ul class="grid gap-1.5 text-sm leading-snug text-on-surface-variant">${benefits}</ul>
       <div class="mt-auto grid gap-2">
@@ -1323,8 +1379,8 @@ document.addEventListener("DOMContentLoaded", updateVetustaWhatsAppLinks);
 <!-- Why Choose Us -->
 <section class="py-xl px-md bg-surface-container-low">
 <div class="max-w-[1760px] mx-auto w-full text-center">
-<h2 class="font-h2 text-h2 text-on-background mb-12" data-i18n="why.title">¿Por qué elegirnos?</h2>
-<p class="font-body-md text-body-md text-on-surface-variant max-w-4xl mx-auto mb-10">Somos una clínica veterinaria en Oviedo centrada en el trato claro, las revisiones veterinarias útiles y el cuidado preventivo de perros y gatos en cada etapa de su vida.</p>
+<h2 class="team-editorial-title mb-5" data-i18n="why.title">Por que elegirnos</h2>
+<p class="text-sm md:text-base leading-snug text-on-surface-variant max-w-4xl mx-auto mb-10">Somos una clinica veterinaria en Oviedo centrada en el trato claro, las revisiones veterinarias utiles y el cuidado preventivo de perros y gatos en cada etapa de su vida.</p>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 xl:gap-12">
 <div class="flex flex-col items-center text-center gap-5 bg-surface-container-lowest border border-outline-variant rounded-xl p-8 soft-shadow">
 <div class="w-16 h-16 bg-primary-fixed rounded-full flex items-center justify-center mb-2">
@@ -1354,35 +1410,45 @@ document.addEventListener("DOMContentLoaded", updateVetustaWhatsAppLinks);
 <section class="py-xl px-md bg-background" id="equipo">
 <div class="max-w-[1760px] mx-auto w-full">
 <div class="text-center max-w-4xl mx-auto mb-12">
-<h2 class="font-h2 text-h2 text-on-background mb-4" data-i18n="team.title">Conoce a quienes cuidarán de tu mascota</h2>
-<p class="font-body-lg text-body-lg text-on-surface-variant" data-i18n="team.subtitle">Un equipo de profesionales apasionados por el bienestar animal.</p>
+<h2 class="team-editorial-title mb-5" data-i18n="team.title">Equipo</h2>
+<p class="text-sm md:text-base leading-snug text-on-surface-variant" data-i18n="team.subtitle">Conoce a quienes cuidaran de tu mascota</p>
 </div>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-14 max-w-[1760px] w-full mx-auto bg-surface-container-lowest p-10 md:p-14 rounded-2xl border border-outline-variant soft-shadow items-start justify-items-center"><!-- Patricia's Card -->
-<div class="flex flex-col items-center gap-6 text-center">
-<div class="flex flex-col gap-3">
-<div>
-<h3 class="font-h3 text-h3 text-on-background">Patricia</h3>
-<p class="text-primary font-label-caps text-label-caps" data-i18n="team.patricia.role">Veterinaria Principal</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14 max-w-[1080px] w-full mx-auto items-center justify-items-center">
+<button class="team-flip-card block border-0 bg-transparent p-0 text-left" type="button" aria-pressed="false" data-team-flip-card>
+<span class="team-flip-inner block">
+<span class="team-flip-face block">
+<img alt="Foto temporal de Patricia" loading="lazy" src="https://images.pexels.com/photos/5215024/pexels-photo-5215024.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=900&amp;h=1125&amp;q=85"/>
+<span class="team-flip-name font-label-caps text-label-caps">Patricia</span>
+</span>
+<span class="team-flip-face team-flip-back">
+<span class="font-label-caps text-label-caps text-primary" data-i18n="team.patricia.role">Veterinaria Principal</span>
+<span class="font-body-md text-body-md text-on-surface-variant" data-i18n="team.patricia.text">Con mas de 15 anos de experiencia, Patricia lidera el equipo con una filosofia basada en la honestidad y el trato humano. Su pasion es el bienestar integral de cada paciente.</span>
+</span>
+</span>
+</button>
+<button class="team-flip-card block border-0 bg-transparent p-0 text-left" type="button" aria-pressed="false" data-team-flip-card>
+<span class="team-flip-inner block">
+<span class="team-flip-face block">
+<img alt="Foto temporal de Victor" loading="lazy" src="https://images.pexels.com/photos/6234605/pexels-photo-6234605.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=900&amp;h=1125&amp;q=85"/>
+<span class="team-flip-name font-label-caps text-label-caps">Victor</span>
+</span>
+<span class="team-flip-face team-flip-back">
+<span class="font-label-caps text-label-caps text-primary" data-i18n="team.victor.role">Auxiliar Veterinario</span>
+<span class="font-body-md text-body-md text-on-surface-variant" data-i18n="team.victor.text">Especialista en cuidados preventivos y manejo amable. Victor se asegura de que cada mascota se sienta tranquila y segura durante su visita a la clinica.</span>
+</span>
+</span>
+</button>
 </div>
-<p class="font-body-md text-body-md text-on-surface-variant" data-i18n="team.patricia.text">
-            Con más de 15 años de experiencia, Patricia lidera el equipo con una filosofía basada en la honestidad y el trato humano. Su pasión es el bienestar integral de cada paciente.
-        </p>
-</div>
-</div>
-<!-- Víctor's Card -->
-<div class="flex flex-col items-center gap-6 text-center">
-<div class="flex flex-col gap-3">
-<div>
-<h3 class="font-h3 text-h3 text-on-background">Víctor</h3>
-<p class="text-primary font-label-caps text-label-caps" data-i18n="team.victor.role">Auxiliar Veterinario</p>
-</div>
-<p class="font-body-md text-body-md text-on-surface-variant" data-i18n="team.victor.text">
-            Especialista en cuidados preventivos y manejo amable. Víctor se asegura de que cada mascota se sienta tranquila y segura durante su visita a la clínica.
-        </p>
-</div>
-</div></div>
 </div>
 </section>
+<script>
+document.querySelectorAll("[data-team-flip-card]").forEach((card) => {
+  card.addEventListener("click", () => {
+    const isFlipped = card.classList.toggle("is-flipped");
+    card.setAttribute("aria-pressed", String(isFlipped));
+  });
+});
+</script>
 <!-- Opinions Section -->
 <section class="py-xl px-md bg-surface-container-low" id="opiniones">
 <div class="max-w-[1760px] mx-auto w-full flex flex-col gap-14">
@@ -1391,8 +1457,8 @@ document.addEventListener("DOMContentLoaded", updateVetustaWhatsAppLinks);
 <img alt="Google" class="h-6 w-6 shrink-0" loading="lazy" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath fill='%23FFC107' d='M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.4-.4-3.5z'/%3E%3Cpath fill='%23FF3D00' d='M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 16.2 4 9.5 8.5 6.3 14.7z'/%3E%3Cpath fill='%234CAF50' d='M24 44c5.2 0 9.9-2 13.5-5.2l-6.2-5.2C29.3 35.1 26.8 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.4 39.6 16.1 44 24 44z'/%3E%3Cpath fill='%231976D2' d='M43.6 20.5H42V20H24v8h11.3c-.8 2.4-2.3 4.3-4.1 5.6l6.2 5.2C36.9 39.3 44 34 44 24c0-1.3-.1-2.4-.4-3.5z'/%3E%3C/svg%3E"/>
 <span class="font-label-caps text-label-caps text-on-surface-variant" data-google-section-summary data-i18n="reviews.googleVerified">4,9/5 en Google · datos recopilados en la última actualización</span>
 </div>
-<h2 class="font-h2 text-h2 text-on-background mb-4" data-i18n="reviews.title">Lo que dicen de nosotros</h2>
-<p class="font-body-md text-body-md text-on-surface-variant max-w-3xl">Valoración tomada de Google en la última actualización de la web. Puede variar con el tiempo. Actualización dinámica disponible mediante integración con Google Places API.</p>
+<h2 class="team-editorial-title mb-2" data-i18n="reviews.title">Opiniones</h2>
+</div>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-8" data-google-reviews-list>
 <div class="bg-surface-container-lowest p-8 rounded-xl border border-outline-variant soft-shadow flex flex-col gap-5">
@@ -1764,3 +1830,5 @@ document.getElementById("current-year").textContent = new Date().getFullYear();
 <script src="/booking.js?v=20260511-slots"></script>
 <script defer src="/i18n.js"></script>
 </body></html>
+
+
