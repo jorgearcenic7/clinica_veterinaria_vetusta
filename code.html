@@ -504,11 +504,12 @@
             justify-content: center;
             width: 100%;
             text-align: center;
-            white-space: nowrap;
+            white-space: normal;
+            flex-wrap: wrap;
         }
 
         .booking-editorial-title span {
-            display: inline-block;
+            display: inline;
         }
 
         .services-editorial {
@@ -1167,6 +1168,27 @@
             text-align: center !important;
         }
 
+        .team-editorial-title,
+        .premium-packs-title,
+        .services-title,
+        .booking-editorial-title {
+            max-width: 100%;
+            overflow-wrap: normal;
+            word-break: normal;
+            text-wrap: balance;
+        }
+
+        .team-editorial-title,
+        .booking-editorial-title {
+            padding-right: clamp(0.5rem, 2vw, 1.5rem);
+            padding-left: clamp(0.5rem, 2vw, 1.5rem);
+        }
+
+        .booking-editorial-title,
+        .booking-editorial-title span {
+            white-space: normal !important;
+        }
+
         @media (max-width: 767px) {
             :root {
                 --page-section-y: clamp(2.25rem, 8vw, 3.25rem);
@@ -1217,9 +1239,9 @@
 <span class="text-white font-label-caps text-label-caps" data-google-review-count>· +560 reseñas en Google</span>
 </div>
 <h2 class="hero-title font-h1 text-h1 text-white drop-shadow-md">
-<span class="hero-title-line">Tu mascota</span>
-<span class="hero-title-line">merece</span>
-<span class="hero-title-line">lo <span class="hero-title-accent">mejor.</span></span>
+<span class="hero-title-line" data-i18n="hero.lineOne">Tu mascota</span>
+<span class="hero-title-line" data-i18n="hero.lineTwo">merece</span>
+<span class="hero-title-line"><span data-i18n="hero.lineThreePrefix">lo</span> <span class="hero-title-accent" data-i18n="hero.lineThreeAccent">mejor.</span></span>
 </h2>
 <div class="flex flex-col sm:flex-row gap-4 mt-2">
 <a class="flex items-center justify-center bg-primary text-on-primary font-label-caps text-label-caps px-8 py-4 rounded-lg hover:bg-surface-tint transition-colors duration-200 hover:scale-105" href="#reserva">
