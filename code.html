@@ -1302,7 +1302,7 @@ const pricingPacks = [
     price: "39€",
     oldPrice: "55€",
     badge: "Pack completo",
-    image: "./imagen-cachorro.png",
+    image: "imagen-cachorro.png?v=20260522-pack",
     benefits: ["Revisión general", "Vacunación inicial", "Desparasitación", "Consejos de cuidados"],
     featured: false,
   },
@@ -1314,7 +1314,7 @@ const pricingPacks = [
     price: "49€",
     oldPrice: "69€",
     badge: "Más popular",
-    image: "./adulto-pack.jpg",
+    image: "adulto-pack.jpg?v=20260522-pack",
     benefits: ["Exploración completa", "Revisión de vacunas", "Plan preventivo", "Recomendaciones personalizadas"],
     featured: true,
   },
@@ -1326,7 +1326,7 @@ const pricingPacks = [
     price: "69€",
     oldPrice: "89€",
     badge: "Cuidado avanzado",
-    image: "./senior-pack.jpg",
+    image: "senior-pack.jpg?v=20260522-pack",
     benefits: ["Revisión senior", "Control preventivo", "Orientación nutricional", "Recomendación de pruebas"],
     featured: false,
   },
@@ -1364,7 +1364,7 @@ const pricingServices = [
     price: "desde 12€",
     oldPrice: "",
     badge: "Preventivo",
-    image: "https://images.pexels.com/photos/6235233/pexels-photo-6235233.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=700&q=85",
+    image: "vacunacion.jpeg?v=20260522-service",
     benefits: ["Vacunación desde 28€", "Desparasitación desde 12€", "Calendario preventivo"],
   },
   {
@@ -1417,6 +1417,7 @@ function buildPricingCard(item, mode = "pack") {
   const article = document.createElement("article");
   article.className = `pricing-card ${mode === "service" ? "pricing-service-card" : ""} ${item.featured ? "featured" : ""} flex h-full flex-col overflow-hidden rounded-3xl`;
   const dataI18n = (key) => item.key ? ` data-i18n="${item.key}.${key}"` : "";
+  const imageLoading = mode === "pack" ? "eager" : "lazy";
   const benefits = item.benefits.map((benefit, index) => `
     <li class="flex items-start gap-2">
       <span class="pricing-check mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs">✓</span>
@@ -1425,7 +1426,7 @@ function buildPricingCard(item, mode = "pack") {
   `).join("");
   article.innerHTML = `
     <div class="relative">
-      <img class="pricing-image w-full" alt="${item.title}" loading="lazy" src="${item.image}">
+      <img class="pricing-image w-full" alt="${item.title}" loading="${imageLoading}" decoding="async" src="${item.image}">
       <span class="absolute left-4 top-4 rounded-full bg-white/90 px-4 py-2 font-label-caps text-xs text-primary shadow"${dataI18n("badge")}>${item.badge}</span>
     </div>
     <div class="flex flex-1 flex-col gap-3 p-5">
@@ -1479,7 +1480,7 @@ document.addEventListener("DOMContentLoaded", updateVetustaWhatsAppLinks);
 <!-- Why Choose Us -->
 <section class="py-xl px-md bg-surface-container-low">
 <div class="max-w-[1760px] mx-auto w-full text-center">
-<h2 class="team-editorial-title mb-5" data-i18n="why.title">Por que elegirnos</h2>
+<h2 class="team-editorial-title mb-5" data-i18n="why.title">Por qué elegirnos</h2>
 <p class="text-sm md:text-base leading-snug text-on-surface-variant max-w-4xl mx-auto mb-10" data-i18n="why.subtitle">Somos una clinica veterinaria en Oviedo centrada en el trato claro, las revisiones veterinarias utiles y el cuidado preventivo de perros y gatos en cada etapa de su vida.</p>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 xl:gap-12">
 <div class="flex flex-col items-center text-center gap-5 bg-surface-container-lowest border border-outline-variant rounded-xl p-8 soft-shadow">
@@ -1906,24 +1907,43 @@ navLinks.forEach((link) => {
   link.addEventListener("click", () => setActiveNav(link.getAttribute("href")));
 });
 
-if ("IntersectionObserver" in window) {
-  const navObserver = new IntersectionObserver((entries) => {
-    const visible = entries
-      .filter((entry) => entry.isIntersecting)
-      .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+function updateActiveNavFromScroll() {
+  if (!navSections.length) {
+    return;
+  }
 
-    if (visible) {
-      setActiveNav(`#${visible.target.id}`);
+  const headerHeight = document.querySelector("header")?.offsetHeight || 0;
+  const activationLine = headerHeight + Math.min(window.innerHeight * 0.28, 260);
+  let currentSection = navSections[0];
+
+  navSections.forEach((section) => {
+    if (section.getBoundingClientRect().top <= activationLine) {
+      currentSection = section;
     }
-  }, {
-    rootMargin: "-25% 0px -55% 0px",
-    threshold: [0.15, 0.35, 0.6]
   });
 
-  navSections.forEach((section) => navObserver.observe(section));
+  setActiveNav(`#${currentSection.id}`);
 }
 
-setActiveNav(window.location.hash || "#inicio");
+let navScrollFrame = null;
+window.addEventListener("scroll", () => {
+  if (navScrollFrame) {
+    return;
+  }
+
+  navScrollFrame = window.requestAnimationFrame(() => {
+    updateActiveNavFromScroll();
+    navScrollFrame = null;
+  });
+}, { passive: true });
+
+window.addEventListener("resize", updateActiveNavFromScroll);
+
+if (window.location.hash) {
+  setActiveNav(window.location.hash);
+} else {
+  updateActiveNavFromScroll();
+}
 const currentYearElement = document.getElementById("current-year");
 if (currentYearElement) {
   currentYearElement.textContent = new Date().getFullYear();

@@ -133,7 +133,7 @@
       "pricing.service.emergency.benefits.0": "Valoración inicial",
       "pricing.service.emergency.benefits.1": "Atención prioritaria",
       "pricing.service.emergency.benefits.2": "Derivación si procede",
-      "why.title": "Por que elegirnos",
+      "why.title": "Por qué elegirnos",
       "why.subtitle": "Somos una clinica veterinaria en Oviedo centrada en el trato claro, las revisiones veterinarias utiles y el cuidado preventivo de perros y gatos en cada etapa de su vida.",
       "why.human.title": "Trato humano de verdad",
       "why.human.text": "Patricia y su equipo se toman el tiempo que tú y tu mascota necesitáis. Cada animal es tratado con cariño y paciencia.",

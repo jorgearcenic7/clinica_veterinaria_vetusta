@@ -57,6 +57,11 @@ let reviewsCache = null;
 let resolvedPlaceCache = null;
 
 app.use(express.json());
+app.use(express.static(publicRoot, {
+  dotfiles: "ignore",
+  index: false,
+  maxAge: "5m",
+}));
 
 const publicFiles = {
   "/": "code.html",
@@ -95,6 +100,7 @@ const publicFiles = {
   "/imagen-cachorro.png": "imagen-cachorro.png",
   "/adulto-pack.jpg": "adulto-pack.jpg",
   "/senior-pack.jpg": "senior-pack.jpg",
+  "/vacunacion.jpeg": "vacunacion.jpeg",
   "/robots.txt": "robots.txt",
   "/sitemap.xml": "sitemap.xml",
   "/favicon.svg": "favicon.svg",

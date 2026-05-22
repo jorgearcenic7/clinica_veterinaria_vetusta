@@ -71,6 +71,10 @@ registerForm.addEventListener("submit", async (event) => {
       throw new Error(passwordError);
     }
 
+    if (values.password !== values.password_confirm) {
+      throw new Error("Las contraseñas no coinciden.");
+    }
+
     const { error } = await supabase.auth.signUp({
       email: values.email,
       password: values.password,
