@@ -11,13 +11,13 @@
 <meta property="og:description" content="Clínica veterinaria en Oviedo para perros y gatos. Vacunas, urgencias, revisiones, consulta veterinaria, peluquería y cuidado preventivo con reserva de cita online o por teléfono."/>
 <meta property="og:type" content="website"/>
 <meta property="og:url" content="https://clinica-veterinaria-vetusta.vercel.app/"/>
-<meta property="og:image" content="https://clinica-veterinaria-vetusta.vercel.app/screen.png"/>
+<meta property="og:image" content="https://images.pexels.com/photos/6234626/pexels-photo-6234626.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=1200&amp;h=630&amp;q=85"/>
 <meta property="og:site_name" content="Clínica Veterinaria Vetusta"/>
 <meta property="og:locale" content="es_ES"/>
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:title" content="Clínica Veterinaria Vetusta - Veterinario Oviedo"/>
 <meta name="twitter:description" content="Clínica veterinaria en Oviedo para perros y gatos. Vacunas, urgencias, revisiones, consulta veterinaria, peluquería y cuidado preventivo con reserva de cita online o por teléfono."/>
-<meta name="twitter:image" content="https://clinica-veterinaria-vetusta.vercel.app/screen.png"/>
+<meta name="twitter:image" content="https://images.pexels.com/photos/6234626/pexels-photo-6234626.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=1200&amp;h=630&amp;q=85"/>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
 <link rel="shortcut icon" href="/favicon.ico"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -25,7 +25,7 @@
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://images.pexels.com" rel="preconnect"/>
-<link as="image" href="https://images.pexels.com/photos/6234626/pexels-photo-6234626.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=2400&amp;h=1600&amp;q=90" rel="preload"/>
+<script src="/image-sources.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Anton&amp;family=Bodoni+Moda:opsz,wght@6..96,700;6..96,900&amp;family=Cormorant+Garamond:ital,wght@0,700;1,700&amp;family=Lexend:wght@400;600&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/>
 <!-- TODO SEO: añade aquí la verificación de Google Search Console cuando tengas el código:
 <meta name="google-site-verification" content="TU_CODIGO_DE_VERIFICACION"/>
@@ -40,7 +40,7 @@
     "name": "Clínica Veterinaria Vetusta",
     "description": "Clínica veterinaria en Oviedo para perros y gatos, con consulta veterinaria, vacunas, revisiones, urgencias dentro del horario, cirugía y peluquería canina y felina.",
     "url": "https://clinica-veterinaria-vetusta.vercel.app/",
-    "image": "https://clinica-veterinaria-vetusta.vercel.app/screen.png",
+    "image": "https://images.pexels.com/photos/6234626/pexels-photo-6234626.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1200&h=630&q=85",
     "logo": "https://clinica-veterinaria-vetusta.vercel.app/favicon.svg",
     "telephone": "+34985206558",
     "address": {
@@ -279,7 +279,7 @@
             width: 100%;
             min-height: clamp(34rem, 82svh, 54rem);
             height: auto;
-            background-image: url("https://images.pexels.com/photos/6234626/pexels-photo-6234626.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=2400&h=1600&q=90");
+            background-image: var(--image-hero-home);
             background-size: cover;
             background-position: 58% center;
             background-repeat: no-repeat;
@@ -1268,7 +1268,7 @@
 <span data-i18n="pricing.servicesTitle">Servicios</span>
 </div>
 <div class="services-image-wrap">
-<img alt="Veterinario revisando a un perro durante una consulta" loading="lazy" src="https://images.pexels.com/photos/6235233/pexels-photo-6235233.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=1800&amp;h=900&amp;q=85"/>
+<img alt="" loading="lazy" data-image-source="servicesOverview"/>
 </div>
 </div>
 <div class="grid gap-7 md:grid-cols-2 xl:grid-cols-3" data-pricing-services></div>
@@ -1281,7 +1281,7 @@
 <span data-i18n="pricing.packsTitleTwo">Premium</span>
 </div>
 <div class="premium-packs-image-wrap">
-<img alt="Perro durante un cuidado veterinario premium" loading="lazy" src="https://images.pexels.com/photos/6234608/pexels-photo-6234608.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=1800&amp;h=900&amp;q=85"/>
+<img alt="" loading="lazy" data-image-source="premiumPacks"/>
 </div>
 <div id="packs-veterinarios">
 <div class="pricing-scroll" data-pricing-packs></div>
@@ -1302,7 +1302,8 @@ const pricingPacks = [
     price: "39€",
     oldPrice: "55€",
     badge: "Pack completo",
-    image: "imagen-cachorro.png?v=20260522-pack",
+    image: window.VetustaImageSources.puppyPack.url,
+    imageAlt: window.VetustaImageSources.puppyPack.alt,
     benefits: ["Revisión general", "Vacunación inicial", "Desparasitación", "Consejos de cuidados"],
     featured: false,
   },
@@ -1314,7 +1315,8 @@ const pricingPacks = [
     price: "49€",
     oldPrice: "69€",
     badge: "Más popular",
-    image: "adulto-pack.jpg?v=20260522-pack",
+    image: window.VetustaImageSources.adultPack.url,
+    imageAlt: window.VetustaImageSources.adultPack.alt,
     benefits: ["Exploración completa", "Revisión de vacunas", "Plan preventivo", "Recomendaciones personalizadas"],
     featured: true,
   },
@@ -1326,7 +1328,8 @@ const pricingPacks = [
     price: "69€",
     oldPrice: "89€",
     badge: "Cuidado avanzado",
-    image: "senior-pack.jpg?v=20260522-pack",
+    image: window.VetustaImageSources.seniorPack.url,
+    imageAlt: window.VetustaImageSources.seniorPack.alt,
     benefits: ["Revisión senior", "Control preventivo", "Orientación nutricional", "Recomendación de pruebas"],
     featured: false,
   },
@@ -1338,7 +1341,8 @@ const pricingPacks = [
     price: "29€",
     oldPrice: "39€",
     badge: "Ahorro",
-    image: "https://images.pexels.com/photos/6816860/pexels-photo-6816860.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=700&q=85",
+    image: window.VetustaImageSources.groomingPack.url,
+    imageAlt: window.VetustaImageSources.groomingPack.alt,
     benefits: ["Baño", "Higiene básica", "Cepillado", "Revisión del manto"],
     featured: false,
   },
@@ -1353,7 +1357,8 @@ const pricingServices = [
     price: "desde 35€",
     oldPrice: "",
     badge: "Disponible",
-    image: "https://images.pexels.com/photos/6234626/pexels-photo-6234626.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=700&q=85",
+    image: window.VetustaImageSources.consultationService.url,
+    imageAlt: window.VetustaImageSources.consultationService.alt,
     benefits: ["Exploración", "Orientación veterinaria", "Plan de actuación"],
   },
   {
@@ -1364,7 +1369,8 @@ const pricingServices = [
     price: "desde 12€",
     oldPrice: "",
     badge: "Preventivo",
-    image: "vacunacion.jpeg?v=20260522-service",
+    image: window.VetustaImageSources.vaccinationService.url,
+    imageAlt: window.VetustaImageSources.vaccinationService.alt,
     benefits: ["Vacunación desde 28€", "Desparasitación desde 12€", "Calendario preventivo"],
   },
   {
@@ -1375,7 +1381,8 @@ const pricingServices = [
     price: "presupuesto personalizado",
     oldPrice: "",
     badge: "Valoración previa",
-    image: "https://images.pexels.com/photos/6234608/pexels-photo-6234608.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=700&q=85",
+    image: window.VetustaImageSources.surgeryService.url,
+    imageAlt: window.VetustaImageSources.surgeryService.alt,
     benefits: ["Estudio del caso", "Presupuesto previo", "Seguimiento posterior"],
   },
   {
@@ -1386,7 +1393,8 @@ const pricingServices = [
     price: "desde 45€",
     oldPrice: "",
     badge: "Diagnóstico",
-    image: "https://images.pexels.com/photos/8460094/pexels-photo-8460094.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=700&q=85",
+    image: window.VetustaImageSources.diagnosticsService.url,
+    imageAlt: window.VetustaImageSources.diagnosticsService.alt,
     benefits: ["Analítica básica", "Resultados ágiles", "Revisión veterinaria"],
   },
   {
@@ -1397,7 +1405,8 @@ const pricingServices = [
     price: "desde 25€",
     oldPrice: "",
     badge: "Con cita previa",
-    image: "https://images.pexels.com/photos/6816860/pexels-photo-6816860.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=700&q=85",
+    image: window.VetustaImageSources.groomingPack.url,
+    imageAlt: window.VetustaImageSources.groomingPack.alt,
     benefits: ["Baño", "Cepillado", "Mantenimiento del manto"],
   },
   {
@@ -1408,7 +1417,8 @@ const pricingServices = [
     price: "según valoración",
     oldPrice: "",
     badge: "Llamar antes",
-    image: "https://images.pexels.com/photos/5731864/pexels-photo-5731864.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=700&q=85",
+    image: window.VetustaImageSources.emergencyService.url,
+    imageAlt: window.VetustaImageSources.emergencyService.alt,
     benefits: ["Valoración inicial", "Atención prioritaria", "Derivación si procede"],
   },
 ];
@@ -1426,7 +1436,7 @@ function buildPricingCard(item, mode = "pack") {
   `).join("");
   article.innerHTML = `
     <div class="relative">
-      <img class="pricing-image w-full" alt="${item.title}" loading="${imageLoading}" decoding="async" src="${item.image}">
+      <img class="pricing-image w-full" alt="${item.imageAlt || item.title}" loading="${imageLoading}" decoding="async" src="${item.image}">
       <span class="absolute left-4 top-4 rounded-full bg-white/90 px-4 py-2 font-label-caps text-xs text-primary shadow"${dataI18n("badge")}>${item.badge}</span>
     </div>
     <div class="flex flex-1 flex-col gap-3 p-5">
@@ -1518,7 +1528,7 @@ document.addEventListener("DOMContentLoaded", updateVetustaWhatsAppLinks);
 <button class="team-flip-card block border-0 bg-transparent p-0 text-left" type="button" aria-pressed="false" data-team-flip-card>
 <span class="team-flip-inner block">
 <span class="team-flip-face block">
-<img alt="Foto temporal de Patricia" loading="lazy" src="https://images.pexels.com/photos/5215024/pexels-photo-5215024.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=900&amp;h=1125&amp;q=85"/>
+<img alt="" loading="lazy" data-image-source="teamPatricia"/>
 <span class="team-flip-name font-label-caps text-label-caps">Patricia</span>
 </span>
 <span class="team-flip-face team-flip-back">
@@ -1530,7 +1540,7 @@ document.addEventListener("DOMContentLoaded", updateVetustaWhatsAppLinks);
 <button class="team-flip-card block border-0 bg-transparent p-0 text-left" type="button" aria-pressed="false" data-team-flip-card>
 <span class="team-flip-inner block">
 <span class="team-flip-face block">
-<img alt="Foto temporal de Victor" loading="lazy" src="https://images.pexels.com/photos/6234605/pexels-photo-6234605.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;w=900&amp;h=1125&amp;q=85"/>
+<img alt="" loading="lazy" data-image-source="teamVictor"/>
 <span class="team-flip-name font-label-caps text-label-caps">Victor</span>
 </span>
 <span class="team-flip-face team-flip-back">
