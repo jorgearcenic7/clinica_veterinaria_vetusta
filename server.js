@@ -2,6 +2,7 @@ import "dotenv/config";
 import { createClient } from "@supabase/supabase-js";
 import crypto from "node:crypto";
 import express from "express";
+import rateLimit from "express-rate-limit";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -62,6 +63,33 @@ app.use(express.static(publicRoot, {
   index: false,
   maxAge: "5m",
 }));
+
+// Limita el volumen de peticiones para reducir abuso y fuerza bruta en la API.
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: Number(process.env.API_RATE_LIMIT || 300),
+  standardHeaders: "draft-7",
+  legacyHeaders: false,
+  message: { error: "Demasiadas peticiones. Espera unos minutos antes de intentarlo de nuevo." },
+});
+
+// Rutas con datos personales, reservas o acciones sensibles tienen un límite más estricto.
+const sensitiveLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: Number(process.env.SENSITIVE_RATE_LIMIT || 30),
+  standardHeaders: "draft-7",
+  legacyHeaders: false,
+  message: { error: "Demasiados intentos. Espera unos minutos antes de volver a intentarlo." },
+});
+
+app.use("/api", apiLimiter);
+app.use([
+  "/auth",
+  "/area-privada",
+  "/api/reservations",
+  "/api/admin",
+  "/api/supabase-config",
+], sensitiveLimiter);
 
 const publicFiles = {
   "/": "code.html",
@@ -182,8 +210,8 @@ app.get("/api/availability", async (request, response) => {
   try {
     const month = String(request.query.month || "").trim();
 
-    if (!/^\d{4}-\d{2}$/.test(month)) {
-      response.status(400).json({ error: "Usa el parametro month con formato YYYY-MM." });
+    if (!isValidMonthKey(month)) {
+      response.status(400).json({ error: "Usa el parámetro month con formato YYYY-MM." });
       return;
     }
 
@@ -225,14 +253,14 @@ app.post("/api/reservations", async (request, response) => {
     const reservations = await readReservations(reservation.datetime.slice(0, 7));
 
     if (!isBookableDateTime(reservation.datetime, reservation.servicio)) {
-      response.status(400).json({ error: "La fecha u hora elegida no esta dentro del horario de la clinica." });
+      response.status(400).json({ error: "La fecha u hora elegida no está dentro del horario de la clínica." });
       return;
     }
 
     const alreadyReserved = reservations.some((item) => reservationOverlaps(item, reservation));
 
     if (alreadyReserved) {
-      response.status(409).json({ error: "Ese horario ya esta reservado. Elige otro hueco." });
+      response.status(409).json({ error: "Ese horario ya está reservado. Elige otro hueco." });
       return;
     }
 
@@ -386,7 +414,7 @@ async function getPlaceId(apiKey) {
   const payload = await googleResponse.json();
 
   if (!googleResponse.ok) {
-    const error = new Error(payload?.error?.message || `Google Nearby Search respondio con ${googleResponse.status}.`);
+    const error = new Error(payload?.error?.message || `Google Nearby Search respondió con ${googleResponse.status}.`);
     error.statusCode = googleResponse.status;
     throw error;
   }
@@ -394,7 +422,7 @@ async function getPlaceId(apiKey) {
   const place = (payload.places || [])[0];
 
   if (!place?.id) {
-    const error = new Error(`No se encontro una clinica veterinaria cerca de ${latitude}, ${longitude}. Ajusta GOOGLE_PLACE_SEARCH_RADIUS_METERS o usa GOOGLE_PLACE_ID.`);
+    const error = new Error(`No se encontró una clínica veterinaria cerca de ${latitude}, ${longitude}. Ajusta GOOGLE_PLACE_SEARCH_RADIUS_METERS o usa GOOGLE_PLACE_ID.`);
     error.statusCode = 404;
     throw error;
   }
@@ -527,7 +555,7 @@ async function readPublicSupabaseReservationSlots(month) {
 
   if (error) {
     throw new Error(
-      "Supabase no pudo leer reservas. Anade SUPABASE_SERVICE_ROLE_KEY al backend/Vercel o vuelve a ejecutar supabase-reservations.sql para crear la funcion publica de disponibilidad: "
+      "Supabase no pudo leer reservas. Añade SUPABASE_SERVICE_ROLE_KEY al backend/Vercel o vuelve a ejecutar supabase-reservations.sql para crear la función pública de disponibilidad: "
       + error.message,
     );
   }
@@ -595,7 +623,7 @@ async function requireAdminRequest(request) {
   const { data: userData, error: userError } = await requestSupabase.auth.getUser(accessToken);
 
   if (userError || !userData.user) {
-    const error = new Error("Sesion no valida.");
+    const error = new Error("Sesión no válida.");
     error.statusCode = 401;
     throw error;
   }
@@ -619,19 +647,24 @@ async function requireAdminRequest(request) {
 }
 
 function getBearerToken(request) {
-  const header = request.get("authorization") || "";
-  const match = header.match(/^Bearer\s+(.+)$/i);
-  return match?.[1] || "";
+  const header = safeString(request.get("authorization"), 4096);
+  const prefix = "bearer ";
+
+  if (!header.toLowerCase().startsWith(prefix)) {
+    return "";
+  }
+
+  return header.slice(prefix.length).trim();
 }
 
 function normalizeReservationUpdate(body) {
   const changes = {};
 
   if (Object.hasOwn(body || {}, "status")) {
-    const status = cleanText(body.status);
+    const status = safeString(body.status, 20);
 
     if (!["pending", "confirmed", "cancelled"].includes(status)) {
-      const error = new Error("Estado de reserva no valido.");
+      const error = new Error("Estado de reserva no válido.");
       error.statusCode = 400;
       throw error;
     }
@@ -640,10 +673,10 @@ function normalizeReservationUpdate(body) {
   }
 
   if (Object.hasOwn(body || {}, "datetime")) {
-    const datetime = cleanText(body.datetime);
+    const datetime = safeString(body.datetime, 16);
 
     if (!isBookableDateTime(datetime)) {
-      const error = new Error("La fecha u hora elegida no esta dentro del horario de la clinica.");
+      const error = new Error("La fecha u hora elegida no está dentro del horario de la clínica.");
       error.statusCode = 400;
       throw error;
     }
@@ -653,11 +686,11 @@ function normalizeReservationUpdate(body) {
   }
 
   if (Object.hasOwn(body || {}, "notes")) {
-    changes.notes = cleanLongText(body.notes) || null;
+    changes.notes = safeString(body.notes, 2000) || null;
   }
 
   if (Object.hasOwn(body || {}, "worker_id")) {
-    changes.worker_id = cleanText(body.worker_id) || null;
+    changes.worker_id = safeString(body.worker_id, 80) || null;
   }
 
   if (Object.keys(changes).length === 0) {
@@ -689,7 +722,7 @@ async function updateReservationFromAdmin(requestSupabase, reservationId, change
     Object.assign(next, toDatabaseReservationChanges(buildReservationTimestamps(next.datetime, next.servicio)));
 
     if (!isBookableDateTime(next.datetime, next.servicio)) {
-      const error = new Error("La fecha u hora elegida no esta dentro del horario de la clinica.");
+      const error = new Error("La fecha u hora elegida no está dentro del horario de la clínica.");
       error.statusCode = 400;
       throw error;
     }
@@ -701,7 +734,7 @@ async function updateReservationFromAdmin(requestSupabase, reservationId, change
     ));
 
     if (alreadyReserved) {
-      const error = new Error("Ese horario ya esta reservado. Elige otro hueco.");
+      const error = new Error("Ese horario ya está reservado. Elige otro hueco.");
       error.statusCode = 409;
       throw error;
     }
@@ -796,7 +829,7 @@ function validateReservationForCalendar(reservation) {
   }
 
   if (!reservation.telefono) {
-    throw new Error("La reserva no tiene telefono para sincronizar.");
+    throw new Error("La reserva no tiene teléfono para sincronizar.");
   }
 }
 
@@ -862,7 +895,7 @@ async function googleCalendarRequest(pathSuffix, options = {}) {
   const payload = await googleResponse.json().catch(() => ({}));
 
   if (!googleResponse.ok) {
-    const error = new Error(payload?.error?.message || `Google Calendar respondio con ${googleResponse.status}.`);
+    const error = new Error(payload?.error?.message || `Google Calendar respondió con ${googleResponse.status}.`);
     error.statusCode = googleResponse.status;
     throw error;
   }
@@ -921,7 +954,7 @@ function toCalendarEvent(reservation) {
     summary: `Cita veterinaria: ${reservation.nombre || "Cliente"}`,
     description: [
       `Cliente: ${reservation.nombre || "Sin nombre"}`,
-      `Telefono: ${reservation.telefono || "Sin telefono"}`,
+      `Teléfono: ${reservation.telefono || "Sin teléfono"}`,
       reservation.email ? `Email: ${reservation.email}` : "",
       `Mascota: ${reservation.mascota || "Sin indicar"}`,
       `Servicio: ${formatReservationServiceForCalendar(reservation.servicio)}`,
@@ -1033,7 +1066,7 @@ async function saveSupabaseReservation(reservation) {
 
   if (error) {
     if (error.code === "23505") {
-      const conflictError = new Error("Ese horario ya esta reservado. Elige otro hueco.");
+      const conflictError = new Error("Ese horario ya está reservado. Elige otro hueco.");
       conflictError.statusCode = 409;
       throw conflictError;
     }
@@ -1165,7 +1198,7 @@ function getScheduleForDate(date) {
 }
 
 function isBookableDateTime(datetime, service = "consulta") {
-  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(datetime)) {
+  if (!isValidDateTimeKey(datetime)) {
     return false;
   }
 
@@ -1245,31 +1278,31 @@ function normalizeReservation(body) {
   const emailCopy = Boolean(body?.emailCopy);
   const reservation = {
     id: crypto.randomUUID(),
-    nombre: cleanText(body?.nombre),
-    telefono: cleanText(body?.telefono),
-    email: cleanText(body?.email),
-    mascota: cleanText(body?.mascota),
-    servicio: cleanText(body?.servicio),
-    notes: cleanLongText(body?.notes || body?.motivo),
-    datetime: cleanText(body?.datetime),
+    nombre: safeString(body?.nombre, 100),
+    telefono: safeString(body?.telefono, 30),
+    email: safeEmail(body?.email),
+    mascota: safeString(body?.mascota, 80),
+    servicio: safeString(body?.servicio, 30),
+    notes: safeString(body?.notes || body?.motivo, 1000),
+    datetime: safeString(body?.datetime, 16),
     emailCopy,
   };
   reservation.code = reservation.id.slice(0, 8).toUpperCase();
 
   if (!reservation.nombre || !reservation.telefono || !reservation.mascota || !reservation.servicio || !reservation.datetime) {
-    const error = new Error("Nombre, telefono, mascota, servicio y fecha/hora son obligatorios.");
+    const error = new Error("Nombre, teléfono, mascota, servicio y fecha/hora son obligatorios.");
     error.statusCode = 400;
     throw error;
   }
 
   if (reservation.email && !isValidEmail(reservation.email)) {
-    const error = new Error("Indica un email valido.");
+    const error = new Error("Indica un email válido.");
     error.statusCode = 400;
     throw error;
   }
 
   if (!["consulta", "vacunacion", "cirugia", "peluqueria"].includes(reservation.servicio)) {
-    const error = new Error("Servicio no valido. Para urgencias, llama directamente a la clinica.");
+    const error = new Error("Servicio no válido. Para urgencias, llama directamente a la clínica.");
     error.statusCode = 400;
     throw error;
   }
@@ -1287,7 +1320,7 @@ async function sendReservationEmailIfRequested(reservation, emailCopy) {
       requested: true,
       sent: false,
       pending: true,
-      message: "Reserva creada. No se ha enviado la copia por email porque no se indico una direccion de email.",
+      message: "Reserva creada. No se ha enviado la copia por email porque no se indicó una dirección de email.",
     };
   }
 
@@ -1319,7 +1352,7 @@ async function sendReservationEmailIfRequested(reservation, emailCopy) {
     const payload = await response.json().catch(() => ({}));
 
     if (!response.ok) {
-      throw new Error(payload?.message || `El proveedor de email respondio con ${response.status}.`);
+      throw new Error(payload?.message || `El proveedor de email respondió con ${response.status}.`);
     }
 
     return { requested: true, sent: true, pending: false };
@@ -1339,14 +1372,14 @@ function reservationEmailText(reservation) {
     `Hola ${reservation.nombre},`,
     "",
     "Tu solicitud de cita se ha recibido correctamente en Clínica Veterinaria Vetusta.",
-    `Codigo de reserva: ${reservation.code}`,
+    `Código de reserva: ${reservation.code}`,
     `Fecha y hora: ${formatReservationDateTime(reservation.datetime)}`,
     `Mascota: ${formatPetType(reservation.mascota)}`,
     `Servicio: ${formatReservationServiceForCalendar(reservation.servicio)}`,
     reservation.notes ? `Motivo de la visita: ${reservation.notes}` : null,
-    `Telefono de la clinica: ${clinicPhone}`,
+    `Teléfono de la clínica: ${clinicPhone}`,
     "",
-    "Te contactaremos si necesitamos ajustar algun detalle.",
+    "Te contactaremos si necesitamos ajustar algún detalle.",
   ].filter(Boolean).join("\n");
 }
 
@@ -1364,10 +1397,6 @@ function reservationEmailHtml(reservation) {
       <p>Te contactaremos si necesitamos ajustar algún detalle.</p>
     </div>
   `;
-}
-
-function cleanLongText(value) {
-  return String(value || "").trim().slice(0, 2000);
 }
 
 function buildReservationTimestamps(datetime, service = "consulta") {
@@ -1414,25 +1443,109 @@ function madridOffset(date) {
   const timeZoneName = formatter
     .formatToParts(date)
     .find((part) => part.type === "timeZoneName")?.value || "GMT+1";
-  const match = timeZoneName.match(/^GMT([+-])(\d{1,2})(?::(\d{2}))?$/);
+  const offset = parseGmtOffset(timeZoneName);
 
-  if (!match) {
-    return "+01:00";
+  return offset || "+01:00";
+}
+
+function parseGmtOffset(value) {
+  const text = safeString(value, 12);
+
+  if (!text.startsWith("GMT") || (text[3] !== "+" && text[3] !== "-")) {
+    return "";
   }
 
-  const sign = match[1];
-  const hours = String(Number(match[2])).padStart(2, "0");
-  const minutes = match[3] || "00";
+  const sign = text[3];
+  const rest = text.slice(4);
+  const [rawHours, rawMinutes = "00"] = rest.split(":");
 
-  return `${sign}${hours}:${minutes}`;
+  if (!rawHours || rawHours.length > 2 || rawMinutes.length !== 2 || !isDigits(rawHours) || !isDigits(rawMinutes)) {
+    return "";
+  }
+
+  const hoursNumber = Number(rawHours);
+  const minutesNumber = Number(rawMinutes);
+
+  if (hoursNumber > 14 || minutesNumber > 59) {
+    return "";
+  }
+
+  return `${sign}${String(hoursNumber).padStart(2, "0")}:${String(minutesNumber).padStart(2, "0")}`;
 }
 
 function cleanText(value) {
-  return String(value || "").trim().slice(0, 160);
+  return safeString(value, 160);
+}
+
+function safeString(value, maxLength = 160) {
+  return String(value || "").trim().slice(0, maxLength);
+}
+
+function safeEmail(value) {
+  return safeString(value, 254).toLowerCase();
 }
 
 function isValidEmail(value) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || "").trim());
+  const email = safeEmail(value);
+  const atIndex = email.indexOf("@");
+  const lastDotIndex = email.lastIndexOf(".");
+
+  return email.length >= 6
+    && email.length <= 254
+    && !email.includes(" ")
+    && atIndex > 0
+    && atIndex === email.lastIndexOf("@")
+    && lastDotIndex > atIndex + 1
+    && lastDotIndex < email.length - 1;
+}
+
+function isValidMonthKey(value) {
+  const month = safeString(value, 7);
+  const [year, monthNumber] = month.split("-");
+
+  return month.length === 7
+    && year?.length === 4
+    && monthNumber?.length === 2
+    && isDigits(year)
+    && isDigits(monthNumber)
+    && Number(monthNumber) >= 1
+    && Number(monthNumber) <= 12;
+}
+
+function isValidDateTimeKey(value) {
+  const datetime = safeString(value, 16);
+
+  if (datetime.length !== 16 || datetime[4] !== "-" || datetime[7] !== "-" || datetime[10] !== "T" || datetime[13] !== ":") {
+    return false;
+  }
+
+  const year = datetime.slice(0, 4);
+  const month = datetime.slice(5, 7);
+  const day = datetime.slice(8, 10);
+  const hour = datetime.slice(11, 13);
+  const minute = datetime.slice(14, 16);
+
+  if (![year, month, day, hour, minute].every(isDigits)) {
+    return false;
+  }
+
+  const parsed = new Date(Number(year), Number(month) - 1, Number(day), Number(hour), Number(minute));
+
+  return Number(month) >= 1
+    && Number(month) <= 12
+    && Number(day) >= 1
+    && Number(day) <= 31
+    && Number(hour) >= 0
+    && Number(hour) <= 23
+    && Number(minute) >= 0
+    && Number(minute) <= 59
+    && parsed.getFullYear() === Number(year)
+    && parsed.getMonth() === Number(month) - 1
+    && parsed.getDate() === Number(day);
+}
+
+function isDigits(value) {
+  return [...String(value || "")].every((char) => char >= "0" && char <= "9");
 }
 
 function formatReservationDateTime(datetime) {

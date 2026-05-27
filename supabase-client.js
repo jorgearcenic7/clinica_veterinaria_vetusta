@@ -15,7 +15,7 @@ export async function getSupabase() {
   const config = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    throw new Error(config.error || "No se pudo cargar la configuracion de Supabase.");
+    throw new Error(config.error || "No se pudo cargar la configuración de Supabase.");
   }
 
   cachedClient = createClient(config.supabaseUrl, config.supabaseAnonKey);
@@ -193,7 +193,7 @@ export async function signedPetImageUrl(supabase, imagePath) {
   }
 
   if (imagePath.startsWith("http")) {
-    console.error("signed url error", new Error("pets.image_url debe ser un path relativo del bucket pet-images, no una URL publica."));
+    console.error("signed url error", new Error("pets.image_url debe ser un path relativo del bucket pet-images, no una URL pública."));
     return "";
   }
 

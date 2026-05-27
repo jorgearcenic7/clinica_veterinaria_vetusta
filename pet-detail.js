@@ -138,7 +138,7 @@ function renderRecords() {
     .sort((a, b) => a.next_due_date.localeCompare(b.next_due_date));
 
   if (upcoming.length === 0) {
-    upcomingListEl.append(emptyMessage("No hay proximas fechas registradas."));
+    upcomingListEl.append(emptyMessage("No hay próximas fechas registradas."));
   } else {
     upcoming.forEach((record) => upcomingListEl.append(recordCard(record, true)));
   }
@@ -172,7 +172,7 @@ async function renderDocuments() {
           <strong>${escapeHtml(documentItem.title)}</strong>
           <div class="small muted">${escapeHtml(documentItem.file_name || "Documento")}</div>
         </div>
-        <span class="badge">${documentItem.source === "clinic" ? "Clinica" : "Cliente"}</span>
+        <span class="badge">${documentItem.source === "clinic" ? "Clínica" : "Cliente"}</span>
       </div>
       ${documentItem.description ? `<p>${escapeHtml(documentItem.description)}</p>` : ""}
       <div class="row">
@@ -192,7 +192,7 @@ function recordCard(record, showDueDate) {
       <span class="small muted">${escapeHtml(record.record_type || "General")}</span>
     </div>
     <div class="small muted">Fecha: ${formatDate(record.record_date)}</div>
-    ${showDueDate ? `<div class="small"><strong>Proxima fecha:</strong> ${formatDate(record.next_due_date)}</div>` : ""}
+    ${showDueDate ? `<div class="small"><strong>Próxima fecha:</strong> ${formatDate(record.next_due_date)}</div>` : ""}
     ${record.notes ? `<p>${escapeHtml(record.notes)}</p>` : ""}
   `;
   return item;

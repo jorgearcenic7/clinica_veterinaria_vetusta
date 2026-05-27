@@ -7,8 +7,8 @@ const loginForm = document.querySelector("[data-login-form]");
 const registerForm = document.querySelector("[data-register-form]");
 const resetForm = document.querySelector("[data-reset-form]");
 const updatePasswordForm = document.querySelector("[data-update-password-form]");
-const redirectParam = new URLSearchParams(window.location.search).get("redirect") || "/dashboard";
-const redirectTo = redirectParam.startsWith("/") && !redirectParam.startsWith("//") ? redirectParam : "/dashboard";
+const redirectParam = new URLSearchParams(window.location.search).get("redirect");
+const redirectTo = redirectParam ? getSafeRedirectUrl(redirectParam) : "/dashboard";
 
 initAuth();
 
@@ -23,7 +23,7 @@ async function initAuth() {
     }
 
     if (data.session) {
-      window.location.replace(await dashboardPathForSession(supabase, data.session));
+      safeRedirect(await dashboardPathForSession(supabase, data.session));
       return;
     }
   } catch (error) {
@@ -52,7 +52,7 @@ loginForm.addEventListener("submit", async (event) => {
     }
 
     const { data } = await supabase.auth.getSession();
-    window.location.replace(await dashboardPathForSession(supabase, data.session));
+    safeRedirect(await dashboardPathForSession(supabase, data.session));
   } catch (error) {
     setStatus(statusEl, friendlyAuthError(error), true);
   }
@@ -92,7 +92,7 @@ registerForm.addEventListener("submit", async (event) => {
     }
 
     registerForm.reset();
-    setStatus(statusEl, "Cuenta creada. Si Supabase pide confirmacion, revisa tu email antes de entrar.");
+    setStatus(statusEl, "Cuenta creada. Si Supabase pide confirmación, revisa tu email antes de entrar.");
   } catch (error) {
     setStatus(statusEl, friendlyAuthError(error), true);
   }
@@ -114,7 +114,7 @@ resetForm.addEventListener("submit", async (event) => {
     }
 
     resetForm.reset();
-    setStatus(statusEl, "Te hemos enviado un enlace para recuperar la contrasena.");
+    setStatus(statusEl, "Te hemos enviado un enlace para recuperar la contraseña.");
   } catch (error) {
     setStatus(statusEl, friendlyAuthError(error), true);
   }
@@ -122,7 +122,7 @@ resetForm.addEventListener("submit", async (event) => {
 
 updatePasswordForm.addEventListener("submit", async (event) => {
   event.preventDefault();
-  setStatus(statusEl, "Guardando contrasena...");
+  setStatus(statusEl, "Guardando contraseña...");
 
   try {
     const supabase = await getSupabase();
@@ -140,8 +140,8 @@ updatePasswordForm.addEventListener("submit", async (event) => {
     }
 
     const { data } = await supabase.auth.getSession();
-    setStatus(statusEl, "Contrasena actualizada. Ya puedes entrar.");
-    window.location.replace(data.session ? await dashboardPathForSession(supabase, data.session) : "/dashboard");
+    setStatus(statusEl, "Contraseña actualizada. Ya puedes entrar.");
+    safeRedirect(data.session ? await dashboardPathForSession(supabase, data.session) : "/dashboard");
   } catch (error) {
     setStatus(statusEl, friendlyAuthError(error), true);
   }
@@ -168,7 +168,7 @@ function showPasswordUpdate() {
 
 async function dashboardPathForSession(supabase, session) {
   if (!session?.user?.id) {
-    return redirectTo;
+    return getSafeRedirectUrl(redirectTo);
   }
 
   const { data, error } = await supabase
@@ -179,17 +179,41 @@ async function dashboardPathForSession(supabase, session) {
 
   if (error) {
     console.error("profile redirect error", error);
-    return redirectTo;
+    return getSafeRedirectUrl(redirectTo);
   }
 
-  return data?.role === "admin" ? "/admin" : redirectTo;
+  return data?.role === "admin" ? "/admin" : getSafeRedirectUrl(redirectTo);
+}
+
+function safeRedirect(url) {
+  window.location.replace(getSafeRedirectUrl(url));
+}
+
+export function getSafeRedirectUrl(value) {
+  try {
+    const text = String(value || "").trim();
+
+    if (!text || text.startsWith("//") || hasControlCharacter(text)) {
+      return "/";
+    }
+
+    const url = new URL(text, window.location.origin);
+
+    if (url.origin !== window.location.origin || !url.pathname.startsWith("/")) {
+      return "/";
+    }
+
+    return `${url.pathname}${url.search}${url.hash}`;
+  } catch (_error) {
+    return "/";
+  }
 }
 
 function friendlyAuthError(error) {
-  const message = error?.message || "No se pudo completar la operacion.";
+  const message = error?.message || "No se pudo completar la operación.";
 
   if (message.includes("Invalid login credentials")) {
-    return "Email o contrasena incorrectos.";
+    return "Email o contraseña incorrectos.";
   }
 
   if (message.includes("email rate limit exceeded")) {
@@ -197,4 +221,11 @@ function friendlyAuthError(error) {
   }
 
   return friendlyError(error);
+}
+
+function hasControlCharacter(value) {
+  return [...value].some((char) => {
+    const code = char.charCodeAt(0);
+    return code <= 31 || code === 127;
+  });
 }

@@ -75,7 +75,7 @@ function renderReservations() {
   reservationsListEl.replaceChildren();
 
   if (reservations.length === 0) {
-    reservationsListEl.append(emptyMessage("Todavia no hay citas asociadas a tu cuenta."));
+    reservationsListEl.append(emptyMessage("Todavía no hay citas asociadas a tu cuenta."));
     return;
   }
 
@@ -99,7 +99,7 @@ async function renderPets() {
   petsListEl.replaceChildren();
 
   if (pets.length === 0) {
-    petsListEl.append(emptyMessage("Todavia no hay mascotas asociadas a tu cuenta."));
+    petsListEl.append(emptyMessage("Todavía no hay mascotas asociadas a tu cuenta."));
     return;
   }
 
@@ -210,9 +210,9 @@ function formatReservationDateTime(datetime) {
 function formatReservationService(value) {
   const labels = {
     consulta: "Consulta general",
-    vacunacion: "Vacunacion",
-    cirugia: "Cirugia",
-    peluqueria: "Peluqueria",
+    vacunacion: "Vacunación",
+    cirugia: "Cirugía",
+    peluqueria: "Peluquería",
     urgencia: "Urgencia",
   };
 

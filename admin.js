@@ -204,11 +204,11 @@ function renderReservationDetail() {
   reservationDetailEl.classList.remove("hidden");
   reservationDetailEl.innerHTML = `
     <div>
-      <p class="muted small">Detalle rapido</p>
+      <p class="muted small">Detalle rápido</p>
       <h3>${escapeHtml(formatReservationTitle(reservation))}</h3>
       <p>${escapeHtml(formatReservationService(reservation.servicio))}</p>
       <p class="muted">${escapeHtml(formatReservationDateTime(reservation.datetime))} · ${escapeHtml(formatReservationTimeRange(reservation))}</p>
-      <p class="muted">${escapeHtml(reservation.telefono || "Sin telefono")}</p>
+      <p class="muted">${escapeHtml(reservation.telefono || "Sin teléfono")}</p>
       <span class="badge ${statusClass(status)}">${escapeHtml(statusLabel(status))}</span>
       ${syncStatusMarkup(reservation)}
     </div>
@@ -236,7 +236,7 @@ function renderClients() {
     button.className = `client-card ${client.id === selectedClientId ? "active" : ""}`;
     button.innerHTML = `
       <strong>${escapeHtml(client.full_name || "Sin nombre")}</strong>
-      <span>${escapeHtml(client.phone || "Sin telefono")}</span>
+      <span>${escapeHtml(client.phone || "Sin teléfono")}</span>
     `;
     button.addEventListener("click", () => {
       selectedClientId = client.id;
@@ -260,7 +260,7 @@ async function renderPets() {
   }
 
   if (clientPets.length === 0) {
-    petsListEl.append(emptyMessage("Este cliente aun no tiene mascotas."));
+    petsListEl.append(emptyMessage("Este cliente aún no tiene mascotas."));
     return;
   }
 
@@ -567,7 +567,7 @@ async function updateReservationStatus(id, status) {
     const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
 
     if (sessionError || !sessionData.session?.access_token) {
-      throw sessionError || new Error("Sesion no valida.");
+      throw sessionError || new Error("Sesión no válida.");
     }
 
     const response = await fetch(`/api/admin/reservations/${encodeURIComponent(id)}`, {
@@ -589,7 +589,7 @@ async function updateReservationStatus(id, status) {
     const syncError = data.reservation?.googleSyncError || data.reservation?.google_sync_error;
     setStatus(
       statusEl,
-      syncError ? "Reserva cancelada. Error de sincronizacion con Google Calendar." : "Reserva cancelada.",
+      syncError ? "Reserva cancelada. Error de sincronización con Google Calendar." : "Reserva cancelada.",
       Boolean(syncError),
     );
   } catch (error) {
@@ -610,9 +610,9 @@ function formatReservationDateTime(value) {
 function formatReservationService(value) {
   const labels = {
     consulta: "Consulta general",
-    vacunacion: "Vacunacion",
-    cirugia: "Cirugia",
-    peluqueria: "Peluqueria",
+    vacunacion: "Vacunación",
+    cirugia: "Cirugía",
+    peluqueria: "Peluquería",
     urgencia: "Urgencia",
   };
 
@@ -635,7 +635,7 @@ function statusClass(status) {
 
 function syncStatusMarkup(reservation) {
   if (reservation.google_sync_error) {
-    return `<div class="sync-status sync-status-error" title="${escapeHtml(reservation.google_sync_error)}">Error de sincronizacion</div>`;
+    return `<div class="sync-status sync-status-error" title="${escapeHtml(reservation.google_sync_error)}">Error de sincronización</div>`;
   }
 
   if (
