@@ -6,6 +6,7 @@ const upcomingListEl = document.querySelector("[data-upcoming-list]");
 const recordsListEl = document.querySelector("[data-records-list]");
 const documentsListEl = document.querySelector("[data-documents-list]");
 const logoutButton = document.querySelector("[data-logout]");
+const petTitleEl = document.querySelector("[data-pet-title]");
 const petId = window.location.pathname.split("/").filter(Boolean).pop();
 
 let supabase = null;
@@ -55,6 +56,9 @@ async function loadPetData() {
   }
 
   pet = petResult.data;
+  if (petTitleEl) {
+    petTitleEl.textContent = pet.name ? `Ficha de ${pet.name}` : "Ficha de la mascota";
+  }
   records = recordsResult.data || [];
   documents = documentsResult.data || [];
   await render();
@@ -77,19 +81,26 @@ async function renderPet() {
   }
 
   petCardEl.innerHTML = `
-    <div class="pet-detail-image-wrapper">
-      ${imageUrl ? `<img class="pet-detail-image" src="${escapeHtml(imageUrl)}" alt="Foto de ${escapeHtml(pet.name)}">` : `<div class="pet-detail-image placeholder" aria-hidden="true">${escapeHtml(pet.name.slice(0, 1).toUpperCase())}</div>`}
-    </div>
-    <div class="row change-photo-button">
-      <label class="button secondary">
+    <div class="pet-profile-media">
+      <div class="pet-detail-image-wrapper">
+        ${imageUrl ? `<img class="pet-detail-image" src="${escapeHtml(imageUrl)}" alt="Foto de ${escapeHtml(pet.name || "mascota")}">` : `<div class="pet-detail-image placeholder" aria-hidden="true">${escapeHtml((pet.name || "M").slice(0, 1).toUpperCase())}</div>`}
+      </div>
+      <label class="button secondary change-photo-button">
         Cambiar foto
         <input class="hidden" type="file" accept="image/jpeg,image/png,image/webp" data-image-input="${pet.id}">
       </label>
     </div>
-    <h1 class="page-title">${escapeHtml(pet.name)}</h1>
-    <p class="muted">${escapeHtml([pet.species, pet.breed].filter(Boolean).join(" · ") || "Sin detalles")}</p>
-    <p><strong>Fecha de nacimiento:</strong> ${formatDate(pet.birth_date)}</p>
-    <p><strong>Edad:</strong> ${calculateAge(pet.birth_date)}</p>
+    <div class="pet-profile-content">
+      <p class="eyebrow">Ficha veterinaria</p>
+      <h2 class="pet-name">${escapeHtml(pet.name || "Mascota")}</h2>
+      <p class="muted">${escapeHtml([pet.species, pet.breed].filter(Boolean).join(" · ") || "Información general de la mascota")}</p>
+      <div class="pet-info-grid">
+        ${petInfoItem("Especie", pet.species || "Sin indicar", "M")}
+        ${petInfoItem("Raza", pet.breed || "Sin indicar", "R")}
+        ${petInfoItem("Fecha de nacimiento", formatDate(pet.birth_date), "F")}
+        ${petInfoItem("Edad", calculateAge(pet.birth_date), "E")}
+      </div>
+    </div>
   `;
 
   petCardEl.querySelector("[data-image-input]").addEventListener("change", changeImage);
@@ -138,13 +149,19 @@ function renderRecords() {
     .sort((a, b) => a.next_due_date.localeCompare(b.next_due_date));
 
   if (upcoming.length === 0) {
-    upcomingListEl.append(emptyMessage("No hay próximas fechas registradas."));
+    upcomingListEl.append(emptyMessage(
+      "No hay próximas fechas registradas.",
+      "Cuando la clínica programe una vacuna o tratamiento, aparecerá aquí.",
+    ));
   } else {
     upcoming.forEach((record) => upcomingListEl.append(recordCard(record, true)));
   }
 
   if (records.length === 0) {
-    recordsListEl.append(emptyMessage("No hay historial oficial registrado."));
+    recordsListEl.append(emptyMessage(
+      "No hay historial oficial registrado.",
+      "Las consultas, revisiones y tratamientos aparecerán aquí cuando sean añadidos por la clínica.",
+    ));
   } else {
     records.forEach((record) => recordsListEl.append(recordCard(record, false)));
   }
@@ -154,7 +171,10 @@ async function renderDocuments() {
   documentsListEl.replaceChildren();
 
   if (documents.length === 0) {
-    documentsListEl.append(emptyMessage("No hay documentos asociados a esta mascota."));
+    documentsListEl.append(emptyMessage(
+      "No hay documentos asociados a esta mascota.",
+      "Aquí aparecerán informes, cartillas, analíticas u otros archivos.",
+    ));
     return;
   }
 
@@ -165,7 +185,7 @@ async function renderDocuments() {
 
   documentsWithUrls.forEach((documentItem) => {
     const item = document.createElement("article");
-    item.className = "list-item";
+    item.className = "list-item document-item";
     item.innerHTML = `
       <div class="row">
         <div>
@@ -185,7 +205,7 @@ async function renderDocuments() {
 
 function recordCard(record, showDueDate) {
   const item = document.createElement("article");
-  item.className = "list-item";
+  item.className = `list-item timeline-item ${showDueDate ? "upcoming-item" : ""}`;
   item.innerHTML = `
     <div class="row">
       <strong>${escapeHtml(record.title)}</strong>
@@ -198,9 +218,25 @@ function recordCard(record, showDueDate) {
   return item;
 }
 
-function emptyMessage(text) {
-  const item = document.createElement("p");
-  item.className = "muted";
-  item.textContent = text;
+function emptyMessage(title, description = "") {
+  const item = document.createElement("div");
+  item.className = "empty-state";
+  item.innerHTML = `
+    <span class="empty-icon" aria-hidden="true">+</span>
+    <strong>${escapeHtml(title)}</strong>
+    ${description ? `<p>${escapeHtml(description)}</p>` : ""}
+  `;
   return item;
+}
+
+function petInfoItem(label, value, icon) {
+  return `
+    <div class="pet-info-item">
+      <span class="pet-info-icon" aria-hidden="true">${escapeHtml(icon)}</span>
+      <span>
+        <small>${escapeHtml(label)}</small>
+        <strong>${escapeHtml(value)}</strong>
+      </span>
+    </div>
+  `;
 }
