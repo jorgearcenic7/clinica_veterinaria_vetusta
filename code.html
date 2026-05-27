@@ -1428,6 +1428,9 @@ function buildPricingCard(item, mode = "pack") {
   article.className = `pricing-card ${mode === "service" ? "pricing-service-card" : ""} ${item.featured ? "featured" : ""} flex h-full flex-col overflow-hidden rounded-3xl`;
   const dataI18n = (key) => item.key ? ` data-i18n="${item.key}.${key}"` : "";
   const imageLoading = mode === "pack" ? "eager" : "lazy";
+  const imageBadge = mode === "pack"
+    ? `<span class="absolute left-4 top-4 rounded-full bg-white/90 px-4 py-2 font-label-caps text-xs text-primary shadow"${dataI18n("badge")}>${item.badge}</span>`
+    : "";
   const benefits = item.benefits.map((benefit, index) => `
     <li class="flex items-start gap-2">
       <span class="pricing-check mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs">✓</span>
@@ -1437,7 +1440,7 @@ function buildPricingCard(item, mode = "pack") {
   article.innerHTML = `
     <div class="relative">
       <img class="pricing-image w-full" alt="${item.imageAlt || item.title}" loading="${imageLoading}" decoding="async" src="${item.image}">
-      <span class="absolute left-4 top-4 rounded-full bg-white/90 px-4 py-2 font-label-caps text-xs text-primary shadow"${dataI18n("badge")}>${item.badge}</span>
+      ${imageBadge}
     </div>
     <div class="flex flex-1 flex-col gap-3 p-5">
       <div>
