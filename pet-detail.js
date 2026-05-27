@@ -82,28 +82,53 @@ async function renderPet() {
 
   petCardEl.innerHTML = `
     <div class="pet-profile-media">
-      <div class="pet-detail-image-wrapper">
-        ${imageUrl ? `<img class="pet-detail-image" src="${escapeHtml(imageUrl)}" alt="Foto de ${escapeHtml(pet.name || "mascota")}">` : `<div class="pet-detail-image placeholder" aria-hidden="true">${escapeHtml((pet.name || "M").slice(0, 1).toUpperCase())}</div>`}
+      <div class="pet-flip-card" role="button" tabindex="0" aria-label="Ver datos de ${escapeHtml(pet.name || "la mascota")}" data-pet-flip-card>
+        <div class="pet-flip-inner">
+          <div class="pet-flip-face pet-flip-front">
+            ${imageUrl ? `<img class="pet-detail-image" src="${escapeHtml(imageUrl)}" alt="Foto de ${escapeHtml(pet.name || "mascota")}">` : `<div class="pet-detail-image placeholder" aria-hidden="true">${escapeHtml((pet.name || "M").slice(0, 1).toUpperCase())}</div>`}
+            <div class="pet-photo-overlay">
+              <span>Ficha veterinaria</span>
+              <strong>${escapeHtml(pet.name || "Mascota")}</strong>
+              <small>Haz clic para ver sus datos</small>
+            </div>
+          </div>
+          <div class="pet-flip-face pet-flip-back">
+            <p class="eyebrow">Datos de la mascota</p>
+            <h2 class="pet-name">${escapeHtml(pet.name || "Mascota")}</h2>
+            <p class="muted">${escapeHtml([pet.species, pet.breed].filter(Boolean).join(" · ") || "Información general de la mascota")}</p>
+            <div class="pet-info-grid">
+              ${petInfoItem("Especie", pet.species || "Sin indicar", "M")}
+              ${petInfoItem("Raza", pet.breed || "Sin indicar", "R")}
+              ${petInfoItem("Fecha de nacimiento", formatDate(pet.birth_date), "F")}
+              ${petInfoItem("Edad", calculateAge(pet.birth_date), "E")}
+            </div>
+            <span class="pet-flip-hint">Haz clic para volver a la foto</span>
+          </div>
+        </div>
       </div>
       <label class="button secondary change-photo-button">
         Cambiar foto
         <input class="hidden" type="file" accept="image/jpeg,image/png,image/webp" data-image-input="${pet.id}">
       </label>
     </div>
-    <div class="pet-profile-content">
-      <p class="eyebrow">Ficha veterinaria</p>
-      <h2 class="pet-name">${escapeHtml(pet.name || "Mascota")}</h2>
-      <p class="muted">${escapeHtml([pet.species, pet.breed].filter(Boolean).join(" · ") || "Información general de la mascota")}</p>
-      <div class="pet-info-grid">
-        ${petInfoItem("Especie", pet.species || "Sin indicar", "M")}
-        ${petInfoItem("Raza", pet.breed || "Sin indicar", "R")}
-        ${petInfoItem("Fecha de nacimiento", formatDate(pet.birth_date), "F")}
-        ${petInfoItem("Edad", calculateAge(pet.birth_date), "E")}
-      </div>
-    </div>
   `;
 
   petCardEl.querySelector("[data-image-input]").addEventListener("change", changeImage);
+  petCardEl.querySelector("[data-pet-flip-card]").addEventListener("click", togglePetCard);
+  petCardEl.querySelector("[data-pet-flip-card]").addEventListener("keydown", handlePetCardKeydown);
+}
+
+function togglePetCard(event) {
+  event.currentTarget.classList.toggle("is-flipped");
+}
+
+function handlePetCardKeydown(event) {
+  if (event.key !== "Enter" && event.key !== " ") {
+    return;
+  }
+
+  event.preventDefault();
+  event.currentTarget.classList.toggle("is-flipped");
 }
 
 async function changeImage(event) {
