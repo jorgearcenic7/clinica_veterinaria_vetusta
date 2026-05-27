@@ -10,15 +10,11 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.106.2",
     "dotenv": "^16.4.7",
-<<<<<<< HEAD
-    "express": "^4.21.2",
+    "express": "^4.22.1",
     "express-rate-limit": "^7.5.1"
   },
   "overrides": {
     "qs": "^6.14.0"
-=======
-    "express": "^4.22.2"
->>>>>>> 9b6eb5caa0ba9b311e42af6571c17d8ba46edc99
   },
   "engines": {
     "node": ">=18"
