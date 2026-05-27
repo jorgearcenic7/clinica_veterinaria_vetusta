@@ -49,8 +49,8 @@ window.VetustaImageSources = {
     section: "Pack Higiene",
   },
   consultationService: {
-    url: "https://images.pexels.com/photos/6235233/pexels-photo-6235233.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=700&q=85",
-    alt: "Consulta veterinaria con revisión general de una mascota",
+    url: "https://images.pexels.com/photos/6235660/pexels-photo-6235660.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=700&q=85",
+    alt: "Veterinaria escuchando el corazón de un perro en consulta general",
     source: "Pexels",
     license: "Pexels License, uso comercial permitido",
     section: "Servicio Consulta",
@@ -63,8 +63,8 @@ window.VetustaImageSources = {
     section: "Servicio Vacunación",
   },
   surgeryService: {
-    url: "https://images.pexels.com/photos/6234605/pexels-photo-6234605.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=700&q=85",
-    alt: "Equipo veterinario preparando una valoración clínica",
+    url: "https://images.pexels.com/photos/7469214/pexels-photo-7469214.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=700&q=85",
+    alt: "Equipo clínico preparando material para una intervención veterinaria",
     source: "Pexels",
     license: "Pexels License, uso comercial permitido",
     section: "Servicio Cirugía",
