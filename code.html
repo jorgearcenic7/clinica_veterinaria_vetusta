@@ -1424,9 +1424,6 @@ function buildPricingCard(item, mode = "pack") {
       <span${dataI18n(`benefits.${index}`)}>${benefit}</span>
     </li>
   `).join("");
-  const categoryMarkup = mode === "service"
-    ? ""
-    : `<p class="font-label-caps text-label-caps text-primary"${dataI18n("category")}>${item.category}</p>`;
   article.innerHTML = `
     <div class="relative">
       <img class="pricing-image w-full" alt="${item.imageAlt || item.title}" loading="${imageLoading}" decoding="async" src="${item.image}">
@@ -1434,7 +1431,6 @@ function buildPricingCard(item, mode = "pack") {
     </div>
     <div class="flex flex-1 flex-col gap-3 p-5">
       <div>
-        ${categoryMarkup}
         <h4 class="mt-1 font-h3 text-[26px] leading-tight text-on-background"${dataI18n("title")}>${item.title}</h4>
         <p class="mt-2 text-sm leading-snug text-on-surface-variant"${dataI18n("description")}>${item.description}</p>
       </div>

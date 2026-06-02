@@ -35,8 +35,8 @@ window.VetustaImageSources = {
     section: "Pack Adulto",
   },
   seniorPack: {
-    url: "https://images.pexels.com/photos/5745228/pexels-photo-5745228.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=700&q=85",
-    alt: "Mascota senior descansando con aspecto tranquilo",
+    url: "https://images.pexels.com/photos/21268602/pexels-photo-21268602.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=700&q=85",
+    alt: "Perro mayor descansando tumbado en una acera",
     source: "Pexels",
     license: "Pexels License, uso comercial permitido",
     section: "Pack Senior",
