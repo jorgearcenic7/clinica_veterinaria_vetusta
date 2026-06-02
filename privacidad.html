@@ -15,6 +15,7 @@ h1, h2, .brand { font-family: "Plus Jakarta Sans", sans-serif; }
 .legal-article:first-child { border-top: 0; padding-top: 0; }
 .article-number { color: #004734; font-weight: 800; }
 .legal-placeholder { background-color: #fff3cd; border: 1px dashed #ffc107; padding: 2px 6px; border-radius: 3px; font-weight: 700; color: #856404; }
+.language-select { border: 1px solid #c1c8c2; border-radius: 999px; background: #ffffff; color: #004734; font-weight: 700; padding: 0.45rem 0.75rem; font-size: 0.85rem; }
 aside.legal-note {
   position: static;
   display: block;
@@ -36,15 +37,24 @@ aside.legal-note {
 <div class="max-w-[1200px] mx-auto px-6 md:px-12 py-4 flex items-center justify-between gap-4">
 <a class="brand text-xl md:text-2xl font-bold text-[#1B4332]" href="/">Clinica Veterinaria Vetusta</a>
 <nav class="flex flex-wrap gap-4 text-sm font-semibold text-[#1B4332]">
-<a href="/#servicios">Servicios</a>
-<a href="/#reserva">Reservas</a>
-<a href="/#contacto">Contacto</a>
+<a href="/#servicios" data-i18n="nav.services">Servicios</a>
+<a href="/#reserva" data-i18n="nav.booking">Reservas</a>
+<a href="/#contacto" data-i18n="nav.contact">Contacto</a>
 </nav>
+<div>
+<label class="sr-only" for="language-select">Idioma</label>
+<select class="language-select" id="language-select" aria-label="Idioma">
+<option value="es">ES</option>
+<option value="en">EN</option>
+<option value="fr">FR</option>
+<option value="pt">PT</option>
+</select>
+</div>
 </div>
 </header>
 <main class="max-w-5xl mx-auto px-6 py-16">
-<p class="text-sm font-semibold uppercase tracking-wide text-[#004734] mb-3">Protección de datos</p>
-<h1 class="text-5xl md:text-7xl font-black tracking-tight text-black mb-6">Política de Privacidad</h1>
+<p class="text-sm font-semibold uppercase tracking-wide text-[#004734] mb-3"><span data-i18n="legal.privacy.eyebrow">Protección de datos</span></p>
+<h1 class="text-5xl md:text-7xl font-black tracking-tight text-black mb-6" data-i18n="legal.privacy.title">Política de Privacidad</h1>
 <p class="max-w-3xl text-lg text-[#414844] mb-10">Información sobre el tratamiento de datos personales realizado a través del sitio web, el sistema de reservas y el area privada de clientes.</p>
 <div class="legal-card p-6 md:p-10 space-y-8">
 <section class="legal-article">
@@ -111,10 +121,10 @@ aside.legal-note {
 <div class="max-w-[1200px] mx-auto px-8 py-10 flex flex-col md:flex-row justify-between gap-6">
 <p class="brand font-bold">Clinica Veterinaria Vetusta</p>
 <nav class="flex flex-wrap gap-4 text-sm text-emerald-100/80">
-<a href="/aviso-legal.html">Aviso Legal</a>
-<a href="/privacidad.html">Privacidad</a>
-<a href="/cookies.html">Cookies</a>
-<a href="/sitemap.html">Sitemap</a>
+<a href="/aviso-legal.html" data-i18n="footer.legal">Aviso Legal</a>
+<a href="/privacidad.html" data-i18n="footer.privacy">Privacidad</a>
+<a href="/cookies.html" data-i18n="footer.cookies">Cookies</a>
+<a href="/sitemap.html" data-i18n="footer.sitemap">Sitemap</a>
 </nav>
 </div>
 </footer>
@@ -139,5 +149,6 @@ aside.legal-note {
 <script>
 (function(){const k="cookie_consent",m=24*30*24*60*60*1000,b=document.querySelector("[data-cookie-banner]"),o=document.querySelector("[data-cookie-modal]"),t=document.querySelector("[data-cookie-analytics]");let loaded=false;function r(){try{const v=JSON.parse(localStorage.getItem(k)||"null");return v&&v.timestamp&&Date.now()-v.timestamp<=m?v:null}catch(e){return null}}function l(){if(loaded)return;loaded=true;const s=document.createElement("script");s.src="/analytics.js";s.defer=true;document.head.appendChild(s)}function s(a){const v={analytics:!!a,timestamp:Date.now()};localStorage.setItem(k,JSON.stringify(v));if(b)b.style.display="none";if(o)o.style.display="none";if(v.analytics)l()}function c(){const v=r();if(t)t.checked=!!(v&&v.analytics);if(o)o.style.display="flex"}const v=r();if(v){if(v.analytics)l()}else if(b)b.style.display="block";document.querySelectorAll("[data-cookie-manage],[data-cookie-configure]").forEach(e=>e.addEventListener("click",c));document.querySelector("[data-cookie-accept]")?.addEventListener("click",()=>s(true));document.querySelector("[data-cookie-reject]")?.addEventListener("click",()=>s(false));document.querySelector("[data-cookie-save]")?.addEventListener("click",()=>s(t&&t.checked));document.querySelector("[data-cookie-close]")?.addEventListener("click",()=>{if(o)o.style.display="none"})})();
 </script>
+<script defer src="/i18n.js"></script>
 </body>
 </html>
