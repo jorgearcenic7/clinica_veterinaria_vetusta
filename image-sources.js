@@ -63,10 +63,10 @@ window.VetustaImageSources = {
     section: "Servicio Vacunación",
   },
   surgeryService: {
-    url: "https://cdn.pixabay.com/photo/2019/07/08/03/45/surgery-4323718_1280.jpg",
-    alt: "Quirófano veterinario con una mascota durante una intervención",
-    source: "Pixabay",
-    license: "Pixabay Content License, uso comercial permitido",
+    url: "https://images.pexels.com/photos/6235663/pexels-photo-6235663.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=700&q=85",
+    alt: "Veterinaria atendiendo a una mascota en un entorno clínico tranquilo",
+    source: "Pexels",
+    license: "Pexels License, uso comercial permitido",
     section: "Servicio Cirugía",
   },
   diagnosticsService: {

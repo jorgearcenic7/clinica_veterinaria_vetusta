@@ -25,7 +25,7 @@
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://images.pexels.com" rel="preconnect"/>
-<script src="/image-sources.js?v=20260527-services-2"></script>
+<script src="/image-sources.js?v=20260602-services-3"></script>
 <link href="https://fonts.googleapis.com/css2?family=Anton&amp;family=Bodoni+Moda:opsz,wght@6..96,700;6..96,900&amp;family=Cormorant+Garamond:ital,wght@0,700;1,700&amp;family=Lexend:wght@400;600&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/>
 <!-- TODO SEO: añade aquí la verificación de Google Search Console cuando tengas el código:
 <meta name="google-site-verification" content="TU_CODIGO_DE_VERIFICACION"/>
@@ -1424,6 +1424,9 @@ function buildPricingCard(item, mode = "pack") {
       <span${dataI18n(`benefits.${index}`)}>${benefit}</span>
     </li>
   `).join("");
+  const categoryMarkup = mode === "service"
+    ? ""
+    : `<p class="font-label-caps text-label-caps text-primary"${dataI18n("category")}>${item.category}</p>`;
   article.innerHTML = `
     <div class="relative">
       <img class="pricing-image w-full" alt="${item.imageAlt || item.title}" loading="${imageLoading}" decoding="async" src="${item.image}">
@@ -1431,7 +1434,7 @@ function buildPricingCard(item, mode = "pack") {
     </div>
     <div class="flex flex-1 flex-col gap-3 p-5">
       <div>
-        <p class="font-label-caps text-label-caps text-primary"${dataI18n("category")}>${item.category}</p>
+        ${categoryMarkup}
         <h4 class="mt-1 font-h3 text-[26px] leading-tight text-on-background"${dataI18n("title")}>${item.title}</h4>
         <p class="mt-2 text-sm leading-snug text-on-surface-variant"${dataI18n("description")}>${item.description}</p>
       </div>
