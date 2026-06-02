@@ -63,8 +63,8 @@ window.VetustaImageSources = {
     section: "Servicio Vacunación",
   },
   surgeryService: {
-    url: "https://images.pexels.com/photos/6235663/pexels-photo-6235663.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=700&q=85",
-    alt: "Veterinaria atendiendo a una mascota en un entorno clínico tranquilo",
+    url: "https://images.pexels.com/photos/23692685/pexels-photo-23692685.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=700&q=85",
+    alt: "Veterinaria atendiendo a un perro Chow Chow en clínica",
     source: "Pexels",
     license: "Pexels License, uso comercial permitido",
     section: "Servicio Cirugía",
