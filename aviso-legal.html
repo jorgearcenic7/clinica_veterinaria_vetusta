@@ -15,7 +15,19 @@ h1, h2, .brand { font-family: "Plus Jakarta Sans", sans-serif; }
 .legal-article:first-child { border-top: 0; padding-top: 0; }
 .article-number { color: #004734; font-weight: 800; }
 .legal-placeholder { background-color: #fff3cd; border: 1px dashed #ffc107; padding: 2px 6px; border-radius: 3px; font-weight: 700; color: #856404; }
-.legal-note { background: #fff8db; border-left: 5px solid #d99a00; border-radius: 10px; padding: 1rem 1.25rem; color: #4c3a00; }
+aside.legal-note {
+  position: static;
+  display: block;
+  margin: 2rem 0 1.5rem;
+  padding: 1rem 1.25rem;
+  background-color: #fffbea;
+  border-left: 4px solid #ffc107;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #4a3c00;
+  clear: both;
+}
 </style>
 </head>
 <body>
@@ -81,9 +93,9 @@ h1, h2, .brand { font-family: "Plus Jakarta Sans", sans-serif; }
 <h2 class="text-2xl font-bold text-black mb-3"><span class="article-number">Artículo 10.</span> Vigencia y modificaciones</h2>
 <p>Fecha de última actúalización: <span class="legal-placeholder">[FECHA DE ÚLTIMA ACTUALIZACIÓN]</span>. El titular se reserva el derecho a actúalizar el presente Aviso Legal para adaptarlo a cambios normativos, jurisprudenciales, técnicos u organizativos. Se recomienda al usuario revisar periódicamente esta página.</p>
 </section>
-<asíde class="legal-note">
+<aside class="legal-note">
 <strong>Nota importante:</strong> Este documento ha sido redactado conforme a la normativa española vigente a <span class="legal-placeholder">[FECHA]</span>. Se recomienda su revisión periódica y, antes de la publicación definitiva, la validación por parte de un abogado especializado en derecho digital o protección de datos.
-</asíde>
+</aside>
 </div>
 </main>
 <footer class="bg-[#1B4332] text-white">

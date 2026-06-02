@@ -15,7 +15,19 @@ h1, h2, .brand { font-family: "Plus Jakarta Sans", sans-serif; }
 .legal-article:first-child { border-top: 0; padding-top: 0; }
 .article-number { color: #004734; font-weight: 800; }
 .legal-placeholder { background-color: #fff3cd; border: 1px dashed #ffc107; padding: 2px 6px; border-radius: 3px; font-weight: 700; color: #856404; }
-.legal-note { background: #fff8db; border-left: 5px solid #d99a00; border-radius: 10px; padding: 1rem 1.25rem; color: #4c3a00; }
+aside.legal-note {
+  position: static;
+  display: block;
+  margin: 2rem 0 1.5rem;
+  padding: 1rem 1.25rem;
+  background-color: #fffbea;
+  border-left: 4px solid #ffc107;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #4a3c00;
+  clear: both;
+}
 .cookie-table { width: 100%; border-collapse: separate; border-spacing: 0; overflow: hidden; border: 1px solid rgba(0, 71, 52, 0.18); border-radius: 12px; }
 .cookie-table th { background: #004734; color: #fff; text-align: left; font-weight: 700; }
 .cookie-table th, .cookie-table td { padding: 0.9rem; border-bottom: 1px solid rgba(0, 71, 52, 0.12); vertical-align: top; }
@@ -134,9 +146,9 @@ h1, h2, .brand { font-family: "Plus Jakarta Sans", sans-serif; }
 <h2 class="text-2xl font-bold text-black mb-3"><span class="article-number">Artículo 9.</span> Mas información y contacto</h2>
 <p>Para cualquier duda sobre el uso de cookies, el usuario puede dirigirse a <span class="legal-placeholder">[EMAIL]</span>. Para reclamaciones relacionadas con protección de datos y cookies, puede acudir a la Agencia Española de Protección de Datos: <a class="text-[#004734] font-semibold hover:underline" href="https://www.aepd.es" rel="noopener noreferrer" target="_blank">www.aepd.es</a>.</p>
 </section>
-<asíde class="legal-note">
+<aside class="legal-note">
 <strong>Nota importante:</strong> Este documento ha sido redactado conforme a la normativa española vigente a <span class="legal-placeholder">[FECHA]</span>. Se recomienda su revisión periódica y, antes de la publicación definitiva, la validación por parte de un abogado especializado en derecho digital o protección de datos.
-</asíde>
+</aside>
 </div>
 </main>
 <footer class="bg-[#1B4332] text-white">
