@@ -1,67 +1,94 @@
-# Clínica Veterinaria Vetusta
+# Clinica Veterinaria Vetusta
 
 ![Node.js](https://img.shields.io/badge/Node.js-18+-green)
-![Supabase](https://img.shields.io/badge/Supabase-Backend-3ECF8E)
-![Vercel](https://img.shields.io/badge/Vercel-Deployed-black)
+![Express](https://img.shields.io/badge/Express-Backend-black)
+![Supabase](https://img.shields.io/badge/Supabase-Database%20%26%20Auth-3ECF8E)
+![Vercel](https://img.shields.io/badge/Vercel-Ready-black)
 ![License](https://img.shields.io/badge/License-Private-red)
 
-Web dinámica para una clínica veterinaria en Oviedo. Incluye página pública, reservas online, reseñas, área privada de clientes, panel de administración e integraciones opcionales con Supabase, Resend, Google Calendar y Google Places.
+Sitio web fullstack para una clinica veterinaria en Oviedo. El proyecto combina una pagina publica orientada a captacion y SEO local con reserva online, area privada de clientes, gestion de mascotas, documentacion clinica y panel de administracion.
+
+Esta desarrollado con HTML, CSS, JavaScript vanilla y un backend Express en Node.js. Supabase se utiliza para autenticacion, persistencia, seguridad por Row Level Security y almacenamiento privado de imagenes y documentos. El backend tambien deja preparadas integraciones opcionales con Google Places, Google Calendar, Resend y Google Analytics 4.
 
 ## Funcionalidades
 
-- Página pública con información de servicios, equipo, reseñas, contacto y mapa.
-- SEO local con metadata, datos estructurados `VeterinaryCare` y `FAQPage`.
-- Reserva online con calendario, horarios reales y bloqueo de huecos pasados u ocupados.
-- Área privada para clientes con login, mascotas, historial y documentación.
-- Panel de administración para gestionar clientes, mascotas, historiales y reservas.
-- Persistencia en Supabase con Row Level Security.
-- Envío opcional de copia de reserva por email mediante Resend.
-- Sincronización opcional de reservas confirmadas con Google Calendar.
-- Reseñas locales por defecto, con opción de activar Google Places API.
+- Pagina publica con servicios, equipo, reseñas, contacto, mapa, preguntas frecuentes y llamadas a la accion.
+- SEO local con metadatos, sitemap, robots.txt y datos estructurados para clinica veterinaria y FAQ.
+- Sistema de reservas online con calendario, horarios reales, bloqueo de huecos no disponibles y validacion en servidor.
+- Area privada de clientes con registro, login, recuperacion de contraseña y acceso a informacion de sus mascotas.
+- Ficha privada de mascota con imagen, datos principales, historial, proximas actuaciones y documentos.
+- Subida controlada de imagenes y documentos mediante buckets privados de Supabase Storage.
+- Panel de administracion para consultar clientes, mascotas, historiales, documentos y reservas.
+- Gestion de estado de reservas desde administracion, con soporte para reservas confirmadas y canceladas.
+- Reseñas locales por defecto y opcion de activar reseñas reales desde Google Places API con cache y limite diario.
+- Envio opcional de copia de reserva por email mediante Resend.
+- Sincronizacion opcional de reservas confirmadas con Google Calendar mediante cuenta de servicio.
+- Script dinamico de GA4 servido desde backend cuando existe un identificador configurado.
+- Paginas legales incluidas: aviso legal, privacidad, politica de privacidad, cookies, terminos y condiciones de uso.
 
-## Stack
+## Stack Tecnico
 
 - Node.js 18+
-- Express
-- Supabase
-- HTML, CSS con Tailwind CDN y JavaScript vanilla
-- Vercel
+- Express 4
+- Supabase JS 2
+- Supabase Auth, Postgres, RLS y Storage
+- Express Rate Limit
+- Dotenv
+- HTML, CSS y JavaScript vanilla
+- Tailwind CDN en la interfaz publica
+- Vercel como despliegue recomendado
 
-## Instalación Local
+## Instalacion Local
+
+Instala dependencias:
 
 ```bash
 npm install
+```
+
+Copia el archivo de entorno y completa las variables necesarias:
+
+```bash
+cp .env.example .env
+```
+
+Inicia el servidor en modo desarrollo:
+
+```bash
 npm run dev
 ```
 
-Abre la web en:
+La aplicacion queda disponible en:
 
 ```text
 http://127.0.0.1:3000
 ```
 
-Endpoints útiles:
+Tambien se puede ejecutar en modo normal:
+
+```bash
+npm start
+```
+
+## Scripts
 
 ```text
-GET /api/google-reviews
-GET /api/availability?month=YYYY-MM
+npm run dev   Ejecuta server.js con recarga mediante node --watch
+npm start     Ejecuta server.js
 ```
 
 ## Variables De Entorno
 
-Copia `.env.example` como `.env` en local y completa solo las integraciones que vayas a usar. No subas `.env` a GitHub.
+El proyecto funciona por capas. Para desarrollo basico se puede trabajar con reseñas locales y reservas en archivo temporal/local. Para produccion se recomienda configurar Supabase y las integraciones necesarias.
 
 ### Base
 
 ```env
 PORT=3000
 CLINIC_PHONE="YOUR_PHONE"
-GOOGLE_ENABLE_LIVE_REVIEWS=false
-REVIEWS_CACHE_TTL_SECONDS=21600
-GOOGLE_DAILY_REQUEST_LIMIT=25
+API_RATE_LIMIT=300
+SENSITIVE_RATE_LIMIT=30
 ```
-
-Con `GOOGLE_ENABLE_LIVE_REVIEWS=false`, la web usa reseñas locales y evita llamadas reales a Google Places.
 
 ### Supabase
 
@@ -71,41 +98,39 @@ SUPABASE_ANON_KEY=public_anon_key
 SUPABASE_SERVICE_ROLE_KEY=server_only_secret
 ```
 
-Notas:
+Notas importantes:
 
-- `SUPABASE_ANON_KEY` puede exponerse al frontend siempre que RLS esté correctamente configurado.
-- `SUPABASE_SERVICE_ROLE_KEY` debe usarse solo en backend o en variables de entorno del proveedor de despliegue.
-- Si Supabase no está configurado, el backend puede usar un fallback local para desarrollo.
+- `SUPABASE_ANON_KEY` se expone al frontend mediante `/api/supabase-config`.
+- `SUPABASE_SERVICE_ROLE_KEY` debe mantenerse solo en entorno de servidor.
+- Las politicas RLS incluidas en los SQL son parte esencial de la seguridad del area privada.
+- Si Supabase no esta configurado, las reservas pueden usar fallback local para desarrollo.
 
-### Resend
-
-```env
-RESEND_API_KEY=your_resend_api_key
-RESERVATION_FROM_EMAIL="Clinic Name <reservas@yourdomain.com>"
-```
-
-Si Resend no está configurado, las reservas se crean igualmente, pero no se envía copia por email.
-
-### Google Places
+### Reseñas De Google
 
 ```env
-GOOGLE_ENABLE_LIVE_REVIEWS=true
+GOOGLE_ENABLE_LIVE_REVIEWS=false
+REVIEWS_CACHE_TTL_SECONDS=21600
+GOOGLE_DAILY_REQUEST_LIMIT=25
 GOOGLE_PLACES_API_KEY=your_google_places_api_key
+GOOGLE_PLACE_ID=your_place_id
 GOOGLE_PLACE_LATITUDE=YOUR_LATITUDE
 GOOGLE_PLACE_LONGITUDE=YOUR_LONGITUDE
 GOOGLE_PLACE_SEARCH_RADIUS_METERS=80
 GOOGLE_LANGUAGE_CODE=es
 ```
 
-También puede fijarse manualmente el Place ID:
+Con `GOOGLE_ENABLE_LIVE_REVIEWS=false`, el backend usa `reviews.local.json` y evita llamadas reales a Google Places.
+
+### Email De Reservas
 
 ```env
-GOOGLE_PLACE_ID=your_place_id
+RESEND_API_KEY=your_resend_api_key
+RESERVATION_FROM_EMAIL="Clinic Name <reservas@yourdomain.com>"
 ```
 
-### Google Calendar
+Si Resend no esta configurado, la reserva se crea igualmente, pero no se envia copia por email.
 
-La sincronización de reservas con Google Calendar se ejecuta únicamente desde el backend.
+### Google Calendar
 
 ```env
 GOOGLE_CALENDAR_ID=your_calendar_id
@@ -113,51 +138,43 @@ GOOGLE_CLIENT_EMAIL=your_service_account_email
 GOOGLE_PRIVATE_KEY=your_private_key
 ```
 
-Antes de usar esta integración, comparte el calendario de Google con la cuenta de servicio correspondiente.
+Para activar esta integracion, el calendario debe estar compartido con la cuenta de servicio configurada.
 
 ### Analytics
 
-El proyecto deja preparado GA4 desde el backend:
-
 ```env
 NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
-```
-
-También acepta:
-
-```env
 VITE_GA_ID=G-XXXXXXXXXX
 ```
 
-Si no se define un ID, `/analytics.js` devuelve un script vacío.
+Si no se define ningun identificador, `/analytics.js` devuelve un script vacio.
 
-## Supabase
+## Base De Datos
 
-El proyecto incluye los scripts SQL necesarios para preparar la base de datos:
+El repositorio incluye dos scripts SQL principales:
 
-- `supabase-reservations.sql`: reservas, disponibilidad, índices y políticas de acceso.
-- `supabase-client-area.sql`: área privada de clientes, mascotas, historiales y documentos.
+- `supabase-reservations.sql`: tabla de reservas, indices, estados, funciones de disponibilidad y vinculacion con perfiles.
+- `supabase-client-area.sql`: perfiles, mascotas, historiales, documentos, logs de subida, buckets privados y politicas RLS.
 
 Pasos recomendados:
 
-1. Crea un proyecto en Supabase.
-2. Abre SQL Editor.
-3. Ejecuta completo `supabase-reservations.sql`.
-4. Ejecuta completo `supabase-client-area.sql`.
-5. Configura las URLs de autenticación en Supabase Authentication.
+1. Crear un proyecto en Supabase.
+2. Abrir SQL Editor.
+3. Ejecutar `supabase-reservations.sql`.
+4. Ejecutar `supabase-client-area.sql`.
+5. Revisar las politicas RLS y buckets `pet-images` y `pet-documents`.
+6. Configurar las URLs de autenticacion permitidas.
 
-URLs habituales para desarrollo y producción:
+URLs habituales para desarrollo:
 
 ```text
 http://127.0.0.1:3000
 http://127.0.0.1:3000/auth
 http://127.0.0.1:3000/dashboard
-https://your-domain.com
-https://your-domain.com/auth
-https://your-domain.com/dashboard
+http://127.0.0.1:3000/admin
 ```
 
-Para asignar permisos de administración a un usuario:
+Para conceder permisos de administracion a un usuario:
 
 ```sql
 update public.profiles
@@ -165,58 +182,90 @@ set role = 'admin'
 where id = 'USER_UUID';
 ```
 
-## Reservas Online
+## Reservas
 
-Horarios configurados:
+El horario implementado es:
 
 - Lunes a viernes: 10:30-13:30 y 17:00-20:00.
-- Sábados: 11:00-13:30.
+- Sabados: 11:00-13:30.
 - Domingos: cerrado.
-- Huecos de 30 minutos.
-- Cirugía ocupa 60 minutos.
+- Duracion general: 30 minutos.
+- Cirugia: 60 minutos.
+- Zona horaria operativa: `Europe/Madrid`.
 
-El sistema:
+El sistema bloquea dias pasados, horas pasadas del dia actual, huecos ocupados y solapamientos. La validacion se realiza tanto en frontend como en backend.
 
-- Muestra días pasados como no disponibles.
-- Bloquea horas pasadas del día actual.
-- Marca huecos ocupados.
-- Evita solapamientos.
-- Revalida la fecha y hora en backend.
-
-Zona horaria:
+## Rutas
 
 ```text
-Europe/Madrid
+/                         Pagina publica
+/servicios                 Ancla/ruta publica de servicios
+/contacto                  Ancla/ruta publica de contacto
+/auth                      Registro, login y recuperacion
+/area-privada              Acceso al area privada
+/dashboard                 Area privada del cliente
+/dashboard/pets/:id        Ficha privada de mascota
+/admin                     Panel de administracion
+/terminos-legales          Terminos legales
+/condiciones-uso           Condiciones de uso
+/politica-privacidad       Politica de privacidad
+/aviso-legal.html          Aviso legal
+/privacidad.html           Privacidad
+/cookies.html              Politica de cookies
+/sitemap.html              Sitemap HTML
+/sitemap.xml               Sitemap XML
+/robots.txt                Robots
 ```
 
-## Rutas Principales
+## API
 
 ```text
-/                      Página pública
-/auth                  Registro, login y recuperación de contraseña
-/dashboard             Área privada del cliente
-/dashboard/pets/:id    Ficha privada de mascota
-/admin                 Panel de administración
+GET   /analytics.js
+GET   /api/google-reviews
+GET   /api/availability?month=YYYY-MM
+GET   /api/supabase-config
+POST  /api/reservations
+PATCH /api/admin/reservations/:id
+```
+
+Las rutas `/api`, `/auth`, `/area-privada`, `/api/reservations`, `/api/admin` y `/api/supabase-config` tienen limitacion de peticiones mediante `express-rate-limit`.
+
+## Estructura Del Proyecto
+
+```text
+server.js                       Backend Express, APIs, rutas y validaciones
+code.html                       Pagina publica principal
+booking.js                      Calendario y formulario de reservas
+reviews.js                      Carga y renderizado de reseñas
+image-sources.js                Fuentes y recursos visuales de la web
+i18n.js                         Textos y traducciones de interfaz
+auth.html / auth.js             Registro, login y recuperacion de contraseña
+dashboard.html / dashboard.js   Area privada del cliente
+pet-detail.html / pet-detail.js Ficha privada de mascota
+admin.html / admin.js           Panel de administracion
+client-area.css                 Estilos del area privada y administracion
+supabase-client.js              Cliente publico de Supabase
+supabase-reservations.sql       Modelo SQL de reservas
+supabase-client-area.sql        Modelo SQL de clientes, mascotas y documentos
+reviews.local.json              Reseñas locales de fallback
+DESIGN.md                       Guia visual y criterios de diseño
+vercel.json                     Configuracion de despliegue en Vercel
 ```
 
 ## Despliegue En Vercel
 
-El proyecto incluye `vercel.json` y está preparado para desplegar `server.js`.
+El repositorio incluye `vercel.json` y esta preparado para desplegar `server.js` como funcion Node.
 
-Configuración recomendada:
-
-- Framework Preset: `Other`
-- Build Command: vacío
-- Output Directory: vacío
-- Install Command: `npm install`
-
-Añade las variables necesarias en:
+Configuracion recomendada:
 
 ```text
-Vercel > Project Settings > Environment Variables
+Framework Preset: Other
+Build Command: vacio
+Output Directory: vacio
+Install Command: npm install
 ```
 
-Variables mínimas recomendadas para producción con Supabase:
+Variables minimas recomendadas para produccion con Supabase:
 
 ```env
 SUPABASE_URL=https://YOUR_PROJECT.supabase.co
@@ -225,75 +274,46 @@ SUPABASE_SERVICE_ROLE_KEY=server_only_secret
 GOOGLE_ENABLE_LIVE_REVIEWS=false
 REVIEWS_CACHE_TTL_SECONDS=21600
 GOOGLE_DAILY_REQUEST_LIMIT=25
+API_RATE_LIMIT=300
+SENSITIVE_RATE_LIMIT=30
+```
+
+Las variables deben configurarse en:
+
+```text
+Vercel > Project Settings > Environment Variables
 ```
 
 ## Seguridad
 
-- No subas `.env`, claves privadas ni secretos de backend al repositorio.
-- Mantén `SUPABASE_SERVICE_ROLE_KEY` exclusivamente en entorno de servidor.
-- Usa RLS en Supabase para proteger los datos privados.
-- Ejecuta operaciones sensibles desde el backend, no desde JavaScript del navegador.
-- Sirve páginas privadas sin caché persistente.
-- Valida reservas tanto en frontend como en backend.
-- Revisa que capturas o datos de prueba no incluyan información real de clientes, mascotas o historiales médicos.
-
-## Nota Para Portfolio
-
-Este repositorio puede usarse como demostración técnica o portfolio de un proyecto fullstack para una clínica veterinaria. Algunas integraciones requieren configuración externa en servicios como Supabase, Vercel, Resend o Google Cloud.
-
-No se incluyen secretos, credenciales reales ni datos privados de clientes. Antes de publicar forks, capturas o datos de prueba, revisa que no contengan información sensible.
-
-## Estructura Del Proyecto
-
-```text
-server.js                     Backend Express y APIs
-code.html                     Página pública
-booking.js                    Calendario y formulario de reservas
-reviews.js                    Carga de reseñas
-i18n.js                       Traducciones
-auth.html / auth.js           Login y registro
-dashboard.html / dashboard.js Área privada del cliente
-pet-detail.html / pet-detail.js Ficha de mascota
-admin.html / admin.js         Panel de administración
-supabase-client.js            Configuración pública de Supabase
-supabase-reservations.sql     SQL de reservas
-supabase-client-area.sql      SQL del área privada
-client-area.css               Estilos del área privada
-vercel.json                   Configuración de despliegue
-```
-
-## Repositorio Público
-
-Este repositorio no debe incluir:
-
-- `.env`
-- archivos `.pem`, `.key` o `.p12`
-- `.google-usage.json`
-- `reservations.json` con datos reales
-- claves privadas de Google
-- service role keys de Supabase
-- API keys de Resend o Google Places
+- No subir `.env`, claves privadas ni credenciales reales al repositorio.
+- Mantener `SUPABASE_SERVICE_ROLE_KEY` exclusivamente en servidor.
+- Activar y revisar RLS antes de usar datos reales.
+- Mantener los buckets `pet-images` y `pet-documents` como privados.
+- Validar operaciones sensibles desde backend y desde politicas de base de datos.
+- Servir paginas privadas con `Cache-Control: no-store`.
+- Limitar peticiones a APIs publicas y rutas sensibles.
+- Revisar capturas, datos de prueba y documentos antes de publicar el repositorio.
+- No publicar `reservations.json`, `.google-usage.json`, claves de Google, claves de Resend ni service role keys.
 
 ## Licencia
 
-Copyright (c) 2025 Clínica Veterinaria Vetusta
+Copyright (c) 2025 Clinica Veterinaria Vetusta.
 
-Todos los derechos reservados.
-
-Este proyecto y su código fuente han sido desarrollados para Clínica Veterinaria Vetusta. Queda prohibida la reproducción, distribución, modificación o reutilización total o parcial del código, diseño, textos, imágenes o cualquier otro recurso del proyecto sin autorización previa por escrito.
+Todos los derechos reservados. Este proyecto y su codigo fuente han sido desarrollados para Clinica Veterinaria Vetusta. Queda prohibida la reproduccion, distribucion, modificacion o reutilizacion total o parcial del codigo, diseño, textos, imagenes o cualquier otro recurso del proyecto sin autorizacion previa por escrito.
 
 ## Posibles Mejoras Futuras
 
-- Integración completa con Google Analytics 4, con eventos personalizados para llamadas, reservas y formularios.
-- Configuración de Google Search Console y seguimiento periódico de cobertura, rendimiento y consultas locales.
-- Evolución del sistema de gestión de citas con reglas avanzadas, reprogramación, cancelaciones y disponibilidad por profesional.
-- Panel de administración para editar contenidos públicos sin tocar el código.
-- Blog veterinario optimizado para SEO local con artículos sobre salud, prevención y cuidados de perros y gatos en Oviedo.
-- Páginas individuales para cada servicio veterinario, como vacunación, urgencias, cirugía o peluquería.
-- Optimización avanzada de Core Web Vitals, incluyendo revisión de carga de fuentes, imágenes críticas y scripts externos.
-- Sistema automático de recordatorios de vacunas, revisiones y tratamientos preventivos.
-- Integración con WhatsApp Business para contacto rápido, avisos y confirmaciones.
-- Ampliación del área privada para clientes con más autoservicio, documentos descargables y seguimiento de citas.
-- Integración con CRM o herramientas de email marketing para comunicaciones segmentadas.
-- Sistema dinámico de reseñas de Google con controles de caché, moderación visual y métricas de rendimiento.
-- Sincronización automática de reseñas mediante Google Business Profile API si el acceso y las políticas de Google lo permiten.
+- Incorporar una suite de tests automatizados para validacion de reservas, permisos de administracion y flujos de autenticacion.
+- Completar la instrumentacion de GA4 con eventos de reservas, llamadas, formularios, login y descargas de documentos.
+- Añadir seguimiento con Google Search Console y revision periodica de rendimiento SEO local.
+- Ampliar la gestion de citas con reprogramacion, cancelaciones iniciadas por cliente, profesionales asignados y reglas de disponibilidad por servicio.
+- Crear un panel editorial para modificar textos, servicios, equipo, imagenes y preguntas frecuentes sin tocar codigo.
+- Añadir paginas individuales para servicios clave como vacunacion, cirugia, urgencias, medicina preventiva o peluqueria.
+- Implementar recordatorios automaticos de vacunas, revisiones y tratamientos preventivos mediante email o WhatsApp Business.
+- Integrar una pasarela de pagos o deposito para determinados tipos de reserva.
+- Mejorar el panel de administracion con busqueda avanzada, filtros, exportaciones y metricas operativas.
+- Añadir auditoria de acciones administrativas sobre historiales, documentos y cambios de reserva.
+- Optimizar Core Web Vitals con estrategia avanzada de imagenes, fuentes, carga diferida y reduccion de scripts externos.
+- Incorporar despliegues por entorno, revision de logs centralizada y alertas de errores.
+- Explorar integracion con CRM o herramientas de email marketing para comunicaciones segmentadas.
