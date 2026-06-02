@@ -8,9 +8,37 @@
 <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600&family=Plus+Jakarta+Sans:wght@600;700&display=swap" rel="stylesheet"/>
 <style>
 html, body { width: 100%; margin: 0; padding: 0; }
-body { font-family: Lexend, sans-serif; background: #fcf9f8; color: #1b1c1c; }
+body { font-family: Lexend, sans-serif; background: #f0ece4; color: #1b1c1c; }
 h1, h2, .brand { font-family: "Plus Jakarta Sans", sans-serif; }
+.sitemap-card { background: #fff; border: 1px solid rgba(0, 71, 52, 0.16); border-radius: 16px; padding: 1.5rem; box-shadow: 0 14px 30px rgba(0, 71, 52, 0.05); }
+.sitemap-title { border-bottom: 2px solid #004734; padding-bottom: 0.75rem; margin-bottom: 1rem; color: #004734; font-weight: 800; }
+.sitemap-link { color: #004734; font-weight: 600; }
+.sitemap-link:hover { text-decoration: underline; }
+.sitemap-muted { color: #5f5e5c; font-size: 0.92rem; }
+.legal-placeholder { background-color: #fff3cd; border: 1px dashed #ffc107; padding: 2px 6px; border-radius: 3px; font-weight: 700; color: #856404; }
+.legal-note { background: #fff8db; border-left: 5px solid #d99a00; border-radius: 10px; padding: 1rem 1.25rem; color: #4c3a00; }
 </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "Mapa del sitio de Clinica Veterinaria Vetusta",
+  "itemListElement": [
+    { "@type": "SiteNavigationElement", "position": 1, "name": "Inicio", "url": "https://clinica-veterinaria-vetusta.vercel.app/" },
+    { "@type": "SiteNavigationElement", "position": 2, "name": "Servicios", "url": "https://clinica-veterinaria-vetusta.vercel.app/#servicios" },
+    { "@type": "SiteNavigationElement", "position": 3, "name": "Packs Premium", "url": "https://clinica-veterinaria-vetusta.vercel.app/#packs" },
+    { "@type": "SiteNavigationElement", "position": 4, "name": "Equipo", "url": "https://clinica-veterinaria-vetusta.vercel.app/#equipo" },
+    { "@type": "SiteNavigationElement", "position": 5, "name": "Reserva de cita online", "url": "https://clinica-veterinaria-vetusta.vercel.app/#reserva" },
+    { "@type": "SiteNavigationElement", "position": 6, "name": "Preguntas frecuentes", "url": "https://clinica-veterinaria-vetusta.vercel.app/#faq" },
+    { "@type": "SiteNavigationElement", "position": 7, "name": "Contacto", "url": "https://clinica-veterinaria-vetusta.vercel.app/#contacto" },
+    { "@type": "SiteNavigationElement", "position": 8, "name": "Área privada", "url": "https://clinica-veterinaria-vetusta.vercel.app/auth" },
+    { "@type": "SiteNavigationElement", "position": 9, "name": "Aviso Legal", "url": "https://clinica-veterinaria-vetusta.vercel.app/aviso-legal.html" },
+    { "@type": "SiteNavigationElement", "position": 10, "name": "Política de Privacidad", "url": "https://clinica-veterinaria-vetusta.vercel.app/privacidad.html" },
+    { "@type": "SiteNavigationElement", "position": 11, "name": "Política de Cookies", "url": "https://clinica-veterinaria-vetusta.vercel.app/cookies.html" },
+    { "@type": "SiteNavigationElement", "position": 12, "name": "Sitemap XML", "url": "https://clinica-veterinaria-vetusta.vercel.app/sitemap.xml" }
+  ]
+}
+</script>
 </head>
 <body>
 <header class="sticky top-0 z-50 bg-[#FEFBF6]/90 backdrop-blur-md border-b border-[#E6D5B8]">
@@ -23,21 +51,76 @@ h1, h2, .brand { font-family: "Plus Jakarta Sans", sans-serif; }
 </nav>
 </div>
 </header>
-<main class="max-w-4xl mx-auto px-6 py-16">
-<p class="text-sm font-semibold uppercase tracking-wide text-[#735c00] mb-3">Mapa del sitio</p>
-<h1 class="text-4xl md:text-5xl font-bold text-[#1B4332] mb-6">Sitemap</h1>
-<div class="bg-white border border-[#c1c8c2] rounded-xl p-6 md:p-10 shadow-[0_10px_20px_rgba(27,67,50,0.04)]">
-<ul class="grid grid-cols-1 md:grid-cols-2 gap-4 text-lg">
-<li><a class="text-[#1B4332] font-semibold hover:underline" href="/#inicio">Inicio</a></li>
-<li><a class="text-[#1B4332] font-semibold hover:underline" href="/#servicios">Servicios</a></li>
-<li><a class="text-[#1B4332] font-semibold hover:underline" href="/#equipo">Sobre nosotros</a></li>
-<li><a class="text-[#1B4332] font-semibold hover:underline" href="/#opiniones">Reseñas</a></li>
-<li><a class="text-[#1B4332] font-semibold hover:underline" href="/#contacto">Contacto</a></li>
-<li><a class="text-[#1B4332] font-semibold hover:underline" href="/aviso-legal.html">Aviso Legal</a></li>
-<li><a class="text-[#1B4332] font-semibold hover:underline" href="/privacidad.html">Privacidad</a></li>
-<li><a class="text-[#1B4332] font-semibold hover:underline" href="/cookies.html">Cookies</a></li>
+<main class="max-w-6xl mx-auto px-6 py-16">
+<p class="text-sm font-semibold uppercase tracking-wide text-[#004734] mb-3">Mapa del sitio</p>
+<h1 class="text-5xl md:text-7xl font-black tracking-tight text-black mb-6">Sitemap</h1>
+<p class="max-w-3xl text-lg text-[#414844] mb-10">Ultima actúalización: <strong>[FECHA DE ÚLTIMA ACTUALIZACIÓN]</strong>. Este mapa organiza las páginas, secciones principales y recursos técnicos del sitio web de Clinica Veterinaria Vetusta para facilitar la navegación de usuarios y buscadores.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+<section class="sitemap-card">
+<h2 class="sitemap-title">Inicio y presentacion</h2>
+<ul class="space-y-3">
+<li><span aria-hidden="true">⌂</span> <a class="sitemap-link" href="/">Inicio</a></li>
+<li><span aria-hidden="true">✓</span> <a class="sitemap-link" href="/#por-que-elegirnos">Por que elegirnos</a></li>
 </ul>
+</section>
+<section class="sitemap-card">
+<h2 class="sitemap-title">Servicios</h2>
+<ul class="space-y-3">
+<li><span aria-hidden="true">✚</span> <a class="sitemap-link" href="/#servicios">Todos los servicios</a></li>
+<li><span aria-hidden="true">★</span> <a class="sitemap-link" href="/#packs">Packs Premium</a></li>
+<li><span aria-hidden="true">•</span> <a class="sitemap-link" href="/#servicios">Consulta general</a></li>
+<li><span aria-hidden="true">•</span> <a class="sitemap-link" href="/#servicios">Vacunación</a></li>
+<li><span aria-hidden="true">•</span> <a class="sitemap-link" href="/#servicios">Cirugía</a></li>
+<li><span aria-hidden="true">•</span> <a class="sitemap-link" href="/#servicios">Peluquería canina y felina</a></li>
+<li><span aria-hidden="true">•</span> <a class="sitemap-link" href="/#servicios">Urgencias en horario</a></li>
+</ul>
+</section>
+<section class="sitemap-card">
+<h2 class="sitemap-title">Equipo</h2>
+<ul class="space-y-3">
+<li><span aria-hidden="true">♙</span> <a class="sitemap-link" href="/#equipo">Nuestro equipo</a></li>
+<li><span aria-hidden="true">•</span> <a class="sitemap-link" href="/#equipo">Patricia - Veterinaria principal</a></li>
+<li><span aria-hidden="true">•</span> <a class="sitemap-link" href="/#equipo">Victor - Auxiliar veterinario</a></li>
+</ul>
+</section>
+<section class="sitemap-card">
+<h2 class="sitemap-title">Reservas y contacto</h2>
+<ul class="space-y-3">
+<li><span aria-hidden="true">◷</span> <a class="sitemap-link" href="/#reserva">Reserva de cita online</a></li>
+<li><span aria-hidden="true">?</span> <a class="sitemap-link" href="/#faq">Preguntas frecuentes</a></li>
+<li><span aria-hidden="true">⌖</span> <a class="sitemap-link" href="/#contacto">Cómo llegar / Mapa</a></li>
+</ul>
+</section>
+<section class="sitemap-card">
+<h2 class="sitemap-title">Área privada de clientes</h2>
+<ul class="space-y-3">
+<li><span aria-hidden="true">↪</span> <a class="sitemap-link" href="/auth">Iniciar sesión / Registro</a></li>
+<li><span aria-hidden="true">▣</span> <a class="sitemap-link" href="/dashboard">Panel de cliente</a></li>
+<li><span aria-hidden="true">◇</span> <a class="sitemap-link" href="/dashboard/pets/:id">Ficha de mascota</a> <span class="sitemap-muted">(ruta dinámica)</span></li>
+</ul>
+</section>
+<section class="sitemap-card">
+<h2 class="sitemap-title">Información legal</h2>
+<ul class="space-y-3">
+<li><span aria-hidden="true">§</span> <a class="sitemap-link" href="/aviso-legal.html">Aviso Legal</a></li>
+<li><span aria-hidden="true">§</span> <a class="sitemap-link" href="/privacidad.html">Política de Privacidad</a></li>
+<li><span aria-hidden="true">§</span> <a class="sitemap-link" href="/cookies.html">Política de Cookies</a></li>
+<li><span aria-hidden="true">§</span> <a class="sitemap-link" href="/terminos-legales.html">Términos y Condiciones</a></li>
+<li><span aria-hidden="true">§</span> <a class="sitemap-link" href="/condiciónes-uso.html">Condiciones de Uso</a></li>
+<li><span aria-hidden="true">⌂</span> <a class="sitemap-link" href="/sitemap.html">Mapa del sitio</a></li>
+</ul>
+</section>
+<section class="sitemap-card">
+<h2 class="sitemap-title">Recursos técnicos</h2>
+<ul class="space-y-3">
+<li><span aria-hidden="true">XML</span> <a class="sitemap-link" href="/sitemap.xml">Sitemap XML</a></li>
+<li><span aria-hidden="true">TXT</span> <a class="sitemap-link" href="/robots.txt">Robots.txt</a></li>
+</ul>
+</section>
 </div>
+<asíde class="legal-note mt-10">
+<strong>Nota importante:</strong> Este documento ha sido redactado conforme a la normativa española vigente a <span class="legal-placeholder">[FECHA]</span>. Se recomienda su revisión periódica y, antes de la publicación definitiva, la validación por parte de un abogado especializado en derecho digital o protección de datos.
+</asíde>
 </main>
 <footer class="bg-[#1B4332] text-white">
 <div class="max-w-[1200px] mx-auto px-8 py-10 flex flex-col md:flex-row justify-between gap-6">
@@ -50,5 +133,26 @@ h1, h2, .brand { font-family: "Plus Jakarta Sans", sans-serif; }
 </nav>
 </div>
 </footer>
+<button style="position:fixed;left:16px;bottom:16px;z-index:70;background:#fff;border:1px solid #004734;color:#004734;border-radius:999px;padding:10px 14px;font-weight:700;box-shadow:0 10px 22px rgba(0,0,0,.12);" type="button" data-cookie-manage>Gestionar cookies</button>
+<div style="position:fixed;left:0;right:0;bottom:0;z-index:80;padding:16px;display:none;" data-cookie-banner>
+<div style="max-width:980px;margin:0 auto;background:#fff;border:1px solid #c1c8c2;border-radius:16px;padding:20px;box-shadow:0 20px 50px rgba(0,0,0,.18);">
+<h2 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800;color:#004734;">Este sitio utiliza cookies</h2>
+<p style="margin-top:8px;color:#414844;font-size:14px;">Usamos cookies técnicas necesarias y, solo si lo aceptas, cookies analíticas para medir el uso de la web.</p>
+<a style="display:inline-block;margin-top:8px;color:#004734;font-weight:700;text-decoration:underline;" href="/cookies.html">Ver Política de Cookies</a>
+<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;"><button style="background:#004734;color:#fff;border:1px solid #004734;border-radius:10px;padding:12px 16px;font-weight:800;" type="button" data-cookie-accept>Aceptar todas</button><button style="background:transparent;color:#004734;border:1px solid #004734;border-radius:10px;padding:12px 16px;font-weight:800;" type="button" data-cookie-reject>Rechazar</button><button style="background:transparent;color:#5f5e5c;border:0;text-decoration:underline;padding:12px 16px;font-weight:800;" type="button" data-cookie-configure>Configurar</button></div>
+</div>
+</div>
+<div style="position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:16px;" data-cookie-modal>
+<div style="max-width:560px;width:100%;background:#fff;border-radius:16px;padding:24px;box-shadow:0 20px 50px rgba(0,0,0,.24);">
+<h2 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:26px;font-weight:800;color:#004734;">Configurar cookies</h2>
+<p style="margin-top:8px;color:#414844;font-size:14px;">Las cookies técnicas son necesarias. Las analíticas permanecen desactivadas salvo consentimiento.</p>
+<label style="display:flex;justify-content:space-between;gap:16px;border:1px solid #c1c8c2;border-radius:12px;padding:14px;margin-top:18px;"><span><strong>Cookies técnicas</strong><br/><small>Necesarias para navegación, seguridad y autenticación.</small></span><input checked disabled type="checkbox"/></label>
+<label style="display:flex;justify-content:space-between;gap:16px;border:1px solid #c1c8c2;border-radius:12px;padding:14px;margin-top:10px;"><span><strong>Cookies analíticas</strong><br/><small>Permiten cargar Google Analytics 4 si esta configurado.</small></span><input type="checkbox" data-cookie-analytics/></label>
+<div style="display:flex;flex-wrap:wrap;justify-content:flex-end;gap:10px;margin-top:20px;"><button style="border:1px solid #004734;background:#fff;color:#004734;border-radius:10px;padding:12px 16px;font-weight:800;" type="button" data-cookie-close>Cancelar</button><button style="border:1px solid #004734;background:#004734;color:#fff;border-radius:10px;padding:12px 16px;font-weight:800;" type="button" data-cookie-save>Guardar preferencias</button></div>
+</div>
+</div>
+<script>
+(function(){const k="cookie_consent",m=24*30*24*60*60*1000,b=document.querySelector("[data-cookie-banner]"),o=document.querySelector("[data-cookie-modal]"),t=document.querySelector("[data-cookie-analytics]");let loaded=false;function r(){try{const v=JSON.parse(localStorage.getItem(k)||"null");return v&&v.timestamp&&Date.now()-v.timestamp<=m?v:null}catch(e){return null}}function l(){if(loaded)return;loaded=true;const s=document.createElement("script");s.src="/analytics.js";s.defer=true;document.head.appendChild(s)}function s(a){const v={analytics:!!a,timestamp:Date.now()};localStorage.setItem(k,JSON.stringify(v));if(b)b.style.display="none";if(o)o.style.display="none";if(v.analytics)l()}function c(){const v=r();if(t)t.checked=!!(v&&v.analytics);if(o)o.style.display="flex"}const v=r();if(v){if(v.analytics)l()}else if(b)b.style.display="block";document.querySelectorAll("[data-cookie-manage],[data-cookie-configure]").forEach(e=>e.addEventListener("click",c));document.querySelector("[data-cookie-accept]")?.addEventListener("click",()=>s(true));document.querySelector("[data-cookie-reject]")?.addEventListener("click",()=>s(false));document.querySelector("[data-cookie-save]")?.addEventListener("click",()=>s(t&&t.checked));document.querySelector("[data-cookie-close]")?.addEventListener("click",()=>{if(o)o.style.display="none"})})();
+</script>
 </body>
 </html>

@@ -8,8 +8,19 @@
 <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600&family=Plus+Jakarta+Sans:wght@600;700&display=swap" rel="stylesheet"/>
 <style>
 html, body { width: 100%; margin: 0; padding: 0; }
-body { font-family: Lexend, sans-serif; background: #fcf9f8; color: #1b1c1c; }
+body { font-family: Lexend, sans-serif; background: #f0ece4; color: #1b1c1c; }
 h1, h2, .brand { font-family: "Plus Jakarta Sans", sans-serif; }
+.legal-card { background: #fff; border: 1px solid rgba(0, 71, 52, 0.16); border-radius: 18px; box-shadow: 0 18px 36px rgba(0, 71, 52, 0.06); }
+.legal-article { border-top: 1px solid rgba(0, 71, 52, 0.12); padding-top: 1.75rem; }
+.legal-article:first-child { border-top: 0; padding-top: 0; }
+.article-number { color: #004734; font-weight: 800; }
+.legal-placeholder { background-color: #fff3cd; border: 1px dashed #ffc107; padding: 2px 6px; border-radius: 3px; font-weight: 700; color: #856404; }
+.legal-note { background: #fff8db; border-left: 5px solid #d99a00; border-radius: 10px; padding: 1rem 1.25rem; color: #4c3a00; }
+.cookie-table { width: 100%; border-collapse: separate; border-spacing: 0; overflow: hidden; border: 1px solid rgba(0, 71, 52, 0.18); border-radius: 12px; }
+.cookie-table th { background: #004734; color: #fff; text-align: left; font-weight: 700; }
+.cookie-table th, .cookie-table td { padding: 0.9rem; border-bottom: 1px solid rgba(0, 71, 52, 0.12); vertical-align: top; }
+.cookie-table tr:last-child td { border-bottom: 0; }
+.cookie-table td { background: #fff; }
 </style>
 </head>
 <body>
@@ -23,34 +34,109 @@ h1, h2, .brand { font-family: "Plus Jakarta Sans", sans-serif; }
 </nav>
 </div>
 </header>
-<main class="max-w-4xl mx-auto px-6 py-16">
-<p class="text-sm font-semibold uppercase tracking-wide text-[#735c00] mb-3">Politica de cookies</p>
-<h1 class="text-4xl md:text-5xl font-bold text-[#1B4332] mb-6">Cookies</h1>
-<div class="bg-white border border-[#c1c8c2] rounded-xl p-6 md:p-10 shadow-[0_10px_20px_rgba(27,67,50,0.04)] space-y-8">
-<section>
-<h2 class="text-2xl font-semibold text-[#1B4332] mb-3">Que son las cookies</h2>
-<p>Las cookies son pequenos archivos que se almacenan en el dispositivo del usuario cuando visita una pagina web. Permiten recordar informacion tecnica, preferencias o datos de navegacion para mejorar el funcionamiento del sitio.</p>
+<main class="max-w-5xl mx-auto px-6 py-16">
+<p class="text-sm font-semibold uppercase tracking-wide text-[#004734] mb-3">Política de cookies</p>
+<h1 class="text-5xl md:text-7xl font-black tracking-tight text-black mb-6">Cookies</h1>
+<p class="max-w-3xl text-lg text-[#414844] mb-10">Información sobre las cookies y tecnologias similares utilizadas por el sitio web de Clinica Veterinaria Vetusta.</p>
+<div class="legal-card p-6 md:p-10 space-y-8">
+<section class="legal-article">
+<h2 class="text-2xl font-bold text-black mb-3"><span class="article-number">Artículo 1.</span> Qué son las cookies</h2>
+<p>Las cookies son archivos de texto que un servidor web instala en el dispositivo del usuario al visitar un sitio web, con la finalidad de almacenar información sobre la sesión, preferencias de navegación, autenticación, idioma, medición estadística u otros parámetros técnicos. Su uso se regula en España por la <em>Ley 34/2002, de 11 de julio, de servicios de la sociedad de la información y de comercio electrónico</em>. <em>(Art. 22.2 LSSI-CE)</em></p>
 </section>
-<section>
-<h2 class="text-2xl font-semibold text-[#1B4332] mb-3">Tipos de cookies usadas</h2>
-<p>Este sitio puede utilizar cookies tecnicas necesarias para su funcionamiento y, si se incorporan herramientas de medicion, cookies de analisis para conocer el uso agregado de la web.</p>
+<section class="legal-article">
+<h2 class="text-2xl font-bold text-black mb-3"><span class="article-number">Artículo 2.</span> Tipología de cookies según la AEPD</h2>
+<p>Según la Guía sobre el uso de las cookies de la Agencia Española de Protección de Datos, actúalizada en julio de 2023 con criterios aplicables desde el 11 de enero de 2024, las cookies pueden clasíficarse por titularidad, finalidad y duración.</p>
+<p class="mt-3">Por titularidad, pueden ser cookies propias, cuando se envían desde un dominio gestionado por el responsable, o cookies de terceros, cuando se envían desde dominios gestionados por otras entidades. Por finalidad, pueden ser técnicas o estrictamente necesarias, analíticas, de preferencias o personalización, y publícitarias. Este sitio no utiliza cookies publícitarias. Por duración, pueden ser cookies de sesión, eliminadas al cerrar el navegador, o cookies persistentes, conservadas durante un período determinado.</p>
 </section>
-<section>
-<h2 class="text-2xl font-semibold text-[#1B4332] mb-3">Cookies tecnicas</h2>
-<p>Son necesarias para permitir la navegacion, mantener la seguridad, cargar recursos de la web y recordar preferencias basicas. Estas cookies no requieren consentimiento cuando son imprescindibles para prestar el servicio solicitado.</p>
+<section class="legal-article">
+<h2 class="text-2xl font-bold text-black mb-3"><span class="article-number">Artículo 3.</span> Tabla de cookies utilizadas en este sitio</h2>
+<div class="overflow-x-auto">
+<table class="cookie-table">
+<thead>
+<tr>
+<th>Nombre</th>
+<th>Tipo</th>
+<th>Titular</th>
+<th>Finalidad</th>
+<th>Duración</th>
+<th>Requiere consentimiento</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sb-[ref]-auth-token</code></td>
+<td>Técnica / sesión</td>
+<td>Supabase</td>
+<td>Autenticacion del area privada de clientes.</td>
+<td>Sesión</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>cookie_consent</code></td>
+<td>Técnica</td>
+<td>Propia</td>
+<td>Almacena la preferencia del usuario respecto a cookies.</td>
+<td>24 meses</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>_ga</code></td>
+<td>Analítica</td>
+<td>Google LLC</td>
+<td>Distingue usuarios únicos en Google Analytics 4, solo si GA4 está activo y el usuario ha consentido.</td>
+<td>2 años</td>
+<td>Sí</td>
+</tr>
+<tr>
+<td><code>_ga_[ID]</code></td>
+<td>Analítica</td>
+<td>Google LLC</td>
+<td>Mantiene el estado de sesión en Google Analytics 4, solo si GA4 está activo y el usuario ha consentido.</td>
+<td>2 años</td>
+<td>Sí</td>
+</tr>
+<tr>
+<td><code>i18n_lang</code></td>
+<td>Preferencias</td>
+<td>Propia</td>
+<td>Almacena el idioma seleccionado por el usuario.</td>
+<td>1 año</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="mt-3 text-sm text-[#414844]">Esta tabla se actúaliza cada vez que se incorporan nuevas tecnologias al sitio. Ultima revisión: <span class="legal-placeholder">[FECHA DE ÚLTIMA ACTUALIZACIÓN]</span>.</p>
 </section>
-<section>
-<h2 class="text-2xl font-semibold text-[#1B4332] mb-3">Cookies de analisis</h2>
-<p>Si en el futuro se utiliza Google Analytics u otra herramienta similar, podrian instalarse cookies de analisis para medir visitas, paginas consultadas, tiempo de navegacion y rendimiento de la web. Estas cookies se utilizaran solo cuando el usuario las acepte, si la normativa aplicable lo exige.</p>
+<section class="legal-article">
+<h2 class="text-2xl font-bold text-black mb-3"><span class="article-number">Artículo 4.</span> Base legal y consentimiento</h2>
+<p>Las cookies técnicas o estrictamente necesarias no requieren consentimiento cuando son imprescindibles para la navegación, la autenticación, la seguridad o la prestación de un servicio solicitado por el usuario. <em>(Art. 22.2 LSSI-CE y Guía AEPD 2023)</em></p>
+<p class="mt-3">Las cookies analíticas, de personalización no exentas y cualesquiera otras no necesarias requieren consentimiento libre, informado, específico y explícito antes de su instalación. La inactividad del usuario o la mera navegación no equivalen a consentimiento. El consentimiento puede retirarse en cualquier momento con la misma facilidad con la que fue prestado, y su validez deberá renovarse como máximo cada 24 meses. <em>(Art. 6.1.a RGPD y Guía AEPD julio 2023)</em></p>
 </section>
-<section>
-<h2 class="text-2xl font-semibold text-[#1B4332] mb-3">Aceptar, rechazar o configurar cookies</h2>
-<p>Cuando corresponda, el usuario podra aceptar, rechazar o configurar las cookies desde el panel o banner de cookies habilitado en la web. La configuracion podra modificarse posteriormente si se incorpora un panel de preferencias.</p>
+<section class="legal-article">
+<h2 class="text-2xl font-bold text-black mb-3"><span class="article-number">Artículo 5.</span> Gestión del consentimiento</h2>
+<p>El sitio dispone de un banner de cookies con tres opciones visibles en la primera capa: aceptar todas, rechazar y configurar. La opción de rechazar debe aparecer en la misma capa y con igual visibilidad que la de aceptar, conforme al criterio exigible desde el 11 de enero de 2024 por la AEPD.</p>
+<p class="mt-3">El usuario puede acceder en cualquier momento al configurador de cookies desde el enlace o botón "Gestionar cookies" habilitado en el sitio, y guardar sus preferencias por categorías.</p>
 </section>
-<section>
-<h2 class="text-2xl font-semibold text-[#1B4332] mb-3">Desactivar cookies desde el navegador</h2>
-<p>El usuario puede bloquear o eliminar cookies desde la configuracion de su navegador. Cada navegador ofrece opciones especificas para gestionar permisos, borrar datos de navegacion o impedir el almacenamiento de cookies.</p>
+<section class="legal-article">
+<h2 class="text-2xl font-bold text-black mb-3"><span class="article-number">Artículo 6.</span> Como desactivar o eliminar cookies desde el navegador</h2>
+<p>El usuario puede configurar, bloquear o eliminar cookies desde su navegador: Google Chrome, en Configuración &gt; Privacidad y seguridad &gt; Cookies y otros datos de sitios; Mozilla Firefox, en Opciones &gt; Privacidad y seguridad &gt; Cookies y datos del sitio; Apple Safari, en Preferencias &gt; Privacidad &gt; Gestionar datos de sitios web; y Microsoft Edge, en Configuración &gt; Cookies y permisos de sitio.</p>
 </section>
+<section class="legal-article">
+<h2 class="text-2xl font-bold text-black mb-3"><span class="article-number">Artículo 7.</span> Cookies de terceros y política de Google</h2>
+<p>Si se activa Google Analytics 4, Google LLC podrá tratar datos técnicos y estadísticos conforme a sus propias condiciónes y políticas. La política de privacidad de Google esta disponible en <a class="text-[#004734] font-semibold hover:underline" href="https://policies.google.com/privacy" rel="noopener noreferrer" target="_blank">https://policies.google.com/privacy</a>.</p>
+</section>
+<section class="legal-article">
+<h2 class="text-2xl font-bold text-black mb-3"><span class="article-number">Artículo 8.</span> Transferencias internacionales</h2>
+<p>En caso de uso de Google Analytics 4, pueden producirse transferencias internacionales de datos a Estados Unidos. Dichas transferencias deberán ampararse en garantías adecuadas, incluidas Cláusulas Contractúales Tipo aprobadas por la Comisión Europea y el Marco de Privacidad UE-EE.UU. vigente, cuando resulte aplicable. <em>(Art. 46 RGPD)</em></p>
+</section>
+<section class="legal-article">
+<h2 class="text-2xl font-bold text-black mb-3"><span class="article-number">Artículo 9.</span> Mas información y contacto</h2>
+<p>Para cualquier duda sobre el uso de cookies, el usuario puede dirigirse a <span class="legal-placeholder">[EMAIL]</span>. Para reclamaciones relacionadas con protección de datos y cookies, puede acudir a la Agencia Española de Protección de Datos: <a class="text-[#004734] font-semibold hover:underline" href="https://www.aepd.es" rel="noopener noreferrer" target="_blank">www.aepd.es</a>.</p>
+</section>
+<asíde class="legal-note">
+<strong>Nota importante:</strong> Este documento ha sido redactado conforme a la normativa española vigente a <span class="legal-placeholder">[FECHA]</span>. Se recomienda su revisión periódica y, antes de la publicación definitiva, la validación por parte de un abogado especializado en derecho digital o protección de datos.
+</asíde>
 </div>
 </main>
 <footer class="bg-[#1B4332] text-white">
@@ -64,5 +150,26 @@ h1, h2, .brand { font-family: "Plus Jakarta Sans", sans-serif; }
 </nav>
 </div>
 </footer>
+<button style="position:fixed;left:16px;bottom:16px;z-index:70;background:#fff;border:1px solid #004734;color:#004734;border-radius:999px;padding:10px 14px;font-weight:700;box-shadow:0 10px 22px rgba(0,0,0,.12);" type="button" data-cookie-manage>Gestionar cookies</button>
+<div style="position:fixed;left:0;right:0;bottom:0;z-index:80;padding:16px;display:none;" data-cookie-banner>
+<div style="max-width:980px;margin:0 auto;background:#fff;border:1px solid #c1c8c2;border-radius:16px;padding:20px;box-shadow:0 20px 50px rgba(0,0,0,.18);">
+<h2 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800;color:#004734;">Este sitio utiliza cookies</h2>
+<p style="margin-top:8px;color:#414844;font-size:14px;">Usamos cookies técnicas necesarias y, solo si lo aceptas, cookies analíticas para medir el uso de la web.</p>
+<a style="display:inline-block;margin-top:8px;color:#004734;font-weight:700;text-decoration:underline;" href="/cookies.html">Ver Política de Cookies</a>
+<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;"><button style="background:#004734;color:#fff;border:1px solid #004734;border-radius:10px;padding:12px 16px;font-weight:800;" type="button" data-cookie-accept>Aceptar todas</button><button style="background:transparent;color:#004734;border:1px solid #004734;border-radius:10px;padding:12px 16px;font-weight:800;" type="button" data-cookie-reject>Rechazar</button><button style="background:transparent;color:#5f5e5c;border:0;text-decoration:underline;padding:12px 16px;font-weight:800;" type="button" data-cookie-configure>Configurar</button></div>
+</div>
+</div>
+<div style="position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:16px;" data-cookie-modal>
+<div style="max-width:560px;width:100%;background:#fff;border-radius:16px;padding:24px;box-shadow:0 20px 50px rgba(0,0,0,.24);">
+<h2 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:26px;font-weight:800;color:#004734;">Configurar cookies</h2>
+<p style="margin-top:8px;color:#414844;font-size:14px;">Las cookies técnicas son necesarias. Las analíticas permanecen desactivadas salvo consentimiento.</p>
+<label style="display:flex;justify-content:space-between;gap:16px;border:1px solid #c1c8c2;border-radius:12px;padding:14px;margin-top:18px;"><span><strong>Cookies técnicas</strong><br/><small>Necesarias para navegación, seguridad y autenticación.</small></span><input checked disabled type="checkbox"/></label>
+<label style="display:flex;justify-content:space-between;gap:16px;border:1px solid #c1c8c2;border-radius:12px;padding:14px;margin-top:10px;"><span><strong>Cookies analíticas</strong><br/><small>Permiten cargar Google Analytics 4 si esta configurado.</small></span><input type="checkbox" data-cookie-analytics/></label>
+<div style="display:flex;flex-wrap:wrap;justify-content:flex-end;gap:10px;margin-top:20px;"><button style="border:1px solid #004734;background:#fff;color:#004734;border-radius:10px;padding:12px 16px;font-weight:800;" type="button" data-cookie-close>Cancelar</button><button style="border:1px solid #004734;background:#004734;color:#fff;border-radius:10px;padding:12px 16px;font-weight:800;" type="button" data-cookie-save>Guardar preferencias</button></div>
+</div>
+</div>
+<script>
+(function(){const k="cookie_consent",m=24*30*24*60*60*1000,b=document.querySelector("[data-cookie-banner]"),o=document.querySelector("[data-cookie-modal]"),t=document.querySelector("[data-cookie-analytics]");let loaded=false;function r(){try{const v=JSON.parse(localStorage.getItem(k)||"null");return v&&v.timestamp&&Date.now()-v.timestamp<=m?v:null}catch(e){return null}}function l(){if(loaded)return;loaded=true;const s=document.createElement("script");s.src="/analytics.js";s.defer=true;document.head.appendChild(s)}function s(a){const v={analytics:!!a,timestamp:Date.now()};localStorage.setItem(k,JSON.stringify(v));if(b)b.style.display="none";if(o)o.style.display="none";if(v.analytics)l()}function c(){const v=r();if(t)t.checked=!!(v&&v.analytics);if(o)o.style.display="flex"}const v=r();if(v){if(v.analytics)l()}else if(b)b.style.display="block";document.querySelectorAll("[data-cookie-manage],[data-cookie-configure]").forEach(e=>e.addEventListener("click",c));document.querySelector("[data-cookie-accept]")?.addEventListener("click",()=>s(true));document.querySelector("[data-cookie-reject]")?.addEventListener("click",()=>s(false));document.querySelector("[data-cookie-save]")?.addEventListener("click",()=>s(t&&t.checked));document.querySelector("[data-cookie-close]")?.addEventListener("click",()=>{if(o)o.style.display="none"})})();
+</script>
 </body>
 </html>

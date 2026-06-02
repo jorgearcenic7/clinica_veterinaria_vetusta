@@ -8,8 +8,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600&family=Plus+Jakarta+Sans:wght@600;700&display=swap" rel="stylesheet"/>
 <style>
 html, body { width: 100%; margin: 0; padding: 0; }
-body { font-family: Lexend, sans-serif; background: #fcf9f8; color: #1b1c1c; }
+body { font-family: Lexend, sans-serif; background: #f0ece4; color: #1b1c1c; }
 h1, h2, .brand { font-family: "Plus Jakarta Sans", sans-serif; }
+.legal-card { background: #fff; border: 1px solid rgba(0, 71, 52, 0.16); border-radius: 18px; box-shadow: 0 18px 36px rgba(0, 71, 52, 0.06); }
+.legal-article { border-top: 1px solid rgba(0, 71, 52, 0.12); padding-top: 1.75rem; }
+.legal-article:first-child { border-top: 0; padding-top: 0; }
+.article-number { color: #004734; font-weight: 800; }
+.legal-placeholder { background-color: #fff3cd; border: 1px dashed #ffc107; padding: 2px 6px; border-radius: 3px; font-weight: 700; color: #856404; }
+.legal-note { background: #fff8db; border-left: 5px solid #d99a00; border-radius: 10px; padding: 1rem 1.25rem; color: #4c3a00; }
+.treatment-box { background: #f8faf8; border: 1px solid rgba(0, 71, 52, 0.14); border-radius: 12px; padding: 1rem; }
 </style>
 </head>
 <body>
@@ -23,38 +30,69 @@ h1, h2, .brand { font-family: "Plus Jakarta Sans", sans-serif; }
 </nav>
 </div>
 </header>
-<main class="max-w-4xl mx-auto px-6 py-16">
-<p class="text-sm font-semibold uppercase tracking-wide text-[#735c00] mb-3">Proteccion de datos</p>
-<h1 class="text-4xl md:text-5xl font-bold text-[#1B4332] mb-6">Politica de Privacidad</h1>
-<div class="bg-white border border-[#c1c8c2] rounded-xl p-6 md:p-10 shadow-[0_10px_20px_rgba(27,67,50,0.04)] space-y-8">
-<section>
-<h2 class="text-2xl font-semibold text-[#1B4332] mb-3">Responsable del tratamiento</h2>
-<p>El responsable del tratamiento de los datos personales recogidos en este sitio web es <strong>Clínica Veterinaria Vetusta</strong>, titular de <strong>Clinica Veterinaria Vetusta</strong>, con NIF/CIF provisional de demostración <strong>B00000000</strong>.</p>
-<p class="mt-3">Direccion: <strong>Calle de ejemplo 123, 33001 Oviedo, Asturias</strong>. Email: <strong>info@clinicaveterinariavetusta.es</strong>. Telefono: <strong>984 000 000</strong>.</p>
-<p class="mt-3 text-sm text-[#414844]">Estos datos son provisionales para una presentación comercial y deberán sustituirse por los datos reales de la clínica antes de publicar la web.</p>
+<main class="max-w-5xl mx-auto px-6 py-16">
+<p class="text-sm font-semibold uppercase tracking-wide text-[#004734] mb-3">Protección de datos</p>
+<h1 class="text-5xl md:text-7xl font-black tracking-tight text-black mb-6">Política de Privacidad</h1>
+<p class="max-w-3xl text-lg text-[#414844] mb-10">Información sobre el tratamiento de datos personales realizado a través del sitio web, el sistema de reservas y el area privada de clientes.</p>
+<div class="legal-card p-6 md:p-10 space-y-8">
+<section class="legal-article">
+<h2 class="text-2xl font-bold text-black mb-3"><span class="article-number">Artículo 1.</span> Responsable del tratamiento</h2>
+<p>El responsable del tratamiento de los datos personales es <span class="legal-placeholder">[NOMBRE COMPLETO O RAZÓN SOCIAL]</span>, con NIF/CIF <span class="legal-placeholder">[NIF/CIF]</span>, domicilio en <span class="legal-placeholder">[DIRECCIÓN COMPLETA]</span>, teléfono <span class="legal-placeholder">[TELÉFONO]</span> y correo electrónico general <span class="legal-placeholder">[EMAIL]</span>. El correo habilitado para el ejercicio de derechos en materia de protección de datos es <span class="legal-placeholder">[EMAIL DE PRIVACIDAD]</span>. <em>(Art. 13.1.a RGPD)</em></p>
+<p class="mt-3">La presente política se redacta conforme al <em>Reglamento (UE) 2016/679 del Parlamento Europeo y del Consejo, de 27 de abril de 2016</em>, a la <em>Ley Orgánica 3/2018, de 5 de diciembre, de Protección de Datos Personales y garantía de los derechos digitales</em>, y a los criterios informativos de la Agencia Española de Protección de Datos. <em>(Arts. 13 y 14 RGPD)</em></p>
+<p class="mt-3">Las clínicas veterinarias no están obligadas con carácter general a designar Delegado de Protección de Datos, salvo que concurran las circunstancias previstas legalmente, como tratamientos a gran escala. En caso de designacion, deberán indicarse aquí sus datos: <span class="legal-placeholder">[DATOS DEL DPD, SI PROCEDE]</span>. <em>(Art. 34 LOPDGDD)</em></p>
 </section>
-<section>
-<h2 class="text-2xl font-semibold text-[#1B4332] mb-3">Datos recogidos</h2>
-<p>Podemos recoger los datos que el usuario facilite voluntariamente mediante formularios de contacto o reserva, como nombre, telefono, email, tipo de mascota, servicio solicitado, fecha preferida y cualquier informacion necesaria para atender la consulta o cita.</p>
+<section class="legal-article">
+<h2 class="text-2xl font-bold text-black mb-3"><span class="article-number">Artículo 2.</span> Datos personales tratados y finalidades</h2>
+<div class="space-y-4">
+<div class="treatment-box">
+<h3 class="font-bold text-[#004734] mb-2">Tratamiento 1: gestion de reservas y citas</h3>
+<p>Se tratan nombre, apellidos, teléfono, correo electrónico opcional, tipo de mascota, servicio solicitado, fecha y hora de la cita. La finalidad es gestionar la solicitud, confirmar la reserva, evitar solapamientos y comunicarse con el usuario. La base jurídica es la ejecucion de un contrato o la aplicación de medidas precontractúales. Los datos se conservaran durante la relación y durante cinco años adicionales a efectos de prescripción civil. <em>(Arts. 6.1.b y 13.1.c RGPD)</em></p>
+</div>
+<div class="treatment-box">
+<h3 class="font-bold text-[#004734] mb-2">Tratamiento 2: area privada de clientes</h3>
+<p>Se tratan nombre, correo electrónico, contraseña cifrada o credenciales de acceso, datos de mascota, especie, raza, fecha de nacimiento, fotografías, historial clinico, documentos y comunicaciones asociadas. La finalidad es prestar un servicio de historial veterinario digital y facilitar el acceso autenticado a información propia. La base jurídica es la ejecucion del contrato de servicios veterinarios. Los datos se conservaran mientras la cuenta esté activa y durante cinco años adicionales, sin perjuicio de obligaciónes legales o profesionales que resulten aplicables. <em>(Arts. 6.1.b y 13.1.e RGPD)</em></p>
+</div>
+<div class="treatment-box">
+<h3 class="font-bold text-[#004734] mb-2">Tratamiento 3: formulario de contacto y WhatsApp</h3>
+<p>Se tratan nombre, teléfono y contenido del mensaje. La finalidad es atender consultas, comunicaciones y solicitudes de información. La base jurídica es el consentimiento del interesado al iniciar la comunicación. Los datos se conservaran hasta la resolución de la consulta y durante un año adicional para seguimiento ordinario. <em>(Art. 6.1.a RGPD)</em></p>
+</div>
+<div class="treatment-box">
+<h3 class="font-bold text-[#004734] mb-2">Tratamiento 4: cookies y analítica web</h3>
+<p>Si se activa Google Analytics 4 u otra herramienta de medición, se trataran identificadores técnicos, datos de navegación y eventos agregados conforme a la configuración aceptada por el usuario. La información completa se recoge en la Política de Cookies. <em>(Art. 22.2 LSSI-CE y Arts. 6.1.a, 13 RGPD)</em></p>
+</div>
+</div>
 </section>
-<section>
-<h2 class="text-2xl font-semibold text-[#1B4332] mb-3">Finalidad del tratamiento</h2>
-<p>Los datos se trataran para responder consultas, gestionar solicitudes de cita, prestar informacion sobre servicios veterinarios y mantener la comunicacion necesaria con el usuario.</p>
+<section class="legal-article">
+<h2 class="text-2xl font-bold text-black mb-3"><span class="article-number">Artículo 3.</span> Principios aplicados al tratamiento</h2>
+<p>El responsable aplica los principios del <em>articulo 5 RGPD</em>: licitud, lealtad y transparencia; limitacion de la finalidad; minimización de datos; exactitud; limitacion del plazo de conservación; integridad y confidencialidad; y responsabilidad proactiva. Estos principios implican que los datos se trataran solo para finalidades legítimas, de forma proporcionada, segura y documentable.</p>
 </section>
-<section>
-<h2 class="text-2xl font-semibold text-[#1B4332] mb-3">Base legal</h2>
-<p>La base legal para el tratamiento es el consentimiento del usuario, prestado al enviar voluntariamente sus datos mediante los formularios o canales de contacto disponibles.</p>
+<section class="legal-article">
+<h2 class="text-2xl font-bold text-black mb-3"><span class="article-number">Artículo 4.</span> Destinatarios, encargados y cesiones</h2>
+<p>Los datos personales no se cederan a terceros salvo obligación legal, requerimiento de autoridad competente o necesidad directamente vinculada a la prestación del servicio. Determinados proveedores pueden actúar como encargados del tratamiento al prestar servicios técnicos en nombre del responsable. <em>(Arts. 28 y 13.1.e RGPD)</em></p>
+<p class="mt-3">Entre dichos proveedores pueden encontrarse Supabase Inc., como proveedor de base de datos, autenticación y almacenamiento, con región de datos a concretar <span class="legal-placeholder">[REGION DE DATOS SUPABASE]</span>; Vercel Inc., como proveedor de alojamiento web; Resend, si se activa el envío de emails transaccionales; y Google LLC, si se activan Google Analytics 4 o Google Calendar.</p>
+<p class="mt-3">Cuando existan transferencias internacionales de datos a Estados Unidos u otros países fuera del Espacio Económico Europeo, estas deberán apoyarse en garantías adecuadas, incluidas las Cláusulas Contractúales Tipo aprobadas por la Comisión Europea y, cuando proceda, el Marco de Privacidad UE-EE.UU. <em>(Art. 46 RGPD)</em></p>
 </section>
-<section>
-<h2 class="text-2xl font-semibold text-[#1B4332] mb-3">Conservacion de datos</h2>
-<p>Los datos se conservaran durante el tiempo necesario para atender la solicitud, gestionar la cita o cumplir obligaciones legales aplicables. Cuando dejen de ser necesarios, se eliminaran de forma segura.</p>
+<section class="legal-article">
+<h2 class="text-2xl font-bold text-black mb-3"><span class="article-number">Artículo 5.</span> Derechos de los interesados</h2>
+<p>Las personas interesadas pueden ejercer el derecho de acceso para conocer qué datos se tratan <em>(Art. 15 RGPD)</em>, rectificación de datos inexactos <em>(Art. 16 RGPD)</em>, supresión o derecho al olvido <em>(Art. 17 RGPD)</em>, limitacion del tratamiento <em>(Art. 18 RGPD)</em>, portabilidad en formato estructurado <em>(Art. 20 RGPD)</em>, oposición <em>(Art. 21 RGPD)</em> y derecho a no ser objeto de decisiones individuales automatizadas <em>(Art. 22 RGPD)</em>.</p>
+<p class="mt-3">Para ejercer estos derechos, el interesado podrá dirigirse por escrito a <span class="legal-placeholder">[DIRECCIÓN COMPLETA]</span> o enviar un correo a <span class="legal-placeholder">[EMAIL DE PRIVACIDAD]</span>, adjuntando copia del DNI, NIE, pasaporte u otro documento acreditativo de identidad. El responsable respondera en el plazo de un mes desde la recepción de la solicitud, prorrogable dos meses adicionales en casos complejos. <em>(Art. 12.3 RGPD)</em></p>
+<p class="mt-3">Asimismo, el interesado puede presentar reclamacion ante la Agencia Española de Protección de Datos: <a class="text-[#004734] font-semibold hover:underline" href="https://www.aepd.es" rel="noopener noreferrer" target="_blank">www.aepd.es</a>, C/ Jorge Juan, 6, 28001 Madrid, teléfono 901 100 099.</p>
 </section>
-<section>
-<h2 class="text-2xl font-semibold text-[#1B4332] mb-3">Derechos del usuario</h2>
-<p>El usuario puede ejercer sus derechos de acceso, rectificacion, supresion, oposicion, limitacion del tratamiento y portabilidad de sus datos.</p>
-<p class="mt-3">Para ejercer estos derechos, puede enviar una solicitud a <strong>info@clinicaveterinariavetusta.es</strong>, indicando el derecho que desea ejercer y acompanando la informacion necesaria para acreditar su identidad.</p>
-<p class="mt-3 text-sm text-[#414844]">Documento orientativo pendiente de revisión jurídica antes de su uso definitivo.</p>
+<section class="legal-article">
+<h2 class="text-2xl font-bold text-black mb-3"><span class="article-number">Artículo 6.</span> Medidas de seguridad</h2>
+<p>El sitio aplica medidas técnicas y organizativas orientadas a proteger la confidencialidad, integridad y disponibilidad de los datos. Entre ellas se incluyen comunicaciones cifradas mediante TLS/HTTPS, autenticación de usuarios, contraseñas protegidas mediante hashing seguro como bcrypt, Argon2 o mecanismo equivalente gestionado por el proveedor de autenticación, Row Level Security en Supabase, buckets privados para documentos y fotografías, y control de acceso por roles de cliente y administrador. <em>(Art. 32 RGPD)</em></p>
 </section>
+<section class="legal-article">
+<h2 class="text-2xl font-bold text-black mb-3"><span class="article-number">Artículo 7.</span> Menores de edad</h2>
+<p>Este sitio web no esta destinado a menores de 14 años. No se recabaran datos personales de menores de dicha edad sin el consentimiento de sus padres, madres o tutores legales. Si el responsable detecta que se han facilitado datos de un menor sin autorización suficiente, procederá a adoptar las medidas necesarias para su supresión. <em>(Art. 8 RGPD y Art. 7 LOPDGDD)</em></p>
+</section>
+<section class="legal-article">
+<h2 class="text-2xl font-bold text-black mb-3"><span class="article-number">Artículo 8.</span> Vigencia y modificaciones</h2>
+<p>Fecha de última actúalización: <span class="legal-placeholder">[FECHA DE ÚLTIMA ACTUALIZACIÓN]</span>. El responsable se reserva el derecho a modificar esta Política de Privacidad para adaptarla a cambios legislativos, jurisprudenciales, técnicos u organizativos. La version vigente sera la publicada en esta página.</p>
+</section>
+<asíde class="legal-note">
+<strong>Nota importante:</strong> Este documento ha sido redactado conforme a la normativa española vigente a <span class="legal-placeholder">[FECHA]</span>. Se recomienda su revisión periódica y, antes de la publicación definitiva, la validación por parte de un abogado especializado en derecho digital o protección de datos.
+</asíde>
 </div>
 </main>
 <footer class="bg-[#1B4332] text-white">
@@ -68,5 +106,26 @@ h1, h2, .brand { font-family: "Plus Jakarta Sans", sans-serif; }
 </nav>
 </div>
 </footer>
+<button style="position:fixed;left:16px;bottom:16px;z-index:70;background:#fff;border:1px solid #004734;color:#004734;border-radius:999px;padding:10px 14px;font-weight:700;box-shadow:0 10px 22px rgba(0,0,0,.12);" type="button" data-cookie-manage>Gestionar cookies</button>
+<div style="position:fixed;left:0;right:0;bottom:0;z-index:80;padding:16px;display:none;" data-cookie-banner>
+<div style="max-width:980px;margin:0 auto;background:#fff;border:1px solid #c1c8c2;border-radius:16px;padding:20px;box-shadow:0 20px 50px rgba(0,0,0,.18);">
+<h2 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800;color:#004734;">Este sitio utiliza cookies</h2>
+<p style="margin-top:8px;color:#414844;font-size:14px;">Usamos cookies técnicas necesarias y, solo si lo aceptas, cookies analíticas para medir el uso de la web.</p>
+<a style="display:inline-block;margin-top:8px;color:#004734;font-weight:700;text-decoration:underline;" href="/cookies.html">Ver Política de Cookies</a>
+<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;"><button style="background:#004734;color:#fff;border:1px solid #004734;border-radius:10px;padding:12px 16px;font-weight:800;" type="button" data-cookie-accept>Aceptar todas</button><button style="background:transparent;color:#004734;border:1px solid #004734;border-radius:10px;padding:12px 16px;font-weight:800;" type="button" data-cookie-reject>Rechazar</button><button style="background:transparent;color:#5f5e5c;border:0;text-decoration:underline;padding:12px 16px;font-weight:800;" type="button" data-cookie-configure>Configurar</button></div>
+</div>
+</div>
+<div style="position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:16px;" data-cookie-modal>
+<div style="max-width:560px;width:100%;background:#fff;border-radius:16px;padding:24px;box-shadow:0 20px 50px rgba(0,0,0,.24);">
+<h2 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:26px;font-weight:800;color:#004734;">Configurar cookies</h2>
+<p style="margin-top:8px;color:#414844;font-size:14px;">Las cookies técnicas son necesarias. Las analíticas permanecen desactivadas salvo consentimiento.</p>
+<label style="display:flex;justify-content:space-between;gap:16px;border:1px solid #c1c8c2;border-radius:12px;padding:14px;margin-top:18px;"><span><strong>Cookies técnicas</strong><br/><small>Necesarias para navegación, seguridad y autenticación.</small></span><input checked disabled type="checkbox"/></label>
+<label style="display:flex;justify-content:space-between;gap:16px;border:1px solid #c1c8c2;border-radius:12px;padding:14px;margin-top:10px;"><span><strong>Cookies analíticas</strong><br/><small>Permiten cargar Google Analytics 4 si esta configurado.</small></span><input type="checkbox" data-cookie-analytics/></label>
+<div style="display:flex;flex-wrap:wrap;justify-content:flex-end;gap:10px;margin-top:20px;"><button style="border:1px solid #004734;background:#fff;color:#004734;border-radius:10px;padding:12px 16px;font-weight:800;" type="button" data-cookie-close>Cancelar</button><button style="border:1px solid #004734;background:#004734;color:#fff;border-radius:10px;padding:12px 16px;font-weight:800;" type="button" data-cookie-save>Guardar preferencias</button></div>
+</div>
+</div>
+<script>
+(function(){const k="cookie_consent",m=24*30*24*60*60*1000,b=document.querySelector("[data-cookie-banner]"),o=document.querySelector("[data-cookie-modal]"),t=document.querySelector("[data-cookie-analytics]");let loaded=false;function r(){try{const v=JSON.parse(localStorage.getItem(k)||"null");return v&&v.timestamp&&Date.now()-v.timestamp<=m?v:null}catch(e){return null}}function l(){if(loaded)return;loaded=true;const s=document.createElement("script");s.src="/analytics.js";s.defer=true;document.head.appendChild(s)}function s(a){const v={analytics:!!a,timestamp:Date.now()};localStorage.setItem(k,JSON.stringify(v));if(b)b.style.display="none";if(o)o.style.display="none";if(v.analytics)l()}function c(){const v=r();if(t)t.checked=!!(v&&v.analytics);if(o)o.style.display="flex"}const v=r();if(v){if(v.analytics)l()}else if(b)b.style.display="block";document.querySelectorAll("[data-cookie-manage],[data-cookie-configure]").forEach(e=>e.addEventListener("click",c));document.querySelector("[data-cookie-accept]")?.addEventListener("click",()=>s(true));document.querySelector("[data-cookie-reject]")?.addEventListener("click",()=>s(false));document.querySelector("[data-cookie-save]")?.addEventListener("click",()=>s(t&&t.checked));document.querySelector("[data-cookie-close]")?.addEventListener("click",()=>{if(o)o.style.display="none"})})();
+</script>
 </body>
 </html>
