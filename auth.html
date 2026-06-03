@@ -435,6 +435,40 @@
         min-height: 460px;
       }
     }
+
+    /* ── Page entrance ──────────────────────────────────────── */
+    .auth-shell {
+      animation: auth-fade-in 0.48s ease both;
+    }
+
+    @keyframes auth-fade-in {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Button loading state ───────────────────────────────── */
+    .primary-button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .auth-spinner {
+      display: inline-block;
+      width: 15px;
+      height: 15px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: auth-spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+      flex-shrink: 0;
+    }
+
+    @keyframes auth-spin {
+      to { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
@@ -584,5 +618,46 @@
   </main>
 
   <script type="module" src="/auth.js"></script>
+  <script>
+  (function () {
+    var statusEl = document.querySelector('[data-auth-status]');
+
+    document.querySelectorAll('form').forEach(function (form) {
+      form.addEventListener('submit', function () {
+        var btn = form.querySelector('button[type="submit"]');
+        if (!btn || btn.disabled) return;
+        var originalText = btn.textContent.trim();
+        btn.setAttribute('data-original-text', originalText);
+        var spinner = document.createElement('span');
+        spinner.className = 'auth-spinner';
+        btn.replaceChildren(spinner, document.createTextNode(' ' + originalText));
+        btn.disabled = true;
+        // Failsafe: re-enable after 10s in case of unhandled network error
+        setTimeout(function () {
+          if (btn.disabled) {
+            btn.textContent = btn.getAttribute('data-original-text') || originalText;
+            btn.disabled = false;
+          }
+        }, 10000);
+      });
+    });
+
+    if (statusEl) {
+      new MutationObserver(function (mutations) {
+        mutations.forEach(function (m) {
+          if (m.type === 'attributes' && m.attributeName === 'class') {
+            if (statusEl.classList.contains('error')) {
+              document.querySelectorAll('button[type="submit"][disabled]').forEach(function (btn) {
+                var orig = btn.getAttribute('data-original-text');
+                if (orig) btn.textContent = orig;
+                btn.disabled = false;
+              });
+            }
+          }
+        });
+      }).observe(statusEl, { attributes: true, attributeFilter: ['class'] });
+    }
+  })();
+  </script>
 </body>
 </html>

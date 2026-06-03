@@ -26,6 +26,38 @@ Esta desarrollado con HTML, CSS, JavaScript vanilla y un backend Express en Node
 - Script dinamico de GA4 servido desde backend cuando existe un identificador configurado.
 - Paginas legales incluidas: aviso legal, privacidad, politica de privacidad, cookies, terminos y condiciones de uso.
 
+## Mejoras De UI/UX
+
+### Navegacion
+
+- Menu de navegacion mobile completo con drawer lateral deslizante, overlay oscuro y cierre con Escape o click fuera.
+- La hamburguesa respeta el estado `aria-expanded` y bloquea el scroll del body mientras el drawer esta abierto.
+- Los enlaces del menu mobile usan `data-i18n` y responden automaticamente al cambio de idioma.
+
+### Animaciones y microinteracciones
+
+- Animacion de entrada escalonada en secciones al hacer scroll mediante `IntersectionObserver` (fade + translateY).
+- Las cards de opiniones y de "Por que elegirnos" aparecen con delay escalonado (0 / 100 / 200 ms).
+- FAQ con animacion suave de apertura y cierre (`max-height` + `opacity`), sin afectar a los acordeones de packs.
+- Respeto de `prefers-reduced-motion` en todas las animaciones de scroll.
+
+### Formulario de reservas
+
+- Spinner animado en el area de estado mientras se carga la disponibilidad o se confirma la reserva.
+- Boton de envio desactivado durante la peticion y reactivado al finalizar (exito o error).
+- Campos requeridos invalidos muestran borde rojo y fondo rosado mediante `:user-invalid`.
+
+### Area privada (auth, dashboard, ficha de mascota)
+
+- Paginas del area privada con animacion de entrada al cargar (`auth-fade-in`, `shell-fade-in`).
+- Spinner en los botones de login, registro y recuperacion de contraseña durante el envio del formulario.
+- Reactivacion automatica del boton al detectar un error, con failsafe de 10 segundos.
+- Icono de marca (SVG de pata) anadido al topbar de dashboard y ficha de mascota para coherencia visual.
+- Hover lift y sombra en botones primarios, secundarios y de peligro con transiciones de 160 ms.
+- Focus ring verde en inputs, selects y textareas del area privada.
+- Hover en tarjetas de mascotas (escala de foto), clientes (lift + fondo verde) y reservas (lift + borde verde).
+- Radio de esquinas aumentado de 8 px a 12 px en botones e inputs del area privada.
+
 ## Stack Tecnico
 
 - Node.js 18+

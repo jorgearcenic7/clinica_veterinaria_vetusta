@@ -1195,6 +1195,77 @@
                 --page-block-gap: clamp(1.25rem, 5vw, 1.875rem);
             }
         }
+
+        /* ── Mobile menu drawer ─────────────────────────────────── */
+        [data-mobile-overlay] {
+            transition: opacity 0.3s ease;
+        }
+
+        [data-mobile-drawer] {
+            transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ── Scroll entrance animations ─────────────────────────── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity 0.65s ease, transform 0.65s ease;
+        }
+
+        .reveal.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .reveal {
+                opacity: 1;
+                transform: none;
+                transition: none;
+            }
+        }
+
+        /* ── Booking loading spinner ─────────────────────────────── */
+        .booking-spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(1, 45, 29, 0.2);
+            border-top-color: #012d1d;
+            border-radius: 50%;
+            animation: vetusta-spin 0.7s linear infinite;
+            flex-shrink: 0;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+
+        @keyframes vetusta-spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .booking-status-loading {
+            display: flex;
+            align-items: center;
+            color: #012d1d;
+        }
+
+        .booking-status-error {
+            color: #ba1a1a;
+        }
+
+        /* ── Form validation visual feedback ────────────────────── */
+        [data-booking-form] input:user-invalid,
+        [data-booking-form] select:user-invalid,
+        [data-booking-form] textarea:user-invalid {
+            border-color: #ba1a1a !important;
+            background-color: #fff8f8 !important;
+        }
+
+        [data-booking-form] button[type="submit"]:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body class="bg-background text-on-background font-body-md text-body-md antialiased overflow-x-hidden pb-24 md:pb-0">
@@ -1223,11 +1294,37 @@
 <option value="pt">PT</option>
 </select>
 </div>
-<button class="md:hidden text-primary p-2">
+<button class="md:hidden text-primary p-2" type="button" aria-label="Abrir menú de navegación" aria-expanded="false" data-mobile-menu-toggle>
 <span class="material-symbols-outlined">menu</span>
 </button>
 </div>
 </header>
+<!-- Mobile Navigation Drawer -->
+<div class="fixed inset-0 z-40 pointer-events-none" data-mobile-backdrop aria-hidden="true">
+  <div class="absolute inset-0 bg-black/50 opacity-0 pointer-events-none" data-mobile-overlay></div>
+  <nav class="absolute top-0 right-0 h-full w-72 max-w-[85vw] bg-[#FEFBF6] shadow-2xl flex flex-col p-6 gap-6 translate-x-full" data-mobile-drawer aria-label="Menú principal">
+    <div class="flex justify-between items-center pb-4 border-b border-[#c1c8c2]">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-[#1b4332]" style="font-variation-settings:'FILL' 1;">pets</span>
+        <span class="font-bold text-[#1b4332] text-base" style="font-family:'Plus Jakarta Sans',system-ui,sans-serif">Vetusta</span>
+      </div>
+      <button class="p-2 text-[#1b4332] rounded-lg hover:bg-[#f0eded] transition-colors" type="button" aria-label="Cerrar menú" data-mobile-close>
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <div class="flex flex-col gap-1 flex-1 overflow-y-auto">
+      <a class="font-semibold text-sm text-[#1b1c1c] py-3.5 px-4 rounded-xl hover:bg-[#f0eded] transition-colors" href="#inicio" data-mobile-link data-i18n="nav.home">Inicio</a>
+      <a class="font-semibold text-sm text-[#1b1c1c] py-3.5 px-4 rounded-xl hover:bg-[#f0eded] transition-colors" href="#servicios" data-mobile-link data-i18n="nav.services">Servicios</a>
+      <a class="font-semibold text-sm text-[#1b1c1c] py-3.5 px-4 rounded-xl hover:bg-[#f0eded] transition-colors" href="#equipo" data-mobile-link data-i18n="nav.team">Equipo</a>
+      <a class="font-semibold text-sm text-[#1b1c1c] py-3.5 px-4 rounded-xl hover:bg-[#f0eded] transition-colors" href="#opiniones" data-mobile-link data-i18n="nav.reviews">Opiniones</a>
+      <a class="font-semibold text-sm text-[#1b1c1c] py-3.5 px-4 rounded-xl hover:bg-[#f0eded] transition-colors" href="#reserva" data-mobile-link data-i18n="nav.booking">Reserva</a>
+      <a class="font-semibold text-sm text-[#1b1c1c] py-3.5 px-4 rounded-xl hover:bg-[#f0eded] transition-colors" href="#contacto" data-mobile-link data-i18n="nav.contact">Contacto</a>
+    </div>
+    <div class="pt-4 border-t border-[#c1c8c2]">
+      <a class="flex items-center justify-center bg-[#012d1d] text-white font-semibold text-sm px-6 py-4 rounded-xl hover:bg-[#1b4332] transition-colors" href="/auth" data-i18n="nav.clientArea">Área clientes</a>
+    </div>
+  </nav>
+</div>
 <main>
 <!-- Hero Section -->
 <section class="hero zara-hero relative overflow-hidden" id="inicio" role="img" aria-label="Una veterinaria sonriente cuidando con cariño a un perro en una clínica moderna y acogedora, con iluminación natural y tonos cálidos.">
@@ -2059,6 +2156,138 @@ if (currentYearElement) {
 <script src="/reviews.js"></script>
 <script src="/booking.js?v=20260511-slots"></script>
 <script defer src="/i18n.js"></script>
+<script>
+// ── Mobile menu ────────────────────────────────────────────────
+(function () {
+  var toggle   = document.querySelector('[data-mobile-menu-toggle]');
+  var backdrop = document.querySelector('[data-mobile-backdrop]');
+  var overlay  = document.querySelector('[data-mobile-overlay]');
+  var drawer   = document.querySelector('[data-mobile-drawer]');
+  var closes   = document.querySelectorAll('[data-mobile-close]');
+  var links    = document.querySelectorAll('[data-mobile-link]');
+  if (!toggle || !backdrop) return;
+
+  function openMenu() {
+    backdrop.classList.remove('pointer-events-none');
+    backdrop.removeAttribute('aria-hidden');
+    overlay.classList.remove('pointer-events-none');
+    overlay.classList.add('opacity-100');
+    overlay.classList.remove('opacity-0');
+    drawer.classList.remove('translate-x-full');
+    toggle.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMenu() {
+    backdrop.classList.add('pointer-events-none');
+    backdrop.setAttribute('aria-hidden', 'true');
+    overlay.classList.add('pointer-events-none');
+    overlay.classList.add('opacity-0');
+    overlay.classList.remove('opacity-100');
+    drawer.classList.add('translate-x-full');
+    toggle.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+  }
+
+  toggle.addEventListener('click', openMenu);
+  closes.forEach(function (btn) { btn.addEventListener('click', closeMenu); });
+  overlay.addEventListener('click', closeMenu);
+  links.forEach(function (link) { link.addEventListener('click', closeMenu); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeMenu();
+  });
+})();
+
+// ── Scroll entrance animations ─────────────────────────────────
+(function () {
+  if (!window.IntersectionObserver) return;
+  var sections = Array.from(document.querySelectorAll('main > section'));
+  sections.slice(1).forEach(function (el) { el.classList.add('reveal'); });
+
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
+
+  sections.slice(1).forEach(function (el) { observer.observe(el); });
+})();
+
+// ── FAQ smooth accordion ───────────────────────────────────────
+(function () {
+  document.querySelectorAll('details:not(.pricing-faq)').forEach(function (details) {
+    var summary = details.querySelector('summary');
+    var body = summary ? summary.nextElementSibling : null;
+    if (!summary || !body) return;
+
+    summary.addEventListener('click', function (e) {
+      e.preventDefault();
+
+      if (details.open) {
+        body.style.overflow = 'hidden';
+        body.style.maxHeight = body.offsetHeight + 'px';
+        body.style.transition = 'max-height 0.26s ease, opacity 0.22s ease';
+        requestAnimationFrame(function () {
+          body.style.maxHeight = '0';
+          body.style.opacity = '0';
+        });
+        setTimeout(function () {
+          details.open = false;
+          body.style.cssText = '';
+        }, 270);
+      } else {
+        details.open = true;
+        var h = body.scrollHeight;
+        body.style.cssText = 'overflow:hidden;max-height:0;opacity:0;transition:none';
+        void body.offsetHeight;
+        body.style.transition = 'max-height 0.26s ease, opacity 0.22s ease';
+        body.style.maxHeight = h + 'px';
+        body.style.opacity = '1';
+        setTimeout(function () {
+          body.style.cssText = '';
+        }, 270);
+      }
+    });
+  });
+})();
+
+// ── Stagger card grids ─────────────────────────────────────────
+(function () {
+  if (!window.IntersectionObserver) return;
+
+  function staggerGrid(gridEl) {
+    if (!gridEl) return;
+    var items = Array.from(gridEl.children);
+    items.forEach(function (item, i) {
+      item.style.opacity = '0';
+      item.style.transform = 'translateY(20px)';
+      item.style.transition = 'opacity 0.5s ease ' + (i * 0.1) + 's, transform 0.5s ease ' + (i * 0.1) + 's';
+    });
+    new IntersectionObserver(function (entries, obs) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          Array.from(entry.target.children).forEach(function (item) {
+            item.style.opacity = '1';
+            item.style.transform = 'translateY(0)';
+          });
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 }).observe(gridEl);
+  }
+
+  staggerGrid(document.querySelector('[data-google-reviews-list]'));
+
+  var whyTitle = document.querySelector('[data-i18n="why.title"]');
+  if (whyTitle) {
+    var whySection = whyTitle.closest('section');
+    staggerGrid(whySection ? whySection.querySelector('.grid') : null);
+  }
+})();
+</script>
 </body></html>
 
 

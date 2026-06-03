@@ -59,7 +59,7 @@ function currentLocale() {
 }
 
 async function loadAvailability() {
-  setStatus(translate("booking.loading"));
+  setLoadingStatus(translate("booking.loading"));
   const monthKey = toMonthKey(bookingState.visibleMonth);
 
   try {
@@ -348,7 +348,7 @@ async function submitBooking(event) {
     datetime: bookingState.selectedSlot.datetime,
   };
 
-  setStatus(translate("booking.saving"));
+  setLoadingStatus(translate("booking.saving"));
   const response = await fetch("/api/reservations", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -474,6 +474,19 @@ function renderBookingTexts() {
 
 function setStatus(message) {
   bookingStatus.textContent = message;
+  bookingStatus.className = "text-sm text-on-surface-variant";
+  const submitBtn = bookingForm?.querySelector("button[type='submit']");
+  if (submitBtn) submitBtn.disabled = false;
+}
+
+function setLoadingStatus(message) {
+  const spinner = document.createElement("span");
+  spinner.className = "booking-spinner";
+  const text = document.createTextNode(" " + message);
+  bookingStatus.replaceChildren(spinner, text);
+  bookingStatus.className = "booking-status-loading text-sm";
+  const submitBtn = bookingForm?.querySelector("button[type='submit']");
+  if (submitBtn) submitBtn.disabled = true;
 }
 
 function startOfMonth(date) {
