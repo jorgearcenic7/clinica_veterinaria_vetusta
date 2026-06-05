@@ -1110,3 +1110,20 @@ textarea {
     justify-content: flex-start;
   }
 }
+
+/* Paginación de clientes */
+.pagination {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.pagination-info {
+  flex: 1;
+  font-size: 0.85rem;
+  text-align: center;
+}

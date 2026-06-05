@@ -31,6 +31,12 @@ let selectedPetId = null;
 let selectedReservationId = null;
 let visibleWeekStart = startOfWeek(new Date());
 
+// Estado de paginación de clientes
+let clientsPage = 1;
+let clientsTotalPages = 1;
+let clientsTotal = 0;
+const CLIENTS_LIMIT = 20;
+
 logoutButton.addEventListener("click", signOut);
 calendarPrevButton.addEventListener("click", () => changeCalendarWeek(-1));
 calendarNextButton.addEventListener("click", () => changeCalendarWeek(1));
@@ -62,21 +68,21 @@ async function initAdmin() {
 async function loadAll() {
   setStatus(statusEl, "Cargando datos...");
 
-  const [clientsResult, petsResult, reservationsResult, recordsResult, documentsResult] = await Promise.all([
-    supabase.from("profiles").select("id,full_name,phone,role,created_at").eq("role", "client").order("created_at", { ascending: false }),
+  await loadClients(clientsPage);
+
+  const [petsResult, reservationsResult, recordsResult, documentsResult] = await Promise.all([
     supabase.from("pets").select("id,owner_id,name,species,breed,birth_date,image_url,created_at").order("name", { ascending: true }),
     loadReservations(),
     supabase.from("pet_records").select("id,pet_id,title,record_type,record_date,notes,next_due_date,created_at").order("record_date", { ascending: false }),
     supabase.from("pet_documents").select("id,pet_id,uploaded_by,title,description,file_url,file_name,file_type,source,created_at").order("created_at", { ascending: false }),
   ]);
 
-  [clientsResult, petsResult, reservationsResult, recordsResult, documentsResult].forEach((result) => {
+  [petsResult, reservationsResult, recordsResult, documentsResult].forEach((result) => {
     if (result.error) {
       throw result.error;
     }
   });
 
-  clients = clientsResult.data || [];
   pets = petsResult.data || [];
   reservations = reservationsResult.data || [];
   records = recordsResult.data || [];
@@ -86,6 +92,30 @@ async function loadAll() {
     ? selectedPetId
     : pets.find((pet) => pet.owner_id === selectedClientId)?.id || null;
   await render();
+}
+
+async function loadClients(page = 1) {
+  const { data: sessionData } = await supabase.auth.getSession();
+  const token = sessionData?.session?.access_token;
+
+  if (!token) {
+    return;
+  }
+
+  const response = await fetch(
+    `/api/admin/clients?page=${page}&limit=${CLIENTS_LIMIT}`,
+    { headers: { Authorization: `Bearer ${token}` } },
+  );
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.error || "No se pudieron cargar los clientes.");
+  }
+
+  clients = result.data || [];
+  clientsPage = result.page || 1;
+  clientsTotalPages = result.totalPages || 1;
+  clientsTotal = result.total || 0;
 }
 
 async function render() {
@@ -115,9 +145,13 @@ function renderClientDetailVisibility() {
 }
 
 function loadReservations() {
+  const weekStart = toDateKey(visibleWeekStart);
+  const weekEnd = toDateKey(addDays(visibleWeekStart, 7));
   return supabase
     .from("reservations")
     .select("*")
+    .gte("datetime", weekStart)
+    .lt("datetime", weekEnd)
     .order("datetime", { ascending: true });
 }
 
@@ -227,27 +261,68 @@ function renderClients() {
 
   if (clients.length === 0) {
     clientsListEl.append(emptyMessage("No hay clientes registrados."));
-    return;
+  } else {
+    clients.forEach((client) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = `client-card ${client.id === selectedClientId ? "active" : ""}`;
+      button.innerHTML = `
+        <strong>${escapeHtml(client.full_name || "Sin nombre")}</strong>
+        <span>${escapeHtml(client.phone || "Sin teléfono")}</span>
+      `;
+      button.addEventListener("click", () => {
+        selectedClientId = client.id;
+        selectedPetId = pets.find((pet) => pet.owner_id === selectedClientId)?.id || null;
+        resetPetForm();
+        resetRecordForm();
+        resetDocumentForm();
+        render();
+      });
+      clientsListEl.append(button);
+    });
   }
 
-  clients.forEach((client) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = `client-card ${client.id === selectedClientId ? "active" : ""}`;
-    button.innerHTML = `
-      <strong>${escapeHtml(client.full_name || "Sin nombre")}</strong>
-      <span>${escapeHtml(client.phone || "Sin teléfono")}</span>
-    `;
-    button.addEventListener("click", () => {
-      selectedClientId = client.id;
-      selectedPetId = pets.find((pet) => pet.owner_id === selectedClientId)?.id || null;
-      resetPetForm();
-      resetRecordForm();
-      resetDocumentForm();
-      render();
-    });
-    clientsListEl.append(button);
-  });
+  if (clientsTotalPages > 1) {
+    clientsListEl.append(createClientsPagination());
+  }
+}
+
+function createClientsPagination() {
+  const nav = document.createElement("nav");
+  nav.className = "pagination";
+  nav.setAttribute("aria-label", "Paginación de clientes");
+
+  const prevBtn = document.createElement("button");
+  prevBtn.type = "button";
+  prevBtn.className = "secondary";
+  prevBtn.textContent = "Anterior";
+  prevBtn.disabled = clientsPage <= 1;
+  prevBtn.addEventListener("click", () => goToClientsPage(clientsPage - 1));
+
+  const info = document.createElement("span");
+  info.className = "pagination-info muted";
+  info.textContent = `Página ${clientsPage} de ${clientsTotalPages} (${clientsTotal} clientes)`;
+
+  const nextBtn = document.createElement("button");
+  nextBtn.type = "button";
+  nextBtn.className = "secondary";
+  nextBtn.textContent = "Siguiente";
+  nextBtn.disabled = clientsPage >= clientsTotalPages;
+  nextBtn.addEventListener("click", () => goToClientsPage(clientsPage + 1));
+
+  nav.append(prevBtn, info, nextBtn);
+  return nav;
+}
+
+async function goToClientsPage(page) {
+  try {
+    setStatus(statusEl, "Cargando clientes...");
+    await loadClients(page);
+    setStatus(statusEl, "");
+    renderClients();
+  } catch (error) {
+    setStatus(statusEl, "No se pudieron cargar los clientes.", true);
+  }
 }
 
 async function renderPets() {
@@ -648,9 +723,26 @@ function syncStatusMarkup(reservation) {
   return "";
 }
 
-function changeCalendarWeek(offset) {
-  visibleWeekStart = addDays(visibleWeekStart, offset * 7);
-  renderReservations();
+async function changeCalendarWeek(offset) {
+  try {
+    visibleWeekStart = addDays(visibleWeekStart, offset * 7);
+    setStatus(statusEl, "Cargando citas...");
+    const reservationsResult = await loadReservations();
+
+    if (reservationsResult.error) {
+      throw reservationsResult.error;
+    }
+
+    reservations = reservationsResult.data || [];
+    setStatus(statusEl, "");
+    renderReservations();
+  } catch (error) {
+    setStatus(
+      statusEl,
+      "No se pudieron cargar las reservas de la semana.",
+      true,
+    );
+  }
 }
 
 function formatReservationTitle(reservation) {
