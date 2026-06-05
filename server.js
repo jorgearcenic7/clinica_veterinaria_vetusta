@@ -1,4 +1,6 @@
 import express from "express";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { apiLimiter, sensitiveLimiter } from "./middleware/rateLimiter.js";
 import adminRouter from "./routes/admin.js";
 import configRouter from "./routes/config.js";
@@ -8,11 +10,20 @@ import reviewsRouter from "./routes/reviews.js";
 
 validateEnv();
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const app = express();
 const publicRoot = process.cwd();
 const port = Number(process.env.PORT || 3000);
 
 app.use(express.json());
+
+// Sirve public/tailwind.css con ruta absoluta para que Vercel lo encuentre siempre.
+app.use("/public", express.static(path.join(__dirname, "public"), {
+  maxAge: "1d",
+  immutable: true,
+}));
+
 app.use(
   express.static(publicRoot, {
     dotfiles: "ignore",
