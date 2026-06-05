@@ -67,7 +67,8 @@ Esta desarrollado con HTML, CSS, JavaScript vanilla y un backend Express en Node
 - Express Rate Limit
 - Dotenv
 - HTML, CSS y JavaScript vanilla
-- Tailwind CDN en la interfaz publica
+- Tailwind CSS 3 (build compilado, no CDN)
+- Vitest para tests unitarios
 - Vercel como despliegue recomendado
 
 ## Instalacion Local
@@ -82,6 +83,12 @@ Copia el archivo de entorno y completa las variables necesarias:
 
 ```bash
 cp .env.example .env
+```
+
+Compila el CSS de Tailwind (obligatorio antes del primer arranque):
+
+```bash
+npm run build:css
 ```
 
 Inicia el servidor en modo desarrollo:
@@ -105,9 +112,15 @@ npm start
 ## Scripts
 
 ```text
-npm run dev   Ejecuta server.js con recarga mediante node --watch
-npm start     Ejecuta server.js
+npm start              Ejecuta el servidor (dotenv cargado antes de todo import)
+npm run dev            Ejecuta con recarga automatica mediante node --watch
+npm run build:css      Compila Tailwind a public/tailwind.css (necesario antes del primer uso)
+npm run build:css:watch  Compila Tailwind en modo observador (para desarrollo)
+npm test               Ejecuta la suite de tests unitarios con Vitest
+npm run test:watch     Ejecuta tests en modo observador
 ```
+
+El servidor arranca con `node --import ./load-env.js` para garantizar que dotenv carga las variables de entorno antes de que cualquier modulo de la aplicacion se inicialice.
 
 ## Variables De Entorno
 
@@ -258,30 +271,65 @@ GET   /api/availability?month=YYYY-MM
 GET   /api/supabase-config
 POST  /api/reservations
 PATCH /api/admin/reservations/:id
+GET   /api/admin/clients?page=1&limit=20
+GET   /api/admin/pets?page=1&limit=20[&client_id=UUID]
+GET   /api/admin/reservations?page=1&limit=20
 ```
+
+Los tres endpoints `/api/admin/*` de listado soportan paginacion server-side mediante `.range()` de Supabase. El limite maximo aceptado es 100 registros por pagina.
 
 Las rutas `/api`, `/auth`, `/area-privada`, `/api/reservations`, `/api/admin` y `/api/supabase-config` tienen limitacion de peticiones mediante `express-rate-limit`.
 
 ## Estructura Del Proyecto
 
 ```text
-server.js                       Backend Express, APIs, rutas y validaciones
+server.js                       Punto de entrada: imports, middlewares globales y montaje de routers
+load-env.js                     Precarga dotenv antes de cualquier import (usado con --import)
+vercel.json                     Configuracion de despliegue en Vercel
+
+lib/
+  utils.js                      Utilidades puras: validacion, escape, helpers de cadena
+  supabase.js                   Clientes Supabase: supabase (anon) y supabaseAdmin (service role)
+  availability.js               Logica pura de slots y disponibilidad (testeable sin efectos secundarios)
+  googleCalendar.js             Integracion con Google Calendar (cuenta de servicio)
+  resend.js                     Integracion con Resend para email de confirmacion
+  reviews.js                    Google Places / reseñas locales con cache
+  reservations.js               Acceso a datos y logica de negocio de reservas
+
+middleware/
+  rateLimiter.js                apiLimiter y sensitiveLimiter (express-rate-limit)
+
+routes/
+  pages.js                      Rutas HTML publicas y privadas
+  config.js                     /api/supabase-config y /analytics.js
+  reviews.js                    /api/google-reviews
+  reservations.js               /api/availability y /api/reservations
+  admin.js                      /api/admin/* (PATCH, GET paginados)
+
+src/
+  input.css                     Directivas de Tailwind (@tailwind base/components/utilities)
+
+public/
+  tailwind.css                  CSS compilado por Tailwind (generado con npm run build:css)
+
+tests/
+  availability.test.js          Tests unitarios de logica de disponibilidad (Vitest)
+
 code.html                       Pagina publica principal
-booking.js                      Calendario y formulario de reservas
-reviews.js                      Carga y renderizado de reseñas
+booking.js                      Calendario y formulario de reservas (frontend)
+reviews.js                      Carga y renderizado de reseñas (frontend)
 image-sources.js                Fuentes y recursos visuales de la web
 i18n.js                         Textos y traducciones de interfaz
 auth.html / auth.js             Registro, login y recuperacion de contraseña
 dashboard.html / dashboard.js   Area privada del cliente
 pet-detail.html / pet-detail.js Ficha privada de mascota
-admin.html / admin.js           Panel de administracion
+admin.html / admin.js           Panel de administracion (con paginacion de clientes)
 client-area.css                 Estilos del area privada y administracion
-supabase-client.js              Cliente publico de Supabase
+supabase-client.js              Cliente publico de Supabase (frontend)
 supabase-reservations.sql       Modelo SQL de reservas
 supabase-client-area.sql        Modelo SQL de clientes, mascotas y documentos
 reviews.local.json              Reseñas locales de fallback
-DESIGN.md                       Guia visual y criterios de diseño
-vercel.json                     Configuracion de despliegue en Vercel
+tailwind.config.js              Configuracion de Tailwind: tema, colores, fuentes y plugins
 ```
 
 ## Despliegue En Vercel
@@ -292,10 +340,12 @@ Configuracion recomendada:
 
 ```text
 Framework Preset: Other
-Build Command: vacio
+Build Command: npm run build:css
 Output Directory: vacio
 Install Command: npm install
 ```
+
+El build command compila Tailwind a `public/tailwind.css` antes de que Vercel empaquete la funcion. En produccion, Vercel inyecta las variables de entorno directamente en `process.env`, por lo que dotenv no se necesita.
 
 Variables minimas recomendadas para produccion con Supabase:
 
@@ -336,7 +386,6 @@ Todos los derechos reservados. Este proyecto y su codigo fuente han sido desarro
 
 ## Posibles Mejoras Futuras
 
-- Incorporar una suite de tests automatizados para validacion de reservas, permisos de administracion y flujos de autenticacion.
 - Completar la instrumentacion de GA4 con eventos de reservas, llamadas, formularios, login y descargas de documentos.
 - Añadir seguimiento con Google Search Console y revision periodica de rendimiento SEO local.
 - Ampliar la gestion de citas con reprogramacion, cancelaciones iniciadas por cliente, profesionales asignados y reglas de disponibilidad por servicio.
@@ -344,7 +393,7 @@ Todos los derechos reservados. Este proyecto y su codigo fuente han sido desarro
 - Añadir paginas individuales para servicios clave como vacunacion, cirugia, urgencias, medicina preventiva o peluqueria.
 - Implementar recordatorios automaticos de vacunas, revisiones y tratamientos preventivos mediante email o WhatsApp Business.
 - Integrar una pasarela de pagos o deposito para determinados tipos de reserva.
-- Mejorar el panel de administracion con busqueda avanzada, filtros, exportaciones y metricas operativas.
+- Añadir busqueda y filtros avanzados en el panel de administracion.
 - Añadir auditoria de acciones administrativas sobre historiales, documentos y cambios de reserva.
 - Optimizar Core Web Vitals con estrategia avanzada de imagenes, fuentes, carga diferida y reduccion de scripts externos.
 - Incorporar despliegues por entorno, revision de logs centralizada y alertas de errores.
