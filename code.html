@@ -1621,7 +1621,7 @@ document.querySelectorAll("[data-team-flip-card]").forEach((card) => {
 </div>
 <div class="flex flex-col gap-2">
 <label class="font-label-caps text-label-caps text-on-surface" for="telefono" data-i18n="booking.phone">Teléfono</label>
-<input class="rounded-lg border-outline-variant focus:border-primary focus:ring-primary bg-background" id="telefono" name="telefono" placeholder="Tu teléfono" required="" type="tel" data-i18n-placeholder="booking.phonePlaceholder"/>
+<input class="rounded-lg border-outline-variant focus:border-primary focus:ring-primary bg-background" id="telefono" name="telefono" placeholder="Tu teléfono" required="" type="tel" inputmode="tel" pattern="[\d\s\+\-\(\)]{6,}" title="Teléfono: dígitos, espacios, +, - o paréntesis (mínimo 6 caracteres)" data-i18n-placeholder="booking.phonePlaceholder"/>
 <p class="text-sm text-on-surface-variant" data-i18n="booking.phoneHelp">Lo usaremos solo para confirmar o ajustar la cita.</p>
 </div>
 <div class="md:col-span-2 flex flex-col gap-3 rounded-xl border border-outline-variant bg-background p-4">

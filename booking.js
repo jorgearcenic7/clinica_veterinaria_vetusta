@@ -12,6 +12,9 @@ const bookingState = {
   selectedSlot: null,
 };
 
+// Incrementar antes de cada carga para cancelar reintentos de cargas anteriores.
+let _availabilityLoadToken = 0;
+
 const bookingForm = document.querySelector("[data-booking-form]");
 const calendarTitle = document.querySelector("[data-calendar-title]");
 const calendarWeekdays = document.querySelector("[data-calendar-weekdays]");
@@ -41,6 +44,10 @@ function initBookingCalendar() {
   serviceSelect?.addEventListener("change", handleServiceChange);
   confirmationContainer?.addEventListener("click", handleConfirmationAction);
   document.addEventListener("vetusta:languagechange", renderBookingTexts);
+  // Refresca disponibilidad cada 60s. Para sustituirlo por Supabase Realtime
+  // se necesita habilitar Realtime en el dashboard de Supabase y ejecutar:
+  // ALTER PUBLICATION supabase_realtime ADD TABLE reservations;
+  // Ambos cambios son externos al repositorio, por eso se mantiene el intervalo.
   window.setInterval(refreshCurrentSlotAvailability, 60 * 1000);
   updateEmailField();
   loadAvailability();
@@ -59,30 +66,52 @@ function currentLocale() {
 }
 
 async function loadAvailability() {
+  const token = ++_availabilityLoadToken;
   setLoadingStatus(translate("booking.loading"));
   const monthKey = toMonthKey(bookingState.visibleMonth);
 
-  try {
-    const response = await fetch(`/api/availability?month=${monthKey}`);
+  // Hasta 3 reintentos con backoff: inmediato → 1s → 2s → 4s.
+  const retryDelays = [0, 1000, 2000, 4000];
+  let lastError;
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.detail || errorData.error || `Error ${response.status}`);
+  for (const delay of retryDelays) {
+    if (token !== _availabilityLoadToken) return;
+
+    if (delay > 0) {
+      await new Promise((resolve) => setTimeout(resolve, delay));
+      if (token !== _availabilityLoadToken) return;
     }
 
-    bookingState.availability = await response.json();
-  } catch (error) {
-    console.error("Availability load error:", error);
-    setStatus(`${translate("booking.loadError")} ${error.message}`);
-    return;
+    try {
+      const response = await fetch(`/api/availability?month=${monthKey}`);
+
+      if (token !== _availabilityLoadToken) return;
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.detail || errorData.error || `Error ${response.status}`);
+      }
+
+      bookingState.availability = await response.json();
+
+      if (token !== _availabilityLoadToken) return;
+
+      bookingState.selectedDay = null;
+      bookingState.selectedSlot = null;
+      hiddenDateInput.value = "";
+      renderCalendar();
+      renderSlots();
+      setStatus("");
+      return;
+    } catch (error) {
+      lastError = error;
+      console.error("Availability load error:", error);
+    }
   }
 
-  bookingState.selectedDay = null;
-  bookingState.selectedSlot = null;
-  hiddenDateInput.value = "";
-  renderCalendar();
-  renderSlots();
-  setStatus("");
+  if (token === _availabilityLoadToken) {
+    setStatus(`${translate("booking.loadError")} ${lastError.message}`);
+  }
 }
 
 function renderCalendar() {
@@ -337,6 +366,18 @@ async function submitBooking(event) {
   }
 
   const formData = new FormData(bookingForm);
+
+  const phoneDigits = (formData.get("telefono") || "").replace(/\D/g, "");
+  if (phoneDigits.length < 6) {
+    const phoneEl = bookingForm.querySelector("#telefono");
+    if (phoneEl) {
+      phoneEl.setCustomValidity("Indica un teléfono con al menos 6 dígitos.");
+      phoneEl.reportValidity();
+      phoneEl.setCustomValidity("");
+    }
+    return;
+  }
+
   const payload = {
     nombre: formData.get("nombre"),
     telefono: formData.get("telefono"),

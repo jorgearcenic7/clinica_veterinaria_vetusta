@@ -54,9 +54,20 @@ describe("normalizeReservation — campos obligatorios y formato", () => {
     expect(error.statusCode).toBe(400);
   });
 
-  it("acepta teléfono con exactamente 6 caracteres", () => {
+  it("acepta teléfono con exactamente 6 dígitos", () => {
     const result = normalizeReservation({ ...validBody(), telefono: "123456" });
     expect(result.telefono).toBe("123456");
+  });
+
+  it("acepta teléfono con formato español con espacios", () => {
+    const result = normalizeReservation({ ...validBody(), telefono: "985 20 65 58" });
+    expect(result.telefono).toBe("985 20 65 58");
+  });
+
+  it("lanza error 400 si el teléfono solo tiene letras aunque sea largo", () => {
+    const error = throwError({ ...validBody(), telefono: "aaaaaaaaa" });
+    expect(error).not.toBeNull();
+    expect(error.statusCode).toBe(400);
   });
 
   it("lanza error 400 si el servicio no está en la lista permitida", () => {
