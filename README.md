@@ -238,7 +238,7 @@ El horario implementado es:
 - Cirugia: 60 minutos.
 - Zona horaria operativa: `Europe/Madrid`.
 
-El sistema bloquea dias pasados, horas pasadas del dia actual, huecos ocupados y solapamientos. La validacion se realiza tanto en frontend como en backend.
+El sistema bloquea dias pasados, horas pasadas del dia actual, huecos ocupados y solapamientos. La validacion se realiza tanto en frontend como en backend. El frontend utiliza la zona horaria `Europe/Madrid` para el bloqueo de horas pasadas, consistente con el servidor. El backend valida ademas que el telefono tenga al menos 6 caracteres.
 
 ## Rutas
 
@@ -314,6 +314,7 @@ public/
 
 tests/
   availability.test.js          Tests unitarios de logica de disponibilidad (Vitest)
+  reservations.test.js          Tests unitarios de validacion de reservas y comportamiento de email (Vitest)
 
 code.html                       Pagina publica principal
 booking.js                      Calendario y formulario de reservas (frontend)

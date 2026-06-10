@@ -349,29 +349,35 @@ async function submitBooking(event) {
   };
 
   setLoadingStatus(translate("booking.saving"));
-  const response = await fetch("/api/reservations", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
 
-  if (response.status === 409) {
-    setStatus(translate("booking.slotTaken"));
+  try {
+    const response = await fetch("/api/reservations", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (response.status === 409) {
+      setStatus(translate("booking.slotTaken"));
+      await loadAvailability();
+      return;
+    }
+
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      setStatus(data.error || translate("booking.saveError"));
+      return;
+    }
+
+    const data = await response.json();
+    showBookingConfirmation(data.reservation, data.email);
+    bookingForm.reset();
+    updateEmailField();
     await loadAvailability();
-    return;
+  } catch (error) {
+    console.error("Reservation submit error:", error);
+    setStatus(translate("booking.saveError"));
   }
-
-  if (!response.ok) {
-    const data = await response.json().catch(() => ({}));
-    setStatus(data.error || translate("booking.saveError"));
-    return;
-  }
-
-  const data = await response.json();
-  showBookingConfirmation(data.reservation, data.email);
-  bookingForm.reset();
-  updateEmailField();
-  await loadAvailability();
 }
 
 function updateEmailField() {
@@ -515,11 +521,21 @@ function isPastSlot(slot) {
     return false;
   }
 
-  return slot.datetime <= toLocalDateTimeKey(new Date());
+  return slot.datetime <= toMadridDateTimeKey(new Date());
 }
 
-function toLocalDateTimeKey(date) {
-  return `${toDateKey(date)}T${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+function toMadridDateTimeKey(date) {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/Madrid",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(date);
+  const v = Object.fromEntries(parts.map((p) => [p.type, p.value]));
+  return `${v.year}-${v.month}-${v.day}T${v.hour}:${v.minute}`;
 }
 
 function capitalize(text) {
