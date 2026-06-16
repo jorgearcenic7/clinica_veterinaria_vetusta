@@ -563,16 +563,6 @@
             border-radius: 18px;
         }
 
-        .pricing-card .pricing-faq summary {
-            font-size: clamp(0.95rem, 0.55vw + 0.78rem, 1.05rem) !important;
-            line-height: 1.15 !important;
-            font-weight: 600;
-        }
-
-        .pricing-card .pricing-faq {
-            padding: 0.75rem 0.9rem;
-        }
-
         .pricing-check {
             background: #c1ecd4;
             color: #012d1d;
@@ -594,14 +584,6 @@
             background: rgba(255, 255, 255, 0.82);
             border: 1px solid rgba(27, 67, 50, 0.12);
             box-shadow: 0 16px 38px rgba(27, 67, 50, 0.08);
-        }
-
-        .pricing-faq summary::-webkit-details-marker {
-            display: none;
-        }
-
-        .pricing-faq details[open] summary {
-            color: #012d1d;
         }
 
         .floating-whatsapp {
@@ -786,7 +768,7 @@
 
         .benefit-tile h4,
         .pricing-card h4,
-        details:not(.pricing-faq) summary,
+        details summary,
         [data-selected-date-title],
         [data-calendar-title],
         #contacto h4 {
@@ -1372,9 +1354,6 @@ function buildPricingCard(item, mode = "pack") {
   article.className = `pricing-card ${mode === "service" ? "pricing-service-card" : ""} ${item.featured ? "featured" : ""} flex h-full flex-col overflow-hidden rounded-3xl`;
   const dataI18n = (key) => item.key ? ` data-i18n="${item.key}.${key}"` : "";
   const imageLoading = mode === "pack" ? "eager" : "lazy";
-  const imageBadge = mode === "pack"
-    ? `<span class="absolute left-4 top-4 rounded-full bg-white/90 px-4 py-2 font-label-caps text-xs text-primary shadow"${dataI18n("badge")}>${item.badge}</span>`
-    : "";
   const benefits = item.benefits.map((benefit, index) => `
     <li class="flex items-start gap-2">
       <span class="pricing-check mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs">✓</span>
@@ -1384,7 +1363,6 @@ function buildPricingCard(item, mode = "pack") {
   article.innerHTML = `
     <div class="relative">
       <img class="pricing-image w-full" alt="${item.imageAlt || item.title}" loading="${imageLoading}" decoding="async" src="${item.image}">
-      ${imageBadge}
     </div>
     <div class="flex flex-1 flex-col gap-3 p-5">
       <div>
@@ -1397,15 +1375,8 @@ function buildPricingCard(item, mode = "pack") {
         </div>
       </div>
       <ul class="grid gap-1.5 text-sm leading-snug text-on-surface-variant">${benefits}</ul>
-      <div class="mt-auto grid gap-2">
-        <a class="rounded-lg bg-primary px-6 py-3 text-center font-label-caps text-label-caps text-white transition-transform hover:scale-[1.02]" href="#reserva" data-i18n="pricing.bookNow">Reservar ahora</a>
-        <details class="pricing-faq rounded-lg bg-surface-container-low">
-          <summary class="flex cursor-pointer items-center justify-between gap-3 font-label-caps text-sm text-primary">
-            <span data-i18n="pricing.includesTitle">Ver qué incluye</span>
-            <span class="material-symbols-outlined text-[20px]">expand_more</span>
-          </summary>
-          <p class="mt-2 text-sm leading-snug text-on-surface-variant" data-i18n="pricing.includesText">Incluye los puntos indicados y puede ajustarse tras la valoración veterinaria.</p>
-        </details>
+      <div class="mt-auto">
+        <a class="rounded-lg bg-primary px-6 py-3 text-center font-label-caps text-label-caps text-white transition-transform hover:scale-[1.02] block" href="#reserva" data-i18n="pricing.bookNow">Reservar ahora</a>
       </div>
     </div>
   `;
@@ -1832,8 +1803,8 @@ Sábados: 11:00–13:30</p>
 <a class="text-emerald-100/70 hover:text-white transition-colors font-['Plus_Jakarta_Sans'] text-xs leading-relaxed" href="/aviso-legal.html" data-i18n="footer.legal">Aviso Legal</a>
 <a class="text-emerald-100/70 hover:text-white transition-colors font-['Plus_Jakarta_Sans'] text-xs leading-relaxed" href="/privacidad.html" data-i18n="footer.privacy">Privacidad</a>
 <a class="text-emerald-100/70 hover:text-white transition-colors font-['Plus_Jakarta_Sans'] text-xs leading-relaxed" href="/cookies.html" data-i18n="footer.cookies">Cookies</a>
-<button class="text-emerald-100/70 hover:text-white transition-colors font-['Plus_Jakarta_Sans'] text-xs leading-relaxed" type="button" data-cookie-manage>Gestionar cookies</button>
-<a class="text-emerald-100/70 hover:text-white transition-colors font-['Plus_Jakarta_Sans'] text-xs leading-relaxed" href="/sitemap.html">Sitemap</a>
+<button class="text-emerald-100/70 hover:text-white transition-colors font-['Plus_Jakarta_Sans'] text-xs leading-relaxed" type="button" data-cookie-manage data-i18n="footer.manageCookies">Gestionar cookies</button>
+<a class="text-emerald-100/70 hover:text-white transition-colors font-['Plus_Jakarta_Sans'] text-xs leading-relaxed" href="/sitemap.html" data-i18n="footer.sitemap">Sitemap</a>
 </nav>
 </div>
 </footer>
@@ -2079,7 +2050,7 @@ if (currentYearElement) {
 
 // ── FAQ smooth accordion ───────────────────────────────────────
 (function () {
-  document.querySelectorAll('details:not(.pricing-faq)').forEach(function (details) {
+  document.querySelectorAll('details').forEach(function (details) {
     var summary = details.querySelector('summary');
     var body = summary ? summary.nextElementSibling : null;
     if (!summary || !body) return;

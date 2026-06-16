@@ -399,3 +399,4 @@ Todos los derechos reservados. Este proyecto y su codigo fuente han sido desarro
 - Optimizar Core Web Vitals con estrategia avanzada de imagenes, fuentes, carga diferida y reduccion de scripts externos.
 - Incorporar despliegues por entorno, revision de logs centralizada y alertas de errores.
 - Explorar integracion con CRM o herramientas de email marketing para comunicaciones segmentadas.
+- Mostrar reseñas de Google en tiempo real via Google Places API (Place Details). Para una sola ubicacion el coste es $0 (free tier de 10.000 peticiones/mes). Solo requiere registrar tarjeta en Google Cloud. Conviene cachear la respuesta cada pocas horas para no consumir peticiones en cada visita.

@@ -486,71 +486,79 @@
         </span>
         <span>Clínica Veterinaria Vetusta</span>
       </a>
-      <a class="back-link" href="/">Volver a la web</a>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <a class="back-link" href="/" data-i18n="auth.backLink">Volver a la web</a>
+        <select id="language-select" aria-label="Idioma" style="border:1px solid rgba(0,61,43,0.22);border-radius:999px;background:rgba(255,255,255,0.76);color:var(--primary);font-weight:700;padding:11px 14px;font-size:14px;cursor:pointer;">
+          <option value="es">ES</option>
+          <option value="en">EN</option>
+          <option value="fr">FR</option>
+          <option value="pt">PT</option>
+        </select>
+      </div>
     </div>
   </header>
 
   <main class="auth-shell">
     <section class="auth-card" aria-labelledby="auth-title">
-      <h1 class="page-title" id="auth-title">Área privada</h1>
-      <p class="lead">Accede para consultar tus mascotas, historial veterinario y próximas citas.</p>
+      <h1 class="page-title" id="auth-title" data-i18n="auth.title">Área privada</h1>
+      <p class="lead" data-i18n="auth.lead">Accede para consultar tus mascotas, historial veterinario y próximas citas.</p>
 
       <div class="tabs" role="tablist" aria-label="Acceso">
-        <button class="tab-button" type="button" data-tab="login" aria-selected="true">Inicia sesión</button>
-        <button class="tab-button" type="button" data-tab="register" aria-selected="false">Regístrate</button>
-        <button class="tab-button" type="button" data-tab="reset" aria-selected="false">Recuperar contraseña</button>
+        <button class="tab-button" type="button" data-tab="login" aria-selected="true" data-i18n="auth.tab.login">Inicia sesión</button>
+        <button class="tab-button" type="button" data-tab="register" aria-selected="false" data-i18n="auth.tab.register">Regístrate</button>
+        <button class="tab-button" type="button" data-tab="reset" aria-selected="false" data-i18n="auth.tab.reset">Recuperar contraseña</button>
       </div>
 
       <form class="stack" data-auth-panel="login" data-login-form>
         <div class="field-grid">
-          <label for="login-email">Email
+          <label for="login-email"><span data-i18n="auth.field.email">Email</span>
             <input id="login-email" name="email" type="email" autocomplete="email" required>
           </label>
-          <label for="login-password">Contraseña
+          <label for="login-password"><span data-i18n="auth.field.password">Contraseña</span>
             <input id="login-password" name="password" type="password" autocomplete="current-password" required>
           </label>
         </div>
-        <button class="primary-button" type="submit">Iniciar sesión</button>
+        <button class="primary-button" type="submit" data-i18n="auth.login.submit">Iniciar sesión</button>
       </form>
 
       <form class="stack hidden" data-auth-panel="register" data-register-form>
         <div class="field-grid two">
-          <label for="register-name">Nombre completo
+          <label for="register-name"><span data-i18n="auth.register.name">Nombre completo</span>
             <input id="register-name" name="full_name" autocomplete="name" required>
           </label>
-          <label for="register-phone">Teléfono
+          <label for="register-phone"><span data-i18n="auth.register.phone">Teléfono</span>
             <input id="register-phone" name="phone" autocomplete="tel">
           </label>
-          <label for="register-email">Email
+          <label for="register-email"><span data-i18n="auth.field.email">Email</span>
             <input id="register-email" name="email" type="email" autocomplete="email" required>
           </label>
-          <label for="register-password">Contraseña
+          <label for="register-password"><span data-i18n="auth.field.password">Contraseña</span>
             <input id="register-password" name="password" type="password" autocomplete="new-password" minlength="12" required>
           </label>
-          <label for="register-password-confirm">Repetir contraseña
+          <label for="register-password-confirm"><span data-i18n="auth.register.passwordConfirm">Repetir contraseña</span>
             <input id="register-password-confirm" name="password_confirm" type="password" autocomplete="new-password" minlength="12" required>
           </label>
         </div>
-        <button class="primary-button" type="submit">Crear cuenta</button>
+        <button class="primary-button" type="submit" data-i18n="auth.register.submit">Crear cuenta</button>
       </form>
 
       <form class="stack hidden" data-auth-panel="reset" data-reset-form>
-        <label for="reset-email">Email
+        <label for="reset-email"><span data-i18n="auth.field.email">Email</span>
           <input id="reset-email" name="email" type="email" autocomplete="email" required>
         </label>
-        <button class="primary-button" type="submit">Enviar enlace</button>
+        <button class="primary-button" type="submit" data-i18n="auth.reset.submit">Enviar enlace</button>
       </form>
 
       <form class="stack hidden" data-update-password-form>
-        <h2 class="section-title">Nueva contraseña</h2>
-        <label for="new-password">Contraseña nueva
+        <h2 class="section-title" data-i18n="auth.updatePassword.title">Nueva contraseña</h2>
+        <label for="new-password"><span data-i18n="auth.updatePassword.password">Contraseña nueva</span>
           <input id="new-password" name="password" type="password" autocomplete="new-password" minlength="12" required>
         </label>
-        <button class="primary-button" type="submit">Guardar contraseña</button>
+        <button class="primary-button" type="submit" data-i18n="auth.updatePassword.submit">Guardar contraseña</button>
       </form>
 
       <p class="status" data-auth-status aria-live="polite"></p>
-      <p class="legal-note">
+      <p class="legal-note" data-i18n-html="auth.legal">
         Al continuar, aceptas los
         <a href="/terminos-legales">Términos legales</a>,
         las <a href="/condiciones-uso">Condiciones de uso</a>
@@ -559,7 +567,7 @@
     </section>
 
     <aside class="info-card" aria-label="Información del área privada">
-      <span class="visual-badge">Portal seguro para clientes</span>
+      <span class="visual-badge" data-i18n="auth.badge">Portal seguro para clientes</span>
       <span class="paw-detail" aria-hidden="true">
         <svg viewBox="0 0 24 24">
           <path d="M11.25 16.25c-2.2 0-4.25 1.35-4.25 3.05 0 1.2.95 2.05 2.2 2.05.95 0 1.55-.45 2.8-.45s1.85.45 2.8.45c1.25 0 2.2-.85 2.2-2.05 0-1.7-2.05-3.05-4.25-3.05h-1.5Z"/>
@@ -571,8 +579,8 @@
       </span>
 
       <div class="info-content">
-        <h2>Todo el cuidado de tu mascota, en un solo lugar</h2>
-        <p>Desde esta área privada podrás gestionar la información veterinaria de tus mascotas de forma sencilla, segura y rápida.</p>
+        <h2 data-i18n="auth.info.title">Todo el cuidado de tu mascota, en un solo lugar</h2>
+        <p data-i18n="auth.info.desc">Desde esta área privada podrás gestionar la información veterinaria de tus mascotas de forma sencilla, segura y rápida.</p>
 
         <div class="benefits" aria-label="Beneficios del área privada">
           <div class="benefit">
@@ -585,7 +593,7 @@
                 <path d="M8 16h5"/>
               </svg>
             </span>
-            <span>Historial veterinario</span>
+            <span data-i18n="auth.benefit.history">Historial veterinario</span>
           </div>
           <div class="benefit">
             <span class="benefit-icon" aria-hidden="true">
@@ -598,7 +606,7 @@
                 <path d="M14 10 9 5"/>
               </svg>
             </span>
-            <span>Próximas vacunas</span>
+            <span data-i18n="auth.benefit.vaccines">Próximas vacunas</span>
           </div>
           <div class="benefit">
             <span class="benefit-icon" aria-hidden="true">
@@ -610,7 +618,7 @@
                 <path d="m9 15 2 2 4-5"/>
               </svg>
             </span>
-            <span>Tratamientos y citas</span>
+            <span data-i18n="auth.benefit.appointments">Tratamientos y citas</span>
           </div>
         </div>
       </div>
@@ -618,6 +626,7 @@
   </main>
 
   <script type="module" src="/auth.js"></script>
+  <script defer src="/i18n.js"></script>
   <script>
   (function () {
     var statusEl = document.querySelector('[data-auth-status]');
