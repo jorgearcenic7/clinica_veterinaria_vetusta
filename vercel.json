@@ -28,6 +28,7 @@
           "frontend/dashboard.js",
           "frontend/pet-detail.js",
           "frontend/admin.js",
+          "frontend/modules/**",
           "frontend/client-area.css",
           "frontend/google-logo.svg",
           "frontend/robots.txt",

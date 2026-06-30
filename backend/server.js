@@ -34,7 +34,7 @@ app.use((_request, response, next) => {
       // El proyecto usa varios bloques <script> inline en los HTML (pricing, nav, i18n init,
       // cookies consent, etc.) — 'unsafe-inline' es necesario para no romper la web.
       // GA4 se inyecta vía /analytics.js (self) y carga desde googletagmanager.
-      "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com",
+      "script-src 'self' 'unsafe-inline' https://esm.sh https://www.googletagmanager.com https://www.google-analytics.com",
       // Los HTML tienen bloques <style> internos: requiere 'unsafe-inline'.
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",

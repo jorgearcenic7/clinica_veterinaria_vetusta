@@ -6,6 +6,7 @@ export default {
   content: [
     "./frontend/*.html",
     "./frontend/*.js",
+    "./frontend/modules/**/*.js",
     "./backend/routes/**/*.js",
     "./backend/lib/**/*.js",
   ],
