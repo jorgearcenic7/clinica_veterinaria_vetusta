@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { normalizeReservation } from "../lib/reservations.js";
-import { sendReservationEmailIfRequested } from "../lib/resend.js";
+import { normalizeReservation } from "../backend/lib/reservations.js";
+import { sendReservationEmailIfRequested } from "../backend/lib/resend.js";
 
 // Lunes dentro de horario, en el futuro
 const FUTURE_DATETIME = "2027-01-04T11:00";

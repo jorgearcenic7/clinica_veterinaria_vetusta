@@ -7,7 +7,7 @@ import {
   reservationDurationMinutes,
   reservationOccupiesSlot,
   reservationOverlaps,
-} from "../lib/availability.js";
+} from "../backend/lib/availability.js";
 
 // 2025-03-03 es lunes, 2025-03-08 es sábado, 2025-03-09 es domingo.
 const LUNES = new Date(2025, 2, 3);
@@ -233,7 +233,7 @@ describe("buildMonthAvailability — estructura de respuesta", () => {
   });
 
   it("zona horaria Europe/Madrid: getMadridNowDateTimeKey devuelve formato correcto", async () => {
-    const { getMadridNowDateTimeKey } = await import("../lib/availability.js");
+    const { getMadridNowDateTimeKey } = await import("../backend/lib/availability.js");
     const key = getMadridNowDateTimeKey();
     expect(key).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/);
   });

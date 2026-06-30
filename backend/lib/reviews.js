@@ -5,7 +5,7 @@ import { cleanEnvValue } from "./utils.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const projectRoot = path.join(__dirname, "..");
+const projectRoot = path.join(__dirname, "../..");
 
 const cacheTtlSeconds = Number(
   process.env.REVIEWS_CACHE_TTL_SECONDS || 1800,

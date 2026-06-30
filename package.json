@@ -4,10 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "node --import ./load-env.js server.js",
-    "dev": "node --import ./load-env.js --watch server.js",
-    "build:css": "tailwindcss -i ./src/input.css -o ./public/tailwind.css --minify",
-    "build:css:watch": "tailwindcss -i ./src/input.css -o ./public/tailwind.css --watch",
+    "start": "node --import ./backend/load-env.js backend/server.js",
+    "dev": "node --import ./backend/load-env.js --watch backend/server.js",
+    "build:css": "tailwindcss -i ./frontend/src/input.css -o ./frontend/public/tailwind.css --minify",
+    "build:css:watch": "tailwindcss -i ./frontend/src/input.css -o ./frontend/public/tailwind.css --watch",
     "test": "vitest run",
     "test:watch": "vitest"
   },

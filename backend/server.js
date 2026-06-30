@@ -53,13 +53,13 @@ app.use((_request, response, next) => {
 });
 
 // Sirve public/tailwind.css con ruta absoluta para que Vercel lo encuentre siempre.
-app.use("/public", express.static(path.join(__dirname, "public"), {
+app.use("/public", express.static(path.join(__dirname, "../frontend/public"), {
   maxAge: "1d",
   immutable: true,
 }));
 
 app.use(
-  express.static(publicRoot, {
+  express.static(path.join(__dirname, "../frontend"), {
     dotfiles: "ignore",
     index: false,
     maxAge: "5m",

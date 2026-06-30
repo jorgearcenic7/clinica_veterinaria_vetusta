@@ -29,7 +29,7 @@ import {
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const projectRoot = path.join(__dirname, "..");
+const projectRoot = path.join(__dirname, "../..");
 const reservationsFilePath = process.env.VERCEL
   ? path.join(os.tmpdir(), "reservations.json")
   : path.join(projectRoot, "reservations.json");

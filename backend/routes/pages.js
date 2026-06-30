@@ -1,7 +1,11 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { Router } from "express";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const router = Router();
-const publicRoot = process.cwd();
+const frontendRoot = path.join(__dirname, "../../frontend");
 
 const privateRoutes = new Set([
   "/auth",
@@ -60,7 +64,7 @@ Object.entries(publicFiles).forEach(([route, filename]) => {
       response.set("Cache-Control", "no-store");
     }
 
-    response.sendFile(filename, { root: publicRoot }, (error) => {
+    response.sendFile(filename, { root: frontendRoot }, (error) => {
       if (error) {
         next(error);
       }
@@ -70,7 +74,7 @@ Object.entries(publicFiles).forEach(([route, filename]) => {
 
 router.get("/dashboard/pets/:id", (_request, response, next) => {
   response.set("Cache-Control", "no-store");
-  response.sendFile("pet-detail.html", { root: publicRoot }, (error) => {
+  response.sendFile("pet-detail.html", { root: frontendRoot }, (error) => {
     if (error) {
       next(error);
     }

@@ -4,10 +4,10 @@ import containerQueries from "@tailwindcss/container-queries";
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
-    "./*.html",
-    "./*.js",
-    "./routes/**/*.js",
-    "./lib/**/*.js",
+    "./frontend/*.html",
+    "./frontend/*.js",
+    "./backend/routes/**/*.js",
+    "./backend/lib/**/*.js",
   ],
   darkMode: "class",
   theme: {

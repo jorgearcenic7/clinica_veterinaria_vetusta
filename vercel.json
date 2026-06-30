@@ -3,41 +3,41 @@
   "buildCommand": "npm run build:css",
   "builds": [
     {
-      "src": "server.js",
+      "src": "backend/server.js",
       "use": "@vercel/node",
       "config": {
         "includeFiles": [
-          "code.html",
-          "aviso-legal.html",
-          "privacidad.html",
-          "cookies.html",
-          "sitemap.html",
-          "auth.html",
-          "dashboard.html",
-          "pet-detail.html",
-          "admin.html",
-          "terminos-legales.html",
-          "condiciones-uso.html",
-          "politica-privacidad.html",
-          "booking.js",
-          "reviews.js",
-          "image-sources.js",
-          "i18n.js",
-          "supabase-client.js",
-          "auth.js",
-          "dashboard.js",
-          "pet-detail.js",
-          "admin.js",
-          "client-area.css",
-          "google-logo.svg",
-          "robots.txt",
-          "sitemap.xml",
-          "favicon.svg",
+          "frontend/code.html",
+          "frontend/aviso-legal.html",
+          "frontend/privacidad.html",
+          "frontend/cookies.html",
+          "frontend/sitemap.html",
+          "frontend/auth.html",
+          "frontend/dashboard.html",
+          "frontend/pet-detail.html",
+          "frontend/admin.html",
+          "frontend/terminos-legales.html",
+          "frontend/condiciones-uso.html",
+          "frontend/politica-privacidad.html",
+          "frontend/booking.js",
+          "frontend/reviews.js",
+          "frontend/image-sources.js",
+          "frontend/i18n.js",
+          "frontend/supabase-client.js",
+          "frontend/auth.js",
+          "frontend/dashboard.js",
+          "frontend/pet-detail.js",
+          "frontend/admin.js",
+          "frontend/client-area.css",
+          "frontend/google-logo.svg",
+          "frontend/robots.txt",
+          "frontend/sitemap.xml",
+          "frontend/favicon.svg",
           "reviews.local.json",
-          "public/tailwind.css",
-          "lib/**",
-          "middleware/**",
-          "routes/**"
+          "frontend/public/tailwind.css",
+          "backend/lib/**",
+          "backend/middleware/**",
+          "backend/routes/**"
         ]
       }
     }
@@ -45,7 +45,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/server.js"
+      "dest": "/backend/server.js"
     }
   ]
 }
