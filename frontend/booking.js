@@ -83,7 +83,8 @@ async function loadAvailability() {
     }
 
     try {
-      const response = await fetch(`/api/availability?month=${monthKey}`);
+      const { fetchAvailability } = await import("/modules/shared/api.js");
+      const response = await fetchAvailability(monthKey);
 
       if (token !== _availabilityLoadToken) return;
 
@@ -392,11 +393,8 @@ async function submitBooking(event) {
   setLoadingStatus(translate("booking.saving"));
 
   try {
-    const response = await fetch("/api/reservations", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
+    const { createReservation } = await import("/modules/shared/api.js");
+    const response = await createReservation(payload);
 
     if (response.status === 409) {
       setStatus(translate("booking.slotTaken"));

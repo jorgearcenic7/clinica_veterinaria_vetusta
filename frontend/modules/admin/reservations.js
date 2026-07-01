@@ -1,6 +1,7 @@
 import { state, cb, statusEl, reservationsCalendarEl, reservationDetailEl, calendarRangeEl } from "./state.js";
 import { escapeHtml, formatReservationDateTime, formatReservationTitle, formatReservationService, formatReservationTimeRange, formatWeekRange, formatWeekday, statusClass, statusLabel, syncStatusMarkup, reservationDateKey, reservationStartMinutes, toDateKey, addDays } from "./utils.js";
 import { setStatus, friendlyError, formatDate } from "../../supabase-client.js";
+import { patchAdminReservationStatus } from "../shared/api.js";
 
 export function loadReservations() {
   const weekStart = toDateKey(state.visibleWeekStart);
@@ -123,14 +124,7 @@ export async function updateReservationStatus(id, status) {
       throw sessionError || new Error("Sesión no válida.");
     }
 
-    const response = await fetch(`/api/admin/reservations/${encodeURIComponent(id)}`, {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${sessionData.session.access_token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ status }),
-    });
+    const response = await patchAdminReservationStatus(id, status, sessionData.session.access_token);
 
     const data = await response.json().catch(() => ({}));
 

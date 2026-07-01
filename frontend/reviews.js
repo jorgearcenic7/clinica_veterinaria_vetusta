@@ -10,7 +10,8 @@ const googleLogoSrc = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
   const mapsLinkElement = document.querySelector("[data-google-maps-link]");
 
   try {
-    const response = await fetch("/api/google-reviews");
+    const { fetchGoogleReviews } = await import("/modules/shared/api.js");
+    const response = await fetchGoogleReviews();
 
     if (!response.ok) {
       throw new Error("Google reviews endpoint failed");

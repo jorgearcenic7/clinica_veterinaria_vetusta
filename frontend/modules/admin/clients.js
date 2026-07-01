@@ -1,6 +1,7 @@
 import { state, cb, statusEl, clientsListEl, clientDetailEl, petsListEl, recordsTableEl, documentsListEl, CLIENTS_LIMIT } from "./state.js";
 import { escapeHtml, emptyMessage } from "./utils.js";
 import { setStatus } from "../../supabase-client.js";
+import { fetchAdminClients } from "../shared/api.js";
 import { resetPetForm } from "./pets.js";
 import { resetRecordForm } from "./records.js";
 import { resetDocumentForm } from "./documents.js";
@@ -13,10 +14,7 @@ export async function loadClients(page = 1) {
     return;
   }
 
-  const response = await fetch(
-    `/api/admin/clients?page=${page}&limit=${CLIENTS_LIMIT}`,
-    { headers: { Authorization: `Bearer ${token}` } },
-  );
+  const response = await fetchAdminClients(page, CLIENTS_LIMIT, token);
   const result = await response.json();
 
   if (!response.ok) {

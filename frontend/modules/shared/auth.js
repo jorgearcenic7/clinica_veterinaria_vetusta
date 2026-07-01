@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { fetchSupabaseConfig } from "./api.js";
 
 let cachedClient = null;
 
@@ -7,7 +8,7 @@ export async function getSupabase() {
     return cachedClient;
   }
 
-  const response = await fetch("/api/supabase-config");
+  const response = await fetchSupabaseConfig();
   const config = await response.json().catch(() => ({}));
 
   if (!response.ok) {

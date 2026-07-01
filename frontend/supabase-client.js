@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { fetchSupabaseConfig } from "./modules/shared/api.js";
 
 let cachedClient = null;
 const maxImageUploadSize = 5 * 1024 * 1024;
@@ -11,7 +12,7 @@ export async function getSupabase() {
     return cachedClient;
   }
 
-  const response = await fetch("/api/supabase-config");
+  const response = await fetchSupabaseConfig();
   const config = await response.json().catch(() => ({}));
 
   if (!response.ok) {
