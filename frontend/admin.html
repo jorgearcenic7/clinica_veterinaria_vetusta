@@ -151,6 +151,17 @@
     </section>
   </main>
 
+  <div class="modal-overlay hidden" data-cancel-modal>
+    <div class="modal-box panel" role="alertdialog" aria-modal="true" aria-labelledby="cancel-modal-title" aria-describedby="cancel-modal-message">
+      <h2 class="section-title" id="cancel-modal-title">Cancelar reserva</h2>
+      <p id="cancel-modal-message">¿Seguro que quieres cancelar esta reserva? Esta acción cambiará el estado de la cita a cancelada.</p>
+      <div class="nav-actions">
+        <button class="secondary" type="button" data-cancel-modal-dismiss>No, mantener reserva</button>
+        <button class="danger" type="button" data-cancel-modal-confirm>Sí, cancelar reserva</button>
+      </div>
+    </div>
+  </div>
+
   <script type="module" src="/admin.js"></script>
 </body>
 </html>

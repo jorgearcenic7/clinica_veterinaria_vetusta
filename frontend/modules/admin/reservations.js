@@ -1,4 +1,4 @@
-import { state, cb, statusEl, reservationsCalendarEl, reservationDetailEl, calendarRangeEl } from "./state.js";
+import { state, cb, statusEl, reservationsCalendarEl, reservationDetailEl, calendarRangeEl, cancelModalEl, cancelModalDismissButton, cancelModalConfirmButton } from "./state.js";
 import { escapeHtml, formatReservationDateTime, formatReservationTitle, formatReservationService, formatReservationTimeRange, formatWeekRange, formatWeekday, statusClass, statusLabel, syncStatusMarkup, reservationDateKey, reservationStartMinutes, toDateKey, addDays } from "./utils.js";
 import { setStatus, friendlyError, formatDate } from "../../supabase-client.js";
 import { patchAdminReservationStatus } from "../shared/api.js";
@@ -111,9 +111,37 @@ export function renderReservationDetail() {
   `;
 
   reservationDetailEl.querySelectorAll("[data-cancel-reservation]").forEach((button) => {
-    button.addEventListener("click", () => updateReservationStatus(button.dataset.cancelReservation, "cancelled"));
+    button.addEventListener("click", () => openCancelModal(button.dataset.cancelReservation));
   });
 }
+
+let pendingCancelReservationId = null;
+
+function openCancelModal(reservationId) {
+  pendingCancelReservationId = reservationId;
+  cancelModalEl.classList.remove("hidden");
+}
+
+function closeCancelModal() {
+  pendingCancelReservationId = null;
+  cancelModalEl.classList.add("hidden");
+}
+
+cancelModalDismissButton.addEventListener("click", closeCancelModal);
+
+cancelModalEl.addEventListener("click", (event) => {
+  if (event.target === cancelModalEl) {
+    closeCancelModal();
+  }
+});
+
+cancelModalConfirmButton.addEventListener("click", () => {
+  const reservationId = pendingCancelReservationId;
+  closeCancelModal();
+  if (reservationId) {
+    updateReservationStatus(reservationId, "cancelled");
+  }
+});
 
 export async function updateReservationStatus(id, status) {
   try {

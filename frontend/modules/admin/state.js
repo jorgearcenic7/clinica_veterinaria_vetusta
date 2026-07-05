@@ -36,6 +36,9 @@ export const documentsListEl = document.querySelector("[data-documents-list]");
 export const clearPetButton = document.querySelector("[data-clear-pet]");
 export const clearRecordButton = document.querySelector("[data-clear-record]");
 export const logoutButton = document.querySelector("[data-logout]");
+export const cancelModalEl = document.querySelector("[data-cancel-modal]");
+export const cancelModalDismissButton = document.querySelector("[data-cancel-modal-dismiss]");
+export const cancelModalConfirmButton = document.querySelector("[data-cancel-modal-confirm]");
 
 export function getSelectedClient() {
   return state.clients.find(

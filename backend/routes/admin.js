@@ -25,6 +25,7 @@ router.patch("/reservations/:id", async (request, response) => {
       auth.supabase,
       reservationId,
       changes,
+      auth.user,
     );
     response.json({ ok: true, reservation: updatedReservation });
   } catch (error) {

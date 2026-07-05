@@ -10,6 +10,7 @@ import {
   reservationDurationMinutes,
   reservationOverlaps,
 } from "./availability.js";
+import { logAdminAction } from "./auditLog.js";
 import { syncNewConfirmedReservation, syncReservationCalendar } from "./googleCalendar.js";
 import {
   supabase,
@@ -379,6 +380,7 @@ export async function updateReservationFromAdmin(
   requestSupabase,
   reservationId,
   changes,
+  adminUser,
 ) {
   const { data: current, error: readError } = await requestSupabase
     .from("reservations")
@@ -446,6 +448,21 @@ export async function updateReservationFromAdmin(
       `Supabase no pudo actualizar la reserva: ${error.message}`,
     );
   }
+
+  const action = changes.status === "cancelled"
+    ? "cancel"
+    : Object.hasOwn(changes, "status")
+      ? "status_change"
+      : "update";
+
+  await logAdminAction(requestSupabase, {
+    adminUser,
+    action,
+    entityType: "reservation",
+    entityId: reservationId,
+    before: current,
+    after: data,
+  });
 
   return mapReservationRow(data);
 }

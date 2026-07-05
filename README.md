@@ -138,6 +138,11 @@ SENSITIVE_RATE_LIMIT=30
 AUTH_RATE_LIMIT=10
 ```
 
+`AUTH_RATE_LIMIT` recomendado:
+
+- **Produccion: `10`** (valor estricto; es tambien el fallback del codigo si la variable no esta definida).
+- **Desarrollo local: `100`** para no bloquearte al probar el panel admin repetidamente. `.env.example` ya trae `AUTH_RATE_LIMIT=100` con este proposito — si despliegas copiando ese archivo a un entorno de produccion, cambia este valor a `10` antes de subirlo.
+
 ### Supabase
 
 ```env
@@ -199,10 +204,11 @@ Si no se define ningun identificador, `/analytics.js` devuelve un script vacio.
 
 ## Base De Datos
 
-El repositorio incluye dos scripts SQL principales:
+El repositorio incluye tres scripts SQL principales:
 
 - `supabase-reservations.sql`: tabla de reservas, indices, estados, funciones de disponibilidad y vinculacion con perfiles.
-- `supabase-client-area.sql`: perfiles, mascotas, historiales, documentos, logs de subida, buckets privados y politicas RLS.
+- `supabase-client-area.sql`: perfiles, mascotas, historiales, documentos, logs de subida, buckets privados y politicas RLS. Define tambien `public.is_admin()`, reutilizada por el script de auditoria.
+- `supabase-audit-log.sql`: tabla `admin_audit_logs` para la auditoria de acciones administrativas sobre reservas. Requiere haber ejecutado antes `supabase-client-area.sql`.
 
 Pasos recomendados:
 
@@ -210,8 +216,19 @@ Pasos recomendados:
 2. Abrir SQL Editor.
 3. Ejecutar `supabase-reservations.sql`.
 4. Ejecutar `supabase-client-area.sql`.
-5. Revisar las politicas RLS y buckets `pet-images` y `pet-documents`.
-6. Configurar las URLs de autenticacion permitidas.
+5. Ejecutar `supabase-audit-log.sql`.
+6. Revisar las politicas RLS y buckets `pet-images` y `pet-documents`.
+7. Configurar las URLs de autenticacion permitidas.
+
+### Auditoria de acciones administrativas
+
+Cada `PATCH /api/admin/reservations/:id` registra una fila en `admin_audit_logs` con el admin que hizo el cambio (`admin_user_id`, `admin_email`), la accion (`update`, `status_change` o `cancel`), y el estado de la reserva antes y despues (`before_data`, `after_data`).
+
+El registro es best-effort: `backend/lib/auditLog.js` atrapa cualquier error de insercion y solo lo deja en el log del servidor, sin afectar a la actualizacion de la reserva. Si `supabase-audit-log.sql` no se ha ejecutado todavia, la reserva se actualiza igual y solo falta la auditoria hasta que se ejecute el script.
+
+Por ahora la auditoria cubre unicamente reservas (unica entidad con accion admin implementada). No incluye historiales clinicos, documentos ni reseñas.
+
+`supabase-audit-log.sql` incluye grants explicitos (`select, insert` a `authenticated`) ademas de las politicas RLS: este proyecto no usa los privilegios por defecto del esquema `public`, asi que sin ese grant el INSERT falla con "permission denied for table admin_audit_logs" aunque la tabla y las politicas existan.
 
 URLs habituales para desarrollo:
 
@@ -283,7 +300,7 @@ Los tres endpoints `/api/admin/*` de listado soportan paginacion server-side med
 
 Las rutas `/api`, `/auth`, `/area-privada`, `/api/reservations`, `/api/admin` y `/api/supabase-config` tienen limitacion de peticiones mediante `express-rate-limit`, en dos niveles:
 
-- `authLimiter` (mas estricto, `AUTH_RATE_LIMIT`, por defecto 10 peticiones/15 min): `/auth`, `/area-privada` y `/api/admin`, las rutas de acceso a login y de acciones administrativas autenticadas.
+- `authLimiter` (mas estricto, `AUTH_RATE_LIMIT`, por defecto 10 peticiones/15 min): `/auth`, `/area-privada` y `/api/admin`, las rutas de acceso a login y de acciones administrativas autenticadas. En desarrollo local se recomienda `AUTH_RATE_LIMIT=100` (ya incluido en `.env.example`) para no bloquearte al probar el panel admin; en produccion manten `10`.
 - `sensitiveLimiter` (`SENSITIVE_RATE_LIMIT`, por defecto 30 peticiones/15 min): `/api/reservations` y `/api/supabase-config`.
 
 El login, registro y recuperacion de contraseña se realizan directamente desde el navegador contra la API de Supabase Auth (no pasan por el backend), por lo que `authLimiter` protege el acceso a las paginas y a la API admin, pero no sustituye la limitacion propia de Supabase Auth sobre esas llamadas.
@@ -297,6 +314,7 @@ tsconfig.json                   Configuracion de TypeScript (noEmit, allowJs, st
 DESIGN.md                       Tokens de diseño: paleta de color, tipografia y escalas
 supabase-reservations.sql       Modelo SQL de reservas
 supabase-client-area.sql        Modelo SQL de clientes, mascotas y documentos
+supabase-audit-log.sql          Modelo SQL de auditoria de acciones administrativas (reservas)
 reviews.local.json              Reseñas locales de fallback
 
 types/
@@ -315,6 +333,7 @@ backend/
     resend.js                   Integracion con Resend para email de confirmacion
     reviews.js                  Google Places / reseñas locales con cache
     reservations.js             Acceso a datos y logica de negocio de reservas
+    auditLog.js                 Registro best-effort de auditoria en admin_audit_logs
 
   middleware/
     rateLimiter.js               apiLimiter y sensitiveLimiter (express-rate-limit)

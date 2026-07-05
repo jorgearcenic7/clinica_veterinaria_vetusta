@@ -889,6 +889,28 @@ textarea {
   display: none !important;
 }
 
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 50;
+}
+
+.modal-box {
+  width: 100%;
+  max-width: 420px;
+  display: grid;
+  gap: 16px;
+}
+
+.modal-box .nav-actions {
+  justify-content: flex-end;
+}
+
 .list {
   display: grid;
   gap: 12px;
