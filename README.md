@@ -135,6 +135,7 @@ PORT=3000
 CLINIC_PHONE="YOUR_PHONE"
 API_RATE_LIMIT=300
 SENSITIVE_RATE_LIMIT=30
+AUTH_RATE_LIMIT=10
 ```
 
 ### Supabase
@@ -280,7 +281,12 @@ GET   /api/admin/reservations?page=1&limit=20
 
 Los tres endpoints `/api/admin/*` de listado soportan paginacion server-side mediante `.range()` de Supabase. El limite maximo aceptado es 100 registros por pagina.
 
-Las rutas `/api`, `/auth`, `/area-privada`, `/api/reservations`, `/api/admin` y `/api/supabase-config` tienen limitacion de peticiones mediante `express-rate-limit`.
+Las rutas `/api`, `/auth`, `/area-privada`, `/api/reservations`, `/api/admin` y `/api/supabase-config` tienen limitacion de peticiones mediante `express-rate-limit`, en dos niveles:
+
+- `authLimiter` (mas estricto, `AUTH_RATE_LIMIT`, por defecto 10 peticiones/15 min): `/auth`, `/area-privada` y `/api/admin`, las rutas de acceso a login y de acciones administrativas autenticadas.
+- `sensitiveLimiter` (`SENSITIVE_RATE_LIMIT`, por defecto 30 peticiones/15 min): `/api/reservations` y `/api/supabase-config`.
+
+El login, registro y recuperacion de contraseña se realizan directamente desde el navegador contra la API de Supabase Auth (no pasan por el backend), por lo que `authLimiter` protege el acceso a las paginas y a la API admin, pero no sustituye la limitacion propia de Supabase Auth sobre esas llamadas.
 
 ## Estructura Del Proyecto
 

@@ -21,3 +21,15 @@ export const sensitiveLimiter = rateLimit({
     error: "Demasiados intentos. Espera unos minutos antes de volver a intentarlo.",
   },
 });
+
+// Límite más agresivo para login/registro y para el acceso admin autenticado,
+// que son los objetivos habituales de fuerza bruta o abuso de credenciales.
+export const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: Number(process.env.AUTH_RATE_LIMIT || 10),
+  standardHeaders: "draft-7",
+  legacyHeaders: false,
+  message: {
+    error: "Demasiados intentos de acceso. Espera unos minutos antes de volver a intentarlo.",
+  },
+});

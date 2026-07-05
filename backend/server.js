@@ -1,7 +1,7 @@
 import express from "express";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { apiLimiter, sensitiveLimiter } from "./middleware/rateLimiter.js";
+import { apiLimiter, authLimiter, sensitiveLimiter } from "./middleware/rateLimiter.js";
 import adminRouter from "./routes/admin.js";
 import configRouter from "./routes/config.js";
 import pagesRouter from "./routes/pages.js";
@@ -67,16 +67,8 @@ app.use(
 );
 
 app.use("/api", apiLimiter);
-app.use(
-  [
-    "/auth",
-    "/area-privada",
-    "/api/reservations",
-    "/api/admin",
-    "/api/supabase-config",
-  ],
-  sensitiveLimiter,
-);
+app.use(["/auth", "/area-privada", "/api/admin"], authLimiter);
+app.use(["/api/reservations", "/api/supabase-config"], sensitiveLimiter);
 
 app.use("/", pagesRouter);
 app.use("/", configRouter);
