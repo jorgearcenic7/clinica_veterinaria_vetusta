@@ -436,18 +436,72 @@ Copyright (c) 2025 Clinica Veterinaria Vetusta.
 
 Todos los derechos reservados. Este proyecto y su codigo fuente han sido desarrollados para Clinica Veterinaria Vetusta. Queda prohibida la reproduccion, distribucion, modificacion o reutilizacion total o parcial del codigo, diseño, textos, imagenes o cualquier otro recurso del proyecto sin autorizacion previa por escrito.
 
-## Posibles Mejoras Futuras
+## Puntos Pendientes / Mejoras Recomendadas
 
-- Completar la instrumentacion de GA4 con eventos de reservas, llamadas, formularios, login y descargas de documentos.
-- Añadir seguimiento con Google Search Console y revision periodica de rendimiento SEO local.
-- Ampliar la gestion de citas con reprogramacion, cancelaciones iniciadas por cliente, profesionales asignados y reglas de disponibilidad por servicio.
-- Crear un panel editorial para modificar textos, servicios, equipo, imagenes y preguntas frecuentes sin tocar codigo.
-- Añadir paginas individuales para servicios clave como vacunacion, cirugia, urgencias, medicina preventiva o peluqueria.
-- Implementar recordatorios automaticos de vacunas, revisiones y tratamientos preventivos mediante email o WhatsApp Business.
-- Integrar una pasarela de pagos o deposito para determinados tipos de reserva.
-- Añadir busqueda y filtros avanzados en el panel de administracion.
-- Añadir auditoria de acciones administrativas sobre historiales, documentos y cambios de reserva.
-- Optimizar Core Web Vitals con estrategia avanzada de imagenes, fuentes, carga diferida y reduccion de scripts externos.
-- Incorporar despliegues por entorno, revision de logs centralizada y alertas de errores.
-- Explorar integracion con CRM o herramientas de email marketing para comunicaciones segmentadas.
-- Mostrar reseñas de Google en tiempo real via Google Places API (Place Details). Para una sola ubicacion el coste es $0 (free tier de 10.000 peticiones/mes). Solo requiere registrar tarjeta en Google Cloud. Conviene cachear la respuesta cada pocas horas para no consumir peticiones en cada visita.
+### Prioridad alta
+
+- **Configurar Google Calendar real de la clinica**
+  - Definir `GOOGLE_CALENDAR_ID`, `GOOGLE_CLIENT_EMAIL` y `GOOGLE_PRIVATE_KEY`.
+  - Compartir el calendario de la clinica con la cuenta de servicio de Google.
+  - Las reservas funcionan aunque Calendar no este configurado, pero apareceran como no sincronizadas o con error de sincronizacion.
+
+- **Mejorar el estado de sincronizacion con Google Calendar**
+  - Diferenciar entre "Google Calendar no configurado" y un error real de sincronizacion.
+  - Evitar mensajes confusos en desarrollo/local.
+
+- **Añadir edicion completa de reservas desde el panel admin**
+  - Permitir cambiar fecha/hora, notas, estado y profesional asignado si aplica.
+  - Actualmente el panel permite cancelar reservas, pero no una edicion visual completa.
+
+- **Añadir tests de integracion para rutas criticas**
+  - Cubrir rutas de admin/reservas, auditoria, Resend y Google Calendar.
+  - Usar mocks para no llamar a servicios externos reales.
+
+### Prioridad media
+
+- **Completar instrumentacion GA4 de eventos importantes**
+  - Reserva creada.
+  - Clic en telefono.
+  - Envio de formulario.
+  - Login admin.
+  - Descarga de documentos, si aplica.
+
+- **Añadir seguimiento con Google Search Console**
+  - Revisar rendimiento SEO local.
+  - Detectar busquedas, paginas con impresiones y posibles problemas de indexacion.
+
+- **Ampliar gestion de citas**
+  - Reprogramacion por parte del cliente mediante enlace seguro.
+  - Cancelacion por parte del cliente mediante enlace seguro.
+  - Reglas de disponibilidad por servicio.
+  - Profesionales asignados.
+
+- **Añadir busqueda y filtros en el panel admin**
+  - Buscar por cliente, telefono, mascota, fecha o estado.
+  - Util cuando haya muchas reservas/clientes.
+
+- **Ampliar auditoria administrativa**
+  - La auditoria de cambios de reserva ya existe.
+  - Pendiente ampliarla a historiales clinicos, documentos y otros cambios sensibles.
+
+### Prioridad baja / futuro
+
+- **Añadir paginas individuales para servicios clave**
+  - Vacunacion, cirugia, urgencias, medicina preventiva o peluqueria.
+  - Util para SEO local si se van a trabajar contenidos especificos.
+
+- **Implementar recordatorios automaticos**
+  - Vacunas, revisiones y tratamientos preventivos.
+  - Preferiblemente mediante email o WhatsApp Business.
+
+- **Mostrar reseñas de Google en tiempo real**
+  - Usar Google Places API (Place Details) con cache para no consultar en cada visita.
+  - Para una sola ubicacion el coste es $0 (free tier de 10.000 peticiones/mes).
+  - Requiere configurar Google Cloud y registrar tarjeta.
+
+- **Incorporar despliegues por entorno, logs centralizados y alertas**
+  - Separar desarrollo/staging/produccion.
+  - Revisar errores de produccion de forma mas comoda.
+
+- **Explorar pagos o depositos online**
+  - Solo si la clinica quiere cobrar reservas, señales o servicios concretos.
