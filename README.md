@@ -69,6 +69,7 @@ Esta desarrollado con HTML, CSS, JavaScript vanilla y un backend Express en Node
 - HTML, CSS y JavaScript vanilla
 - Tailwind CSS 3 (build compilado, no CDN)
 - Vitest para tests unitarios
+- TypeScript (solo `tsc --noEmit` sobre `.d.ts` y el cliente API compartido, sin build)
 - Vercel como despliegue recomendado
 
 ## Instalacion Local
@@ -118,9 +119,10 @@ npm run build:css      Compila Tailwind a public/tailwind.css (necesario antes d
 npm run build:css:watch  Compila Tailwind en modo observador (para desarrollo)
 npm test               Ejecuta la suite de tests unitarios con Vitest
 npm run test:watch     Ejecuta tests en modo observador
+npm run type-check     Verifica tipos con tsc (noEmit, sobre types/ y el cliente API compartido)
 ```
 
-El servidor arranca con `node --import ./load-env.js` para garantizar que dotenv carga las variables de entorno antes de que cualquier modulo de la aplicacion se inicialice.
+El servidor arranca con `node --import ./backend/load-env.js` para garantizar que dotenv carga las variables de entorno antes de que cualquier modulo de la aplicacion se inicialice.
 
 ## Variables De Entorno
 
@@ -283,54 +285,78 @@ Las rutas `/api`, `/auth`, `/area-privada`, `/api/reservations`, `/api/admin` y 
 ## Estructura Del Proyecto
 
 ```text
-server.js                       Punto de entrada: imports, middlewares globales y montaje de routers
-load-env.js                     Precarga dotenv antes de cualquier import (usado con --import)
 vercel.json                     Configuracion de despliegue en Vercel
+tailwind.config.js              Configuracion de Tailwind: tema, colores, fuentes y plugins
+tsconfig.json                   Configuracion de TypeScript (noEmit, allowJs, strict)
+DESIGN.md                       Tokens de diseño: paleta de color, tipografia y escalas
+supabase-reservations.sql       Modelo SQL de reservas
+supabase-client-area.sql        Modelo SQL de clientes, mascotas y documentos
+reviews.local.json              Reseñas locales de fallback
 
-lib/
-  utils.js                      Utilidades puras: validacion, escape, helpers de cadena
-  supabase.js                   Clientes Supabase: supabase (anon) y supabaseAdmin (service role)
-  availability.js               Logica pura de slots y disponibilidad (testeable sin efectos secundarios)
-  googleCalendar.js             Integracion con Google Calendar (cuenta de servicio)
-  resend.js                     Integracion con Resend para email de confirmacion
-  reviews.js                    Google Places / reseñas locales con cache
-  reservations.js               Acceso a datos y logica de negocio de reservas
+types/
+  api.d.ts                      Contratos de tipos de las respuestas de la API
+  models.d.ts                   Tipos de los modelos de dominio (reserva, cliente, mascota...)
 
-middleware/
-  rateLimiter.js                apiLimiter y sensitiveLimiter (express-rate-limit)
+backend/
+  server.js                     Punto de entrada: imports, middlewares globales y montaje de routers
+  load-env.js                   Precarga dotenv antes de cualquier import (usado con --import)
 
-routes/
-  pages.js                      Rutas HTML publicas y privadas
-  config.js                     /api/supabase-config y /analytics.js
-  reviews.js                    /api/google-reviews
-  reservations.js               /api/availability y /api/reservations
-  admin.js                      /api/admin/* (PATCH, GET paginados)
+  lib/
+    utils.js                    Utilidades puras: validacion, escape, helpers de cadena
+    supabase.js                 Clientes Supabase: supabase (anon) y supabaseAdmin (service role)
+    availability.js             Logica pura de slots y disponibilidad (testeable sin efectos secundarios)
+    googleCalendar.js           Integracion con Google Calendar (cuenta de servicio)
+    resend.js                   Integracion con Resend para email de confirmacion
+    reviews.js                  Google Places / reseñas locales con cache
+    reservations.js             Acceso a datos y logica de negocio de reservas
 
-src/
-  input.css                     Directivas de Tailwind (@tailwind base/components/utilities)
+  middleware/
+    rateLimiter.js               apiLimiter y sensitiveLimiter (express-rate-limit)
 
-public/
-  tailwind.css                  CSS compilado por Tailwind (generado con npm run build:css)
+  routes/
+    pages.js                    Rutas HTML publicas y privadas
+    config.js                   /api/supabase-config y /analytics.js
+    reviews.js                  /api/google-reviews
+    reservations.js             /api/availability y /api/reservations
+    admin.js                    /api/admin/* (PATCH, GET paginados)
+
+frontend/
+  code.html                     Pagina publica principal
+  booking.js                    Calendario y formulario de reservas (frontend)
+  reviews.js                    Carga y renderizado de reseñas (frontend)
+  image-sources.js              Fuentes y recursos visuales de la web
+  i18n.js                       Textos y traducciones de interfaz
+  auth.html / auth.js           Registro, login y recuperacion de contraseña
+  dashboard.html / dashboard.js Area privada del cliente
+  pet-detail.html / pet-detail.js Ficha privada de mascota
+  admin.html / admin.js         Panel de administracion (orquesta los modulos de modules/admin)
+  client-area.css               Estilos del area privada y administracion
+  supabase-client.js             Cliente publico de Supabase (frontend)
+
+  modules/
+    admin/
+      state.js                  Estado compartido y referencias al DOM del panel admin
+      utils.js                  Helpers de fecha/semana para el calendario admin
+      clients.js                 Carga y render paginado de clientes
+      pets.js                    Formulario y render de mascotas
+      records.js                 Formulario y render de historiales clinicos
+      documents.js                Subida y render de documentos privados
+      reservations.js             Calendario semanal y render de reservas
+    shared/
+      api.js                     Cliente centralizado de llamadas a la API (fetch)
+      auth.js                    Helpers de sesion/roles con Supabase Auth
+      storage.js                 Helpers de subida a Supabase Storage
+      utils.js                   Utilidades compartidas de frontend
+
+  src/
+    input.css                    Directivas de Tailwind (@tailwind base/components/utilities)
+
+  public/
+    tailwind.css                 CSS compilado por Tailwind (generado con npm run build:css)
 
 tests/
   availability.test.js          Tests unitarios de logica de disponibilidad (Vitest)
   reservations.test.js          Tests unitarios de validacion de reservas y comportamiento de email (Vitest)
-
-code.html                       Pagina publica principal
-booking.js                      Calendario y formulario de reservas (frontend)
-reviews.js                      Carga y renderizado de reseñas (frontend)
-image-sources.js                Fuentes y recursos visuales de la web
-i18n.js                         Textos y traducciones de interfaz
-auth.html / auth.js             Registro, login y recuperacion de contraseña
-dashboard.html / dashboard.js   Area privada del cliente
-pet-detail.html / pet-detail.js Ficha privada de mascota
-admin.html / admin.js           Panel de administracion (con paginacion de clientes)
-client-area.css                 Estilos del area privada y administracion
-supabase-client.js              Cliente publico de Supabase (frontend)
-supabase-reservations.sql       Modelo SQL de reservas
-supabase-client-area.sql        Modelo SQL de clientes, mascotas y documentos
-reviews.local.json              Reseñas locales de fallback
-tailwind.config.js              Configuracion de Tailwind: tema, colores, fuentes y plugins
 ```
 
 ## Despliegue En Vercel
