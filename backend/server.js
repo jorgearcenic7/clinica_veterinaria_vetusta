@@ -76,6 +76,22 @@ app.use("/api", reviewsRouter);
 app.use("/api", reservationsRouter);
 app.use("/api/admin", adminRouter);
 
+// Rutas inexistentes: Express serviría por defecto un "Cannot GET /..." sin
+// estilo. /api/* sigue devolviendo JSON (los clientes de la API esperan
+// eso); el resto recibe la 404 con la identidad visual de la web.
+app.use((request, response) => {
+  if (request.path.startsWith("/api/")) {
+    response.status(404).json({ error: "Recurso no encontrado." });
+    return;
+  }
+
+  response.status(404).sendFile("404.html", { root: path.join(__dirname, "../frontend") }, (error) => {
+    if (error) {
+      response.status(404).type("text/plain").send("404 - Pagina no encontrada.");
+    }
+  });
+});
+
 if (!process.env.VERCEL) {
   app.listen(port, () => {
     console.log(`Vetusta web running at http://127.0.0.1:${port}`);

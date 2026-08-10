@@ -96,6 +96,38 @@ create unique index if not exists reservations_active_datetime_unique_idx
   on public.reservations (datetime)
   where status <> 'cancelled';
 
+-- Bloqueo atomico de solapamientos por rango de tiempo (cubre servicios de
+-- distinta duracion, p. ej. una cirugia de 10:30-11:30 frente a una consulta
+-- de 11:00-11:30, que el indice unico de arriba no detecta porque su
+-- "datetime" de inicio es distinto). Requiere start_at/end_at rellenos: el
+-- backfill de mas arriba ya los completa para las filas existentes.
+alter table public.reservations
+  alter column start_at set not null,
+  alter column end_at set not null;
+
+do $$
+begin
+  if exists (
+    select 1
+    from pg_constraint
+    where conname = 'reservations_no_overlap'
+      and conrelid = 'public.reservations'::regclass
+  ) then
+    alter table public.reservations
+      drop constraint reservations_no_overlap;
+  end if;
+end;
+$$;
+
+-- Rango semiabierto '[)': dos citas consecutivas (10:00-10:30 y 10:30-11:00)
+-- no se consideran solapadas. Solo aplica a reservas activas: las canceladas
+-- (status = 'cancelled') no bloquean el horario. La comprobacion la hace
+-- Postgres de forma atomica en el INSERT/UPDATE, sin ventana de carrera.
+alter table public.reservations
+  add constraint reservations_no_overlap
+  exclude using gist (tstzrange(start_at, end_at, '[)') with &&)
+  where (status <> 'cancelled');
+
 create index if not exists reservations_start_at_idx
   on public.reservations (start_at);
 

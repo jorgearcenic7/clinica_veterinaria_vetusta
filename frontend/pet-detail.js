@@ -154,7 +154,6 @@ async function changeImage(event) {
       throw error;
     }
 
-    console.log("saved image_url", imagePath);
     await loadPetData();
     setStatus(statusEl, "Imagen actualizada.");
   } catch (error) {

@@ -35,6 +35,25 @@ const reservationsFilePath = process.env.VERCEL
   ? path.join(os.tmpdir(), "reservations.json")
   : path.join(projectRoot, "reservations.json");
 
+// 23505 = unique_violation (mismo datetime exacto).
+// 23P01 = exclusion_violation (reservations_no_overlap: rangos que se solapan
+// aunque el datetime de inicio sea distinto, p. ej. cirugia 10:30-11:30 vs
+// consulta 11:00-11:30). Ambos representan el mismo caso de negocio: el
+// hueco ya no esta libre.
+const RESERVATION_CONFLICT_ERROR_CODES = new Set(["23505", "23P01"]);
+
+function reservationConflictError(error) {
+  if (!RESERVATION_CONFLICT_ERROR_CODES.has(error.code)) {
+    return null;
+  }
+
+  const conflictError = new Error(
+    "Ese horario ya está reservado. Elige otro hueco.",
+  );
+  conflictError.statusCode = 409;
+  return conflictError;
+}
+
 export function reservationSelectFields() {
   return [
     "id",
@@ -241,11 +260,8 @@ async function saveSupabaseReservation(reservation) {
     .insert(databaseReservation);
 
   if (error) {
-    if (error.code === "23505") {
-      const conflictError = new Error(
-        "Ese horario ya está reservado. Elige otro hueco.",
-      );
-      conflictError.statusCode = 409;
+    const conflictError = reservationConflictError(error);
+    if (conflictError) {
       throw conflictError;
     }
     throw new Error(
@@ -444,6 +460,10 @@ export async function updateReservationFromAdmin(
     .single();
 
   if (error) {
+    const conflictError = reservationConflictError(error);
+    if (conflictError) {
+      throw conflictError;
+    }
     throw new Error(
       `Supabase no pudo actualizar la reserva: ${error.message}`,
     );

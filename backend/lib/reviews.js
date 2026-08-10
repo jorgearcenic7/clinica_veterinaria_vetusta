@@ -1,4 +1,5 @@
 import fs from "node:fs/promises";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { cleanEnvValue } from "./utils.js";
@@ -17,7 +18,11 @@ const liveReviewsEnabled =
   process.env.GOOGLE_ENABLE_LIVE_REVIEWS !== "false";
 const defaultLatitude = 43.36443719850797;
 const defaultLongitude = -5.833903884657452;
-const usageFilePath = path.join(projectRoot, ".google-usage.json");
+// En Vercel el filesystem del despliegue es de solo lectura salvo /tmp;
+// mismo patrón que reservationsFilePath en reservations.js.
+const usageFilePath = process.env.VERCEL
+  ? path.join(os.tmpdir(), ".google-usage.json")
+  : path.join(projectRoot, ".google-usage.json");
 const localReviewsFilePath = path.join(projectRoot, "reviews.local.json");
 
 let reviewsCache = null;

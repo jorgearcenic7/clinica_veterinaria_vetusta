@@ -117,17 +117,14 @@ export function calculateAge(birthDate) {
 }
 
 export async function uploadPetImage(supabase, ownerId, petId, file) {
-  console.log("selected file", file);
   validateUploadFile(file, "image");
   const safeName = safeFileName(file.name);
   const filePath = `${ownerId}/${petId}/${Date.now()}-${safeName}`;
-  console.log("upload path", filePath);
   const { data, error } = await supabase.storage.from("pet-images").upload(filePath, file, {
     cacheControl: "3600",
     contentType: file.type,
     upsert: false,
   });
-  console.log("upload result", data, error);
 
   if (error) {
     console.error("upload image error", error);
