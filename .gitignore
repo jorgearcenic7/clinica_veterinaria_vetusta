@@ -10,3 +10,5 @@ reviews.local.json
 *.pem
 *.key
 *.p12
+
+dist/

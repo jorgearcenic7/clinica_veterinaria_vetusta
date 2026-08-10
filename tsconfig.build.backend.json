@@ -1,0 +1,24 @@
+// Config de EMISIÓN del backend (contraste con tsconfig.backend.json, que es
+// solo comprobación con noEmit:true y no cambia en esta fase).
+// rootDir:"backend" + outDir:"dist/backend" reproduce backend/lib, /routes y
+// /middleware con la misma estructura relativa dentro de dist/backend.
+// allowJs:true hace que tsc emita los .js actuales (sin migrar) por el mismo
+// pipeline que los futuros .ts — no hay copia aparte ni transformación real,
+// porque el código ya es sintaxis ES2020 válida.
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "lib": ["ES2020"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "types": ["node"],
+    "rootDir": "backend",
+    "outDir": "dist/backend",
+    "noEmit": false,
+    "sourceMap": true,
+    "declaration": false,
+    "strict": true
+  },
+  "include": ["backend/**/*.ts", "backend/**/*.js"],
+  "exclude": ["node_modules", "dist", "tests"]
+}

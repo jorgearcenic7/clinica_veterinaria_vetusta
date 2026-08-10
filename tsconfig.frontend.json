@@ -1,0 +1,21 @@
+// Frontend vanilla servido tal cual al navegador (sin bundler).
+// "types": [] a propósito: evita que los globals de @types/node se cuelen en código de navegador.
+// El import remoto https://esm.sh/... (usado hoy en supabase-client.js y modules/shared/auth.js)
+// no se resuelve todavía vía TypeScript; se abordará al migrar esos archivos en la Fase 5.
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "lib": ["ES2020", "DOM"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "types": []
+  },
+  "include": [
+    "types/**/*.d.ts",
+    "frontend/modules/shared/api.js"
+  ],
+  "exclude": [
+    "node_modules",
+    "frontend/public"
+  ]
+}

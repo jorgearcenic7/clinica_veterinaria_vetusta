@@ -1,0 +1,19 @@
+// Backend Node.js (ESM real, ejecutado directamente por node/tsx, sin bundler).
+// Amplía tsconfig.json y sustituye las opciones que dependen de DOM/navegador por las de Node.
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "lib": ["ES2020"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "types": ["node"]
+  },
+  "include": [
+    "types/**/*.d.ts",
+    "backend/**/*.ts",
+    "backend/**/*.js"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
