@@ -25,6 +25,7 @@ Esta desarrollado con HTML, CSS, JavaScript vanilla y un backend Express en Node
 - Sincronizacion opcional de reservas confirmadas con Google Calendar mediante cuenta de servicio.
 - Script dinamico de GA4 servido desde backend cuando existe un identificador configurado.
 - Paginas legales incluidas: aviso legal, privacidad, politica de privacidad, cookies, terminos y condiciones de uso.
+- Pagina 404 personalizada con la identidad visual de la web para cualquier ruta inexistente (las rutas `/api/*` inexistentes devuelven JSON en vez de HTML).
 
 ## Mejoras De UI/UX
 
@@ -174,6 +175,8 @@ GOOGLE_LANGUAGE_CODE=es
 
 Con `GOOGLE_ENABLE_LIVE_REVIEWS=false`, el backend usa `reviews.local.json` y evita llamadas reales a Google Places.
 
+El contador de peticiones diarias a Google (`GOOGLE_DAILY_REQUEST_LIMIT`) se persiste en un archivo (`.google-usage.json`). En local se guarda en la raiz del proyecto; en Vercel (`process.env.VERCEL`) se guarda en `os.tmpdir()`, porque el filesystem del despliegue es de solo lectura salvo `/tmp` — mismo patron que usa `reservations.json` en `backend/lib/reservations.js` para el fallback sin Supabase.
+
 ### Email De Reservas
 
 ```env
@@ -206,7 +209,7 @@ Si no se define ningun identificador, `/analytics.js` devuelve un script vacio.
 
 El repositorio incluye tres scripts SQL principales:
 
-- `supabase-reservations.sql`: tabla de reservas, indices, estados, funciones de disponibilidad y vinculacion con perfiles.
+- `supabase-reservations.sql`: tabla de reservas, indices, estados, funciones de disponibilidad, vinculacion con perfiles y constraint de exclusion `reservations_no_overlap` que impide de forma atomica cualquier solapamiento entre reservas activas (ver seccion "Reservas").
 - `supabase-client-area.sql`: perfiles, mascotas, historiales, documentos, logs de subida, buckets privados y politicas RLS. Define tambien `public.is_admin()`, reutilizada por el script de auditoria.
 - `supabase-audit-log.sql`: tabla `admin_audit_logs` para la auditoria de acciones administrativas sobre reservas. Requiere haber ejecutado antes `supabase-client-area.sql`.
 
@@ -219,6 +222,8 @@ Pasos recomendados:
 5. Ejecutar `supabase-audit-log.sql`.
 6. Revisar las politicas RLS y buckets `pet-images` y `pet-documents`.
 7. Configurar las URLs de autenticacion permitidas.
+
+Los tres scripts son idempotentes (usan `if not exists`, `drop policy if exists`, `create or replace`, etc.), por lo que se pueden volver a ejecutar sobre una base de datos ya existente para aplicar cambios posteriores — por ejemplo, si un proyecto ya desplegado necesita incorporar el constraint `reservations_no_overlap` añadido a `supabase-reservations.sql`.
 
 ### Auditoria de acciones administrativas
 
@@ -258,7 +263,9 @@ El horario implementado es:
 - Cirugia: 60 minutos.
 - Zona horaria operativa: `Europe/Madrid`.
 
-El sistema bloquea dias pasados, horas pasadas del dia actual, huecos ocupados y solapamientos. La validacion se realiza tanto en frontend como en backend. El frontend utiliza la zona horaria `Europe/Madrid` para el bloqueo de horas pasadas, consistente con el servidor. El backend valida ademas que el telefono tenga al menos 6 caracteres.
+El sistema bloquea dias pasados, horas pasadas del dia actual, huecos ocupados y solapamientos. La validacion se realiza en frontend, en backend y, de forma atomica, en la propia base de datos. El frontend utiliza la zona horaria `Europe/Madrid` para el bloqueo de horas pasadas, consistente con el servidor. El backend valida ademas que el telefono tenga al menos 6 caracteres.
+
+**Prevencion de solapamientos.** La comprobacion en JavaScript (`reservationOverlaps`) evita en la mayoria de los casos que se muestre o se intente reservar un hueco ocupado, pero por si sola no es suficiente frente a dos peticiones concurrentes, ni cubre el caso de dos servicios de distinta duracion que se solapan sin compartir la misma hora de inicio (por ejemplo, una cirugia de 10:30-11:30 frente a una consulta de 11:00-11:30). Por eso la garantia real es un constraint de exclusion en Postgres (`reservations_no_overlap` en `supabase-reservations.sql`) sobre el rango `tstzrange(start_at, end_at, '[)')` de las reservas activas (`status <> 'cancelled'`): Postgres rechaza el `INSERT`/`UPDATE` de cualquier reserva cuyo rango se solape con otra ya existente, sin ventana de carrera. El rango es semiabierto, asi que dos citas consecutivas (10:00-10:30 y 10:30-11:00) no se consideran solapadas. Cuando la base de datos rechaza una reserva por este motivo (codigo `23P01`) o por coincidencia exacta de horario (codigo `23505`), el backend lo traduce a un `409` con el mensaje "Ese horario ya esta reservado. Elige otro hueco.", y el frontend lo muestra como aviso normal invitando a elegir otro hueco.
 
 ## Rutas
 
@@ -347,6 +354,7 @@ backend/
 
 frontend/
   code.html                     Pagina publica principal
+  404.html                      Pagina 404 personalizada (rutas HTML inexistentes)
   booking.js                    Calendario y formulario de reservas (frontend)
   reviews.js                    Carga y renderizado de reseñas (frontend)
   image-sources.js              Fuentes y recursos visuales de la web
@@ -382,6 +390,7 @@ frontend/
 tests/
   availability.test.js          Tests unitarios de logica de disponibilidad (Vitest)
   reservations.test.js          Tests unitarios de validacion de reservas y comportamiento de email (Vitest)
+  reservations-overlap.test.js  Tests del mapeo de errores 23505/23P01 de Postgres a 409 (creacion y update admin)
 ```
 
 ## Despliegue En Vercel
@@ -454,8 +463,9 @@ Todos los derechos reservados. Este proyecto y su codigo fuente han sido desarro
   - Actualmente el panel permite cancelar reservas, pero no una edicion visual completa.
 
 - **Añadir tests de integracion para rutas criticas**
-  - Cubrir rutas de admin/reservas, auditoria, Resend y Google Calendar.
+  - Cubrir rutas de admin/reservas, auditoria, Resend y Google Calendar de extremo a extremo (peticion HTTP real contra el router, no solo las funciones de `lib/`).
   - Usar mocks para no llamar a servicios externos reales.
+  - Ya existen tests unitarios con mocks para el mapeo de errores de conflicto de reserva (`tests/reservations-overlap.test.js`), pero falta cobertura de integracion del resto de rutas.
 
 ### Prioridad media
 
