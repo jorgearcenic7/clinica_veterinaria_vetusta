@@ -111,8 +111,28 @@ async function fetchGoogleReviews() {
   };
 }
 
+// reviews.local.json es opcional y no se versiona: solo debe contener reseñas
+// reales copiadas de Google. Sin él, la web muestra solo el enlace a Google.
 async function fetchLocalReviews() {
-  const raw = await fs.readFile(localReviewsFilePath, "utf8");
+  let raw;
+
+  try {
+    raw = await fs.readFile(localReviewsFilePath, "utf8");
+  } catch (error) {
+    if (error.code !== "ENOENT") {
+      throw error;
+    }
+
+    return {
+      source: "none",
+      rating: null,
+      reviewCount: 0,
+      googleMapsUri: null,
+      reviews: [],
+      updatedAt: new Date().toISOString(),
+    };
+  }
+
   const data = JSON.parse(raw);
   return {
     source: "local",

@@ -17,13 +17,11 @@
       "hero.lineTwo": "merece",
       "hero.lineThreePrefix": "lo",
       "hero.lineThreeAccent": "mejor.",
-      "hero.reviewCount": "· +560 reseñas en Google",
+      "hero.reviewCount": "· {count} reseñas en Google",
       "hero.prefix": "Clínica veterinaria en Oviedo con",
-      "hero.reviewCopy": "más de 560 opiniones de 5 estrellas",
       "hero.suffix": "Trato humano, honesto y a precios justos.",
       "hero.call": "Llámanos ahora",
       "hero.services": "Ver servicios",
-      "trust.reviews": "Más de 560 reseñas 5 estrellas",
       "trust.care": "Trato cercano y sin rodeos",
       "trust.prices": "Precios transparentes",
       "trust.location": "En Oviedo desde hace años",
@@ -147,12 +145,10 @@
       "team.patricia.text": "Con más de 15 años de experiencia, Patricia lidera el equipo con una filosofía basada en la honestidad y el trato humano. Su pasión es el bienestar integral de cada paciente.",
       "team.victor.role": "Auxiliar Veterinario",
       "team.victor.text": "Especialista en cuidados preventivos y manejo amable. Víctor se asegura de que cada mascota se sienta tranquila y segura durante su visita a la clínica.",
-      "reviews.googleVerified": "4,9/5 en Google · datos recopilados en la última actualización",
+      "reviews.googleVerified": "Opiniones de clientes en Google",
+      "reviews.summary": "{rating}/5 en Google · {count} reseñas",
       "reviews.googleReview": "Reseña de Google",
       "reviews.title": "Opiniones",
-      "reviews.one": "\"Víctor es un veterinario de verdad, se nota la vocación y el cariño que le pone. Llevamos a nuestro perro desde cachorro y siempre ha sido un acierto.\"",
-      "reviews.two": "\"Trato inigualable. Tuvimos una urgencia un sábado y nos atendieron con muchísima empatía y profesionalidad. Salvaron a nuestra gata.\"",
-      "reviews.three": "\"La mejor clínica de Oviedo. Precios muy razonables y no te intentan vender cosas que no necesitas. Transparencia total.\"",
       "reviews.all": "Ver todas las opiniones en Google",
       "cta.title": "¿Tu mascota necesita atención? Pide cita hoy",
       "cta.subtitle": "Reserva cita con un veterinario en Oviedo para consulta veterinaria, vacunas, revisiones, urgencias dentro del horario o peluqueria canina y felina.",
@@ -203,7 +199,7 @@
       "booking.reserved": "reservado",
       "booking.unavailable": "no disponible",
       "booking.loading": "Cargando disponibilidad...",
-      "booking.loadError": "No se pudo cargar la disponibilidad:",
+      "booking.loadError": "No hemos podido cargar los horarios disponibles. Llámanos al 985 20 65 58 y te buscamos hueco.",
       "booking.selectSlot": "Elige un día y una hora disponibles.",
       "booking.saving": "Guardando reserva...",
       "booking.slotTaken": "Ese hueco acaba de reservarse. Elige otro.",
@@ -350,13 +346,11 @@
       "hero.lineTwo": "deserves",
       "hero.lineThreePrefix": "the",
       "hero.lineThreeAccent": "best.",
-      "hero.reviewCount": "· +560 reviews on Google",
+      "hero.reviewCount": "· {count} reviews on Google",
       "hero.prefix": "Veterinary clinic in Oviedo with",
-      "hero.reviewCopy": "more than 560 five-star reviews",
       "hero.suffix": "Kind, honest care at fair prices.",
       "hero.call": "Call us now",
       "hero.services": "View services",
-      "trust.reviews": "More than 560 five-star reviews",
       "trust.care": "Warm, straightforward care",
       "trust.prices": "Transparent prices",
       "trust.location": "In Oviedo for years",
@@ -480,12 +474,10 @@
       "team.patricia.text": "With more than 15 years of experience, Patricia leads the team with a philosophy based on honesty and human care. Her passion is every patient's overall wellbeing.",
       "team.victor.role": "Veterinary Assistant",
       "team.victor.text": "A specialist in preventive care and gentle handling, Víctor makes sure every pet feels calm and safe during their visit.",
-      "reviews.googleVerified": "4.9/5 on Google · data collected in the latest website update",
+      "reviews.googleVerified": "Customer reviews on Google",
+      "reviews.summary": "{rating}/5 on Google · {count} reviews",
       "reviews.googleReview": "Google review",
       "reviews.title": "Reviews",
-      "reviews.one": "\"Víctor is a real veterinarian; you can feel the vocation and care he puts into his work. We have brought our dog since he was a puppy and it has always been the right choice.\"",
-      "reviews.two": "\"Unbeatable care. We had an emergency on a Saturday and they helped us with so much empathy and professionalism. They saved our cat.\"",
-      "reviews.three": "\"The best clinic in Oviedo. Very reasonable prices and they don't try to sell you things you don't need. Total transparency.\"",
       "reviews.all": "See all reviews on Google",
       "cta.title": "Does your pet need care? Book today",
       "cta.subtitle": "Book an appointment with a veterinarian in Oviedo for consultation, vaccines, check-ups, emergencies during opening hours or dog and cat grooming.",
@@ -536,7 +528,7 @@
       "booking.reserved": "reserved",
       "booking.unavailable": "unavailable",
       "booking.loading": "Loading availability...",
-      "booking.loadError": "Availability could not be loaded:",
+      "booking.loadError": "We couldn't load the available times. Call us on +34 985 20 65 58 and we'll find you a slot.",
       "booking.selectSlot": "Choose an available day and time.",
       "booking.saving": "Saving booking...",
       "booking.slotTaken": "That slot has just been booked. Choose another one.",
@@ -683,13 +675,11 @@
       "hero.lineTwo": "mérite",
       "hero.lineThreePrefix": "le",
       "hero.lineThreeAccent": "meilleur.",
-      "hero.reviewCount": "· +560 avis sur Google",
+      "hero.reviewCount": "· {count} avis sur Google",
       "hero.prefix": "Clinique vétérinaire à Oviedo avec",
-      "hero.reviewCopy": "plus de 560 avis cinq étoiles",
       "hero.suffix": "Un accompagnement humain, honnête et à prix justes.",
       "hero.call": "Appelez-nous",
       "hero.services": "Voir les services",
-      "trust.reviews": "Plus de 560 avis cinq étoiles",
       "trust.care": "Un accueil proche et direct",
       "trust.prices": "Prix transparents",
       "trust.location": "À Oviedo depuis des années",
@@ -813,12 +803,10 @@
       "team.patricia.text": "Avec plus de 15 ans d'expérience, Patricia dirige l'équipe avec une philosophie fondée sur l'honnêteté et l'approche humaine. Sa passion est le bien-être global de chaque patient.",
       "team.victor.role": "Auxiliaire vétérinaire",
       "team.victor.text": "Spécialiste des soins préventifs et de la manipulation douce, Víctor veille à ce que chaque animal se sente calme et en sécurité pendant sa visite.",
-      "reviews.googleVerified": "4,9/5 sur Google · données recueillies lors de la dernière mise à jour du site",
+      "reviews.googleVerified": "Avis clients sur Google",
+      "reviews.summary": "{rating}/5 sur Google · {count} avis",
       "reviews.googleReview": "Avis Google",
       "reviews.title": "Avis",
-      "reviews.one": "\"Víctor est un vrai vétérinaire ; on sent sa vocation et l'attention qu'il met dans son travail. Nous amenons notre chien depuis qu'il est chiot et cela a toujours été un bon choix.\"",
-      "reviews.two": "\"Un accueil incomparable. Nous avons eu une urgence un samedi et ils nous ont aidés avec beaucoup d'empathie et de professionnalisme. Ils ont sauvé notre chatte.\"",
-      "reviews.three": "\"La meilleure clinique d'Oviedo. Des prix très raisonnables et aucune vente forcée. Transparence totale.\"",
       "reviews.all": "Voir tous les avis sur Google",
       "cta.title": "Votre animal a besoin de soins ? Prenez rendez-vous aujourd'hui",
       "cta.subtitle": "Prenez rendez-vous avec un vétérinaire à Oviedo pour une consultation, des vaccins, des bilans, les urgences pendant les horaires ou le toilettage chien et chat.",
@@ -869,7 +857,7 @@
       "booking.reserved": "réservé",
       "booking.unavailable": "indisponible",
       "booking.loading": "Chargement des disponibilités...",
-      "booking.loadError": "Impossible de charger les disponibilités :",
+      "booking.loadError": "Impossible de charger les horaires disponibles. Appelez-nous au +34 985 20 65 58 et nous vous trouverons un créneau.",
       "booking.selectSlot": "Choisissez un jour et une heure disponibles.",
       "booking.saving": "Enregistrement de la réservation...",
       "booking.slotTaken": "Ce créneau vient d'être réservé. Choisissez-en un autre.",
@@ -1016,13 +1004,11 @@
       "hero.lineTwo": "merece",
       "hero.lineThreePrefix": "o",
       "hero.lineThreeAccent": "melhor.",
-      "hero.reviewCount": "· +560 avaliações no Google",
+      "hero.reviewCount": "· {count} avaliações no Google",
       "hero.prefix": "Clínica veterinária em Oviedo com",
-      "hero.reviewCopy": "mais de 560 avaliações de cinco estrelas",
       "hero.suffix": "Atendimento humano, honesto e a preços justos.",
       "hero.call": "Ligue agora",
       "hero.services": "Ver serviços",
-      "trust.reviews": "Mais de 560 avaliações cinco estrelas",
       "trust.care": "Atendimento próximo e direto",
       "trust.prices": "Preços transparentes",
       "trust.location": "Em Oviedo há anos",
@@ -1146,12 +1132,10 @@
       "team.patricia.text": "Com mais de 15 anos de experiência, Patricia lidera a equipa com uma filosofia baseada na honestidade e no atendimento humano. A sua paixão é o bem-estar integral de cada paciente.",
       "team.victor.role": "Auxiliar Veterinário",
       "team.victor.text": "Especialista em cuidados preventivos e manuseamento gentil, Víctor garante que cada animal se sinta tranquilo e seguro durante a visita.",
-      "reviews.googleVerified": "4,9/5 no Google · dados recolhidos na última atualização do site",
+      "reviews.googleVerified": "Opiniões de clientes no Google",
+      "reviews.summary": "{rating}/5 no Google · {count} avaliações",
       "reviews.googleReview": "Opinião do Google",
       "reviews.title": "Opiniões",
-      "reviews.one": "\"Víctor é um veterinário de verdade; nota-se a vocação e o carinho que coloca no trabalho. Trazemos o nosso cão desde cachorro e sempre foi uma boa escolha.\"",
-      "reviews.two": "\"Atendimento imbatível. Tivemos uma urgência num sábado e ajudaram-nos com muita empatia e profissionalismo. Salvaram a nossa gata.\"",
-      "reviews.three": "\"A melhor clínica de Oviedo. Preços muito razoáveis e não tentam vender coisas de que não precisa. Transparência total.\"",
       "reviews.all": "Ver todas as opiniões no Google",
       "cta.title": "O seu animal precisa de cuidados? Marque hoje",
       "cta.subtitle": "Reserve consulta com um veterinário em Oviedo para consulta, vacinas, revisões, urgências dentro do horário ou grooming canino e felino.",
@@ -1202,7 +1186,7 @@
       "booking.reserved": "reservado",
       "booking.unavailable": "indisponível",
       "booking.loading": "A carregar disponibilidade...",
-      "booking.loadError": "Não foi possível carregar a disponibilidade:",
+      "booking.loadError": "Não foi possível carregar os horários disponíveis. Ligue-nos para o +34 985 20 65 58 e encontramos uma vaga.",
       "booking.selectSlot": "Escolha um dia e uma hora disponíveis.",
       "booking.saving": "A guardar reserva...",
       "booking.slotTaken": "Esse horário acabou de ser reservado. Escolha outro.",
@@ -1383,24 +1367,6 @@
       }
     });
 
-    const reviewCopy = document.querySelector("[data-google-hero-copy]");
-    if (reviewCopy) {
-      reviewCopy.dataset.i18n = "hero.reviewCopy";
-      reviewCopy.textContent = dictionary["hero.reviewCopy"];
-    }
-
-    const reviewCount = document.querySelector("[data-google-review-count]");
-    if (reviewCount) {
-      reviewCount.dataset.i18n = "hero.reviewCount";
-      reviewCount.textContent = dictionary["hero.reviewCount"];
-    }
-
-    const trustCopy = document.querySelector("[data-google-trust-copy]");
-    if (trustCopy) {
-      trustCopy.dataset.i18n = "trust.reviews";
-      trustCopy.textContent = dictionary["trust.reviews"];
-    }
-
     document.dispatchEvent(new CustomEvent("vetusta:languagechange", {
       detail: { language },
     }));
@@ -1423,34 +1389,6 @@
     }
 
     applyLanguage(initialLanguage);
-
-    const dynamicGoogleCopies = [
-      ["[data-google-hero-copy]", "hero.reviewCopy"],
-      ["[data-google-review-count]", "hero.reviewCount"],
-      ["[data-google-trust-copy]", "trust.reviews"],
-      ["[data-google-section-summary]", "reviews.googleVerified"],
-    ];
-
-    dynamicGoogleCopies.forEach(([selector, key]) => {
-      const element = document.querySelector(selector);
-      if (!element) {
-        return;
-      }
-
-      const observer = new MutationObserver(() => {
-        const language = getLanguage();
-        const expected = translations[language][key];
-        if (language !== defaultLanguage && element.textContent !== expected) {
-          element.textContent = expected;
-        }
-      });
-
-      observer.observe(element, {
-        childList: true,
-        characterData: true,
-        subtree: true,
-      });
-    });
   }
 
   window.VetustaI18n = {

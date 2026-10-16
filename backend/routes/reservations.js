@@ -31,7 +31,6 @@ router.get("/availability", async (request, response) => {
     console.error("Availability error:", error);
     response.status(error.statusCode || 500).json({
       error: "No se pudo cargar la disponibilidad.",
-      detail: error.message,
     });
   }
 });
@@ -71,9 +70,16 @@ router.post("/reservations", async (request, response) => {
       .status(201)
       .json({ ok: true, reservation: savedReservation, email: emailResult });
   } catch (error) {
-    response
-      .status(error.statusCode || 400)
-      .json({ error: error.message || "No se pudo crear la reserva." });
+    // Solo los errores de validación (4xx) llevan un mensaje pensado para el usuario.
+    const isClientError = error.statusCode >= 400 && error.statusCode < 500;
+
+    if (!isClientError) {
+      console.error("Reservation error:", error);
+    }
+
+    response.status(isClientError ? error.statusCode : 500).json({
+      error: isClientError ? error.message : "No se pudo crear la reserva.",
+    });
   }
 });
 

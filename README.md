@@ -20,7 +20,7 @@ Esta desarrollado con HTML, CSS, JavaScript vanilla y un backend Express en Node
 - Subida controlada de imagenes y documentos mediante buckets privados de Supabase Storage.
 - Panel de administracion para consultar clientes, mascotas, historiales, documentos y reservas.
 - Gestion de estado de reservas desde administracion, con soporte para reservas confirmadas y canceladas.
-- Reseñas locales por defecto y opcion de activar reseñas reales desde Google Places API con cache y limite diario.
+- Reseñas reales desde Google Places API con cache y limite diario. Sin datos de Google, la web no muestra cifras ni reseñas y solo enlaza a la ficha de Google.
 - Envio opcional de copia de reserva por email mediante Resend.
 - Sincronizacion opcional de reservas confirmadas con Google Calendar mediante cuenta de servicio.
 - Script dinamico de GA4 servido desde backend cuando existe un identificador configurado.
@@ -173,7 +173,7 @@ GOOGLE_PLACE_SEARCH_RADIUS_METERS=80
 GOOGLE_LANGUAGE_CODE=es
 ```
 
-Con `GOOGLE_ENABLE_LIVE_REVIEWS=false`, el backend usa `reviews.local.json` y evita llamadas reales a Google Places.
+Con `GOOGLE_ENABLE_LIVE_REVIEWS=false`, el backend evita llamadas reales a Google Places y lee `reviews.local.json` si existe. Ese archivo no se versiona y solo debe contener reseñas reales copiadas de Google: mostrar reseñas inventadas como si fueran de Google es una practica comercial prohibida. Si no existe, la web muestra solo el enlace a Google.
 
 El contador de peticiones diarias a Google (`GOOGLE_DAILY_REQUEST_LIMIT`) se persiste en un archivo (`.google-usage.json`). En local se guarda en la raiz del proyecto; en Vercel (`process.env.VERCEL`) se guarda en `os.tmpdir()`, porque el filesystem del despliegue es de solo lectura salvo `/tmp` — mismo patron que usa `reservations.json` en `backend/lib/reservations.js` para el fallback sin Supabase.
 
@@ -322,7 +322,7 @@ DESIGN.md                       Tokens de diseño: paleta de color, tipografia y
 supabase-reservations.sql       Modelo SQL de reservas
 supabase-client-area.sql        Modelo SQL de clientes, mascotas y documentos
 supabase-audit-log.sql          Modelo SQL de auditoria de acciones administrativas (reservas)
-reviews.local.json              Reseñas locales de fallback
+reviews.local.json              (opcional, no versionado) reseñas reales de Google para desarrollo
 
 types/
   api.d.ts                      Contratos de tipos de las respuestas de la API

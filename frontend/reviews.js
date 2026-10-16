@@ -1,10 +1,18 @@
 const googleLogoSrc = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath fill='%23FFC107' d='M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.4-.4-3.5z'/%3E%3Cpath fill='%23FF3D00' d='M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 16.2 4 9.5 8.5 6.3 14.7z'/%3E%3Cpath fill='%234CAF50' d='M24 44c5.2 0 9.9-2 13.5-5.2l-6.2-5.2C29.3 35.1 26.8 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.4 39.6 16.1 44 24 44z'/%3E%3Cpath fill='%231976D2' d='M43.6 20.5H42V20H24v8h11.3c-.8 2.4-2.3 4.3-4.1 5.6l6.2 5.2C36.9 39.3 44 34 44 24c0-1.3-.1-2.4-.4-3.5z'/%3E%3C/svg%3E";
 
+// Solo se muestran cifras y reseñas que llegan de Google. Sin datos, el badge
+// del hero sigue oculto y la sección enseña únicamente el enlace a Google.
 (async function loadGoogleReviews() {
+  // Dentro de la IIFE: booking.js también declara localeByLanguage en el ámbito global.
+  const localeByLanguage = { es: "es-ES", en: "en-GB", fr: "fr-FR", pt: "pt-PT" };
+  const translateTemplate = (key, values, fallback) => {
+    const template = window.VetustaI18n?.t(key) || fallback;
+    return template.replace(/\{(\w+)\}/g, (match, name) => values[name] ?? match);
+  };
+
+  const badgeElement = document.querySelector("[data-google-badge]");
   const ratingElement = document.querySelector("[data-google-rating]");
   const countElement = document.querySelector("[data-google-review-count]");
-  const heroCopyElement = document.querySelector("[data-google-hero-copy]");
-  const trustCopyElement = document.querySelector("[data-google-trust-copy]");
   const sectionSummaryElement = document.querySelector("[data-google-section-summary]");
   const reviewsListElement = document.querySelector("[data-google-reviews-list]");
   const mapsLinkElement = document.querySelector("[data-google-maps-link]");
@@ -20,28 +28,35 @@ const googleLogoSrc = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
     const data = await response.json();
     const rating = typeof data.rating === "number" ? data.rating : null;
     const reviewCount = Number(data.reviewCount || 0);
-    const formattedRating = rating ? rating.toLocaleString("es-ES", { maximumFractionDigits: 1 }) : null;
-    const formattedCount = reviewCount.toLocaleString("es-ES");
 
-    if (formattedRating && ratingElement) {
-      ratingElement.textContent = `⭐ ${formattedRating}/5`;
-    }
+    const renderSummary = () => {
+      if (!rating || !reviewCount) {
+        return;
+      }
 
-    if (reviewCount && countElement) {
-      countElement.textContent = `· +${formattedCount} reseñas en Google`;
-    }
+      const locale = localeByLanguage[window.VetustaI18n?.getLanguage()] || localeByLanguage.es;
+      const values = {
+        rating: rating.toLocaleString(locale, { maximumFractionDigits: 1 }),
+        count: reviewCount.toLocaleString(locale),
+      };
 
-    if (reviewCount && heroCopyElement) {
-      heroCopyElement.textContent = `más de ${formattedCount} opiniones de ${formattedRating || 5} estrellas`;
-    }
+      if (ratingElement) {
+        ratingElement.textContent = `⭐ ${values.rating}/5`;
+      }
 
-    if (reviewCount && trustCopyElement) {
-      trustCopyElement.textContent = `Más de ${formattedCount} reseñas ${formattedRating || 5} estrellas`;
-    }
+      if (countElement) {
+        countElement.textContent = translateTemplate("hero.reviewCount", values, "· {count} reseñas en Google");
+      }
 
-    if (reviewCount && sectionSummaryElement) {
-      sectionSummaryElement.textContent = `${formattedRating || 5}/5 en Google · ${formattedCount} reseñas · datos recopilados en la última actualización`;
-    }
+      if (sectionSummaryElement) {
+        sectionSummaryElement.textContent = translateTemplate("reviews.summary", values, "{rating}/5 en Google · {count} reseñas");
+      }
+
+      badgeElement?.classList.remove("hidden");
+    };
+
+    renderSummary();
+    document.addEventListener("vetusta:languagechange", renderSummary);
 
     if (data.googleMapsUri && mapsLinkElement) {
       mapsLinkElement.href = data.googleMapsUri;
@@ -49,6 +64,7 @@ const googleLogoSrc = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
 
     if (reviewsListElement && Array.isArray(data.reviews) && data.reviews.length > 0) {
       reviewsListElement.replaceChildren(...data.reviews.map(createReviewCard));
+      reviewsListElement.classList.remove("hidden");
     }
   } catch (error) {
     console.warn("No se pudieron actualizar las reseñas de Google.", error);

@@ -70,8 +70,8 @@ window.VetustaImageSources = {
     section: "Servicio Cirugía",
   },
   diagnosticsService: {
-    url: "https://images.pexels.com/photos/3786126/pexels-photo-3786126.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=700&q=85",
-    alt: "Material de diagnóstico veterinario para analíticas",
+    url: "https://images.pexels.com/photos/4032274/pexels-photo-4032274.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=700&q=85",
+    alt: "Mano con guante ajustando un microscopio de laboratorio para una analítica",
     source: "Pexels",
     license: "Pexels License, uso comercial permitido",
     section: "Servicio Diagnóstico",
@@ -91,8 +91,8 @@ window.VetustaImageSources = {
     section: "Equipo",
   },
   teamVictor: {
-    url: "https://images.pexels.com/photos/6234605/pexels-photo-6234605.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=1125&q=85",
-    alt: "Foto temporal de un veterinario de stock",
+    url: "https://images.pexels.com/photos/6235652/pexels-photo-6235652.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=1125&q=85",
+    alt: "Foto temporal de stock: veterinario con un pomerania en brazos",
     source: "Pexels",
     license: "Pexels License, uso comercial permitido",
     section: "Equipo",

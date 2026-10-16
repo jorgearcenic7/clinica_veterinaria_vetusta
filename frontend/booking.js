@@ -72,7 +72,6 @@ async function loadAvailability() {
 
   // Hasta 3 reintentos con backoff: inmediato → 1s → 2s → 4s.
   const retryDelays = [0, 1000, 2000, 4000];
-  let lastError;
 
   for (const delay of retryDelays) {
     if (token !== _availabilityLoadToken) return;
@@ -90,7 +89,7 @@ async function loadAvailability() {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.detail || errorData.error || `Error ${response.status}`);
+        throw new Error(errorData.error || `Error ${response.status}`);
       }
 
       bookingState.availability = await response.json();
@@ -105,13 +104,12 @@ async function loadAvailability() {
       setStatus("");
       return;
     } catch (error) {
-      lastError = error;
       console.error("Availability load error:", error);
     }
   }
 
   if (token === _availabilityLoadToken) {
-    setStatus(`${translate("booking.loadError")} ${lastError.message}`);
+    setStatus(translate("booking.loadError"));
   }
 }
 
@@ -404,7 +402,8 @@ async function submitBooking(event) {
 
     if (!response.ok) {
       const data = await response.json().catch(() => ({}));
-      setStatus(data.error || translate("booking.saveError"));
+      const isClientError = response.status >= 400 && response.status < 500;
+      setStatus(isClientError && data.error ? data.error : translate("booking.saveError"));
       return;
     }
 

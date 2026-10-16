@@ -12,3 +12,7 @@ reviews.local.json
 *.p12
 
 dist/
+
+# Claude Code: ajustes personales y capturas de Playwright
+.claude/settings.local.json
+.playwright-mcp/
