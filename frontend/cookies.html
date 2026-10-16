@@ -193,6 +193,10 @@ aside.legal-note {
 <script>
 (function(){const k="cookie_consent",m=24*30*24*60*60*1000,b=document.querySelector("[data-cookie-banner]"),o=document.querySelector("[data-cookie-modal]"),t=document.querySelector("[data-cookie-analytics]");let loaded=false;function r(){try{const v=JSON.parse(localStorage.getItem(k)||"null");return v&&v.timestamp&&Date.now()-v.timestamp<=m?v:null}catch(e){return null}}function l(){if(loaded)return;loaded=true;const s=document.createElement("script");s.src="/analytics.js";s.defer=true;document.head.appendChild(s)}function s(a){const v={analytics:!!a,timestamp:Date.now()};localStorage.setItem(k,JSON.stringify(v));if(b)b.style.display="none";if(o)o.style.display="none";if(v.analytics)l()}function c(){const v=r();if(t)t.checked=!!(v&&v.analytics);if(o)o.style.display="flex"}const v=r();if(v){if(v.analytics)l()}else if(b)b.style.display="block";document.querySelectorAll("[data-cookie-manage],[data-cookie-configure]").forEach(e=>e.addEventListener("click",c));document.querySelector("[data-cookie-accept]")?.addEventListener("click",()=>s(true));document.querySelector("[data-cookie-reject]")?.addEventListener("click",()=>s(false));document.querySelector("[data-cookie-save]")?.addEventListener("click",()=>s(t&&t.checked));document.querySelector("[data-cookie-close]")?.addEventListener("click",()=>{if(o)o.style.display="none"})})();
 </script>
+<script defer src="/i18n/es.js"></script>
+<script defer src="/i18n/en.js"></script>
+<script defer src="/i18n/fr.js"></script>
+<script defer src="/i18n/pt.js"></script>
 <script defer src="/i18n.js"></script>
 </body>
 </html>

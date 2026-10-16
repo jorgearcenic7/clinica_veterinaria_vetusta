@@ -26,14 +26,21 @@ async function mockAvailability(page) {
  * @param {import("@playwright/test").Page} page
  */
 async function openBookingAndPickFirstSlot(page) {
-  await page.goto("/#reserva");
+  await page.goto("/#reserva", { waitUntil: "domcontentloaded" });
   await page.locator("[data-cookie-accept]").click();
 
   const form = page.locator("[data-booking-form]");
   await form.locator("#servicio").selectOption("consulta");
   await form.locator("#mascota").selectOption("gato");
 
+  // Hay que esperar a que se pinte el mes nuevo: si se elige un día del mes
+  // anterior, la recarga del calendario borra la selección.
+  const calendarTitle = form.locator("[data-calendar-title]");
+  await expect(form.locator("[data-calendar-days] button").first()).toBeVisible();
+  const currentMonth = await calendarTitle.textContent();
   await form.locator("[data-calendar-next]").click();
+  await expect(calendarTitle).not.toHaveText(currentMonth || "");
+  await expect(form.locator("[data-calendar-days] button").first()).toBeVisible();
   await form.locator("[data-calendar-days] button:enabled").first().click();
   await form.locator("[data-time-slots] button:enabled").first().click();
 

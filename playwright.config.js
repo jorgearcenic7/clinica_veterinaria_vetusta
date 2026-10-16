@@ -8,7 +8,9 @@ const PORT = 3100;
 // una base de datos real.
 export default defineConfig({
   testDir: "./e2e",
-  fullyParallel: true,
+  // Un navegador cada vez: con varios Chromium en paralelo en Windows las páginas
+  // tardaban a veces más de 30 s en cargar (el servidor no era el cuello de botella).
+  workers: 1,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? "github" : "list",

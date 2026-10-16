@@ -374,7 +374,8 @@ frontend/
   booking.js                    Calendario y formulario de reservas (frontend)
   reviews.js                    Carga y renderizado de reseñas (frontend)
   image-sources.js              Fuentes y recursos visuales de la web
-  i18n.js                       Textos y traducciones de interfaz
+  i18n.js                       Logica de traduccion (idioma activo, data-i18n, evento vetusta:languagechange)
+  i18n/es.js, en.js, fr.js, pt.js  Textos de la interfaz, un archivo por idioma
   auth.html / auth.js           Registro, login y recuperacion de contraseña
   dashboard.html / dashboard.js Area privada del cliente
   pet-detail.html / pet-detail.js Ficha privada de mascota
@@ -404,6 +405,7 @@ tests/
   availability.test.js          Tests unitarios de logica de disponibilidad (Vitest)
   reservations.test.js          Tests unitarios de validacion de reservas y comportamiento de email (Vitest)
   reservations-overlap.test.js  Tests del mapeo de errores 23505/23P01 de Postgres a 409 (creacion y update admin)
+  classic-scripts.test.js       Los scripts clasicos no declaran globales y los 4 idiomas tienen las mismas claves
 
 e2e/
   booking.spec.js               Reserva de punta a punta en el navegador (Playwright). La API se intercepta: no toca Supabase
