@@ -95,6 +95,7 @@ export default {
         display: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
         body: ["Lexend", "system-ui", "sans-serif"],
         accent: ["Bodoni Moda", "Didot", "Georgia", "serif"],
+        poster: ["Anton", "Arial Narrow", "Impact", "sans-serif"],
       },
       fontSize: {
         h1: ["68px", { lineHeight: "1.2", letterSpacing: "0", fontWeight: "700" }],
