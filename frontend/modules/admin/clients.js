@@ -1,6 +1,6 @@
 import { state, cb, statusEl, clientsListEl, clientDetailEl, petsListEl, recordsTableEl, documentsListEl, CLIENTS_LIMIT } from "./state.js";
-import { escapeHtml, emptyMessage } from "./utils.js";
-import { setStatus } from "../../supabase-client.js";
+import { emptyMessage } from "./utils.js";
+import { escapeHtml, setStatus } from "../../supabase-client.js";
 import { fetchAdminClients } from "../shared/api.js";
 import { resetPetForm } from "./pets.js";
 import { resetRecordForm } from "./records.js";

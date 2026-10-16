@@ -1,6 +1,6 @@
 import { state, cb, statusEl, recordForm, recordsTitleEl, recordsTableEl } from "./state.js";
-import { escapeHtml, tableMessage, normalizeEmptyDates } from "./utils.js";
-import { setStatus, friendlyError, formToObject, formatDate } from "../../supabase-client.js";
+import { tableMessage, normalizeEmptyDates } from "./utils.js";
+import { escapeHtml, setStatus, friendlyError, formToObject, formatDate } from "../../supabase-client.js";
 
 export function renderRecords() {
   recordsTableEl.replaceChildren();

@@ -61,6 +61,13 @@ export default {
         "surface-container-highest": "#e4e2e1",
         "on-surface": "#1b1c1c",
         "on-tertiary-fixed": "#241a00",
+        // Home (dirección C de DESIGN.md): fondos cálidos y acentos suaves.
+        "cream": "#fefbf6",
+        "sand": "#e6d5b8",
+        "sand-soft": "#f6f1e7",
+        "sand-line": "#efe6d3",
+        "mint": "#e8f1eb",
+        "highlight": "#f3e3a6",
       },
       borderRadius: {
         DEFAULT: "0.25rem",
@@ -85,6 +92,9 @@ export default {
         "body-md": ["Lexend"],
         "body-lg": ["Lexend"],
         "label-caps": ["Lexend"],
+        display: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
+        body: ["Lexend", "system-ui", "sans-serif"],
+        accent: ["Bodoni Moda", "Didot", "Georgia", "serif"],
       },
       fontSize: {
         h1: ["68px", { lineHeight: "1.2", letterSpacing: "0", fontWeight: "700" }],

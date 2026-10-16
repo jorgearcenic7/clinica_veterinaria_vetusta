@@ -120,7 +120,7 @@ export async function uploadPetImage(supabase, ownerId, petId, file) {
   validateUploadFile(file, "image");
   const safeName = safeFileName(file.name);
   const filePath = `${ownerId}/${petId}/${Date.now()}-${safeName}`;
-  const { data, error } = await supabase.storage.from("pet-images").upload(filePath, file, {
+  const { error } = await supabase.storage.from("pet-images").upload(filePath, file, {
     cacheControl: "3600",
     contentType: file.type,
     upsert: false,
@@ -290,10 +290,6 @@ export function friendlyError(error) {
 
   if (message.includes("row-level security")) {
     return "No tienes permisos para realizar esta acción.";
-  }
-
-  if (message.includes("new row violates row-level security policy")) {
-    return "No tienes permisos para guardar esta información.";
   }
 
   if (message.includes("The resource already exists")) {
