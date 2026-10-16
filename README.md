@@ -29,6 +29,14 @@ Esta desarrollado con HTML, CSS, JavaScript vanilla y un backend Express en Node
 
 ## Mejoras De UI/UX
 
+### Home (diseño "Serene Nature & Care", ver `DESIGN.md`)
+
+- Hero con texto y foto a color, franja verde con horario, dirección y teléfono, y la valoración de Google solo cuando llega en directo.
+- Servicios como carta de precios con línea de puntos; packs en tarjetas con el pack adulto destacado en verde (carrusel con scroll-snap en móvil).
+- Reseña destacada de Google en cita grande; sin datos de Google la sección muestra solo el enlace.
+- Barra fija inferior en móvil con llamar, WhatsApp y reservar.
+- Tipografías: Plus Jakarta Sans (títulos), Lexend (texto) y Bodoni Moda en cursiva solo como acento.
+
 ### Navegacion
 
 - Menu de navegacion mobile completo con drawer lateral deslizante, overlay oscuro y cierre con Escape o click fuera.
@@ -37,9 +45,8 @@ Esta desarrollado con HTML, CSS, JavaScript vanilla y un backend Express en Node
 
 ### Animaciones y microinteracciones
 
-- Animacion de entrada escalonada en secciones al hacer scroll mediante `IntersectionObserver` (fade + translateY).
-- Las cards de opiniones y de "Por que elegirnos" aparecen con delay escalonado (0 / 100 / 200 ms).
-- FAQ con animacion suave de apertura y cierre (`max-height` + `opacity`), sin afectar a los acordeones de packs.
+- Animacion de entrada de las secciones al hacer scroll mediante `IntersectionObserver` (fade + translateY).
+- FAQ con animacion suave de apertura y cierre (`max-height` + `opacity`).
 - Respeto de `prefers-reduced-motion` en todas las animaciones de scroll.
 
 ### Formulario de reservas

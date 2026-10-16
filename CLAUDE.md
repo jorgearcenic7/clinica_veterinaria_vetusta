@@ -16,7 +16,9 @@ Web de la Clínica Veterinaria Vetusta (Oviedo): Express + HTML/JS vanilla + Sup
 - **Reseñas y valoraciones**: solo datos reales de Google Places. No escribas reseñas, cifras de valoración ni número de reseñas fijas en HTML, i18n ni JSON (es publicidad engañosa). Sin datos, la sección muestra solo el enlace a Google.
 - **Imágenes**: todas se registran en `frontend/image-sources.js` (URL, `alt`, licencia). Comprueba que la foto corresponde al texto: las del equipo son de stock temporal hasta tener fotos reales.
 - **Contacto**: teléfono y WhatsApp `+34 985 20 65 58` (`wa.me/34985206558`).
-- **Diseño**: tokens en `DESIGN.md` y `tailwind.config.js`.
+- **Diseño**: tokens en `DESIGN.md` y `tailwind.config.js`. La home (`frontend/code.html`) se maqueta con clases Tailwind; su `<style>` solo contiene lo que pintan los scripts.
+- **Caché**: el servidor sirve CSS y JS con `max-age=300`. Si cambias `tailwind.css` o un script de la home, sube su `?v=` en `code.html`; si no, los visitantes ven la versión anterior mezclada con el HTML nuevo. Al probar con Playwright, vacía la caché del navegador (CDP `Network.clearBrowserCache`).
+- **Scripts clásicos**: `i18n.js`, `reviews.js`, `booking.js` e `image-sources.js` comparten ámbito global. No declares en el nivel superior nombres que ya existan en otro de ellos (p. ej. `localeByLanguage`).
 
 ## Tests
 

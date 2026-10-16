@@ -144,7 +144,7 @@ function renderCalendar() {
 
 function createEmptyDay() {
   const item = document.createElement("div");
-  item.className = "min-h-[96px] rounded-xl bg-surface-container-low opacity-60";
+  item.className = "min-h-[48px] rounded-xl bg-surface-container-low opacity-60 sm:min-h-[72px]";
   return item;
 }
 
@@ -157,26 +157,27 @@ function createDayButton(day) {
   button.type = "button";
   button.disabled = isDisabled;
   button.className = [
-    "min-h-[96px] rounded-xl border p-4 text-left transition-all flex flex-col justify-between",
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
-    isSelected ? "border-primary bg-primary text-white shadow-lg shadow-primary/20 scale-[1.01]" : "",
-    !isSelected && !isDisabled ? "border-outline-variant bg-white text-on-background hover:border-primary hover:bg-primary-fixed hover:-translate-y-0.5" : "",
+    "min-h-[48px] rounded-xl border p-1.5 transition-all flex flex-col items-center justify-center gap-1 sm:min-h-[72px] sm:items-start sm:justify-between sm:p-2.5",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-container focus-visible:ring-offset-2",
+    isSelected ? "border-primary-container bg-primary-container text-white shadow-md shadow-primary/20" : "",
+    !isSelected && !isDisabled && !day.fullyBooked ? "border-outline-variant bg-white text-on-background hover:border-primary-container hover:bg-mint" : "",
     isDisabled ? "border-surface-container bg-surface-container text-outline cursor-not-allowed" : "",
     day.fullyBooked && !isDisabled && !isSelected ? "border-error/40 bg-error-container text-on-error-container" : "",
   ].join(" ");
 
   const number = document.createElement("span");
   number.className = [
-    "text-[26px] leading-none font-bold",
-    isToday && !isSelected ? "text-primary" : "",
+    "font-display text-base leading-none font-bold sm:text-xl",
+    isToday && !isSelected ? "text-primary-container" : "",
   ].join(" ");
   number.textContent = day.day;
 
+  // La etiqueta (Libre, Completo…) no cabe en una celda de móvil: allí el estado lo dan los colores.
   const label = document.createElement("span");
   label.className = [
-    "w-fit rounded-full px-3 py-1 text-[12px] font-label-caps",
+    "hidden w-fit rounded-full px-2 py-0.5 text-[11px] font-semibold sm:inline-block",
     isSelected ? "bg-white/15 text-white" : "",
-    !isSelected && !isDisabled && !day.fullyBooked ? "bg-primary-fixed text-primary" : "",
+    !isSelected && !isDisabled && !day.fullyBooked ? "bg-mint text-primary-container" : "",
     !isSelected && isDisabled ? "bg-white/60 text-outline" : "",
     !isSelected && day.fullyBooked && !isDisabled ? "bg-error text-white" : "",
   ].join(" ");
@@ -231,13 +232,14 @@ function renderSlots() {
     button.type = "button";
     button.disabled = !isAvailable;
     button.setAttribute("aria-pressed", String(isSelected));
+    // aria-pressed ya anuncia la hora seleccionada.
     button.setAttribute("aria-label", isAvailable
-      ? `${slotLabel}${isSelected ? ", hora seleccionada" : ""}`
+      ? slotLabel
       : `${slotLabel}, ${translate(availability === "reserved" ? "booking.reserved" : "booking.unavailable")}`);
     button.className = [
-      "rounded-xl border px-4 py-4 text-base font-label-caps transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
-      !isAvailable ? "bg-error-container border-error/40 text-on-error-container cursor-not-allowed" : "bg-white border-outline-variant text-primary hover:border-primary hover:bg-primary-fixed hover:-translate-y-0.5",
-      isSelected ? "!bg-primary !text-white !border-primary ring-4 ring-primary/25 shadow-md shadow-primary/20 scale-[1.02]" : "",
+      "min-h-[44px] rounded-xl border px-3 py-2.5 text-[15px] font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-container focus-visible:ring-offset-2",
+      !isAvailable ? "bg-error-container border-error/40 text-on-error-container cursor-not-allowed" : "bg-white border-outline-variant text-primary hover:border-primary-container hover:bg-mint",
+      isSelected ? "!bg-mint !border-primary-container border-2 text-primary" : "",
     ].join(" ");
     button.textContent = isAvailable
       ? slotLabel
@@ -260,13 +262,13 @@ function renderSelectedTimeStatus() {
   }
 
   if (!bookingState.selectedSlot) {
-    selectedTimeStatus.textContent = "Selecciona una hora disponible para continuar.";
-    selectedTimeStatus.className = "rounded-xl bg-surface-container-low p-4 text-sm font-label-caps text-primary";
+    selectedTimeStatus.textContent = translate("booking.selectTimeStatus");
+    selectedTimeStatus.className = "rounded-xl bg-surface-container-low p-4 text-sm font-semibold text-primary";
     return;
   }
 
-  selectedTimeStatus.textContent = `Hora seleccionada: ${formatSlotLabel(bookingState.selectedSlot)}`;
-  selectedTimeStatus.className = "rounded-xl bg-primary p-4 text-sm font-label-caps text-white";
+  selectedTimeStatus.textContent = `${translate("booking.selectedTime")} ${formatSlotLabel(bookingState.selectedSlot)}`;
+  selectedTimeStatus.className = "rounded-xl bg-primary-container p-4 text-sm font-semibold text-white";
 }
 
 function handleServiceChange() {

@@ -48,6 +48,12 @@ colors:
   background: '#fcf9f8'
   on-background: '#1b1c1c'
   surface-variant: '#e4e2e1'
+  cream: '#fefbf6'
+  sand: '#e6d5b8'
+  sand-soft: '#f6f1e7'
+  sand-line: '#efe6d3'
+  mint: '#e8f1eb'
+  highlight: '#f3e3a6'
 typography:
   h1:
     fontFamily: Plus Jakarta Sans
@@ -82,6 +88,10 @@ typography:
     fontWeight: '600'
     lineHeight: '1.2'
     letterSpacing: 0.05em
+  accent:
+    fontFamily: Bodoni Moda
+    fontStyle: italic
+    fontWeight: '600'
 rounded:
   sm: 0.25rem
   DEFAULT: 0.5rem
@@ -123,6 +133,8 @@ The typography strategy focuses on maximum readability and a friendly tone.
 
 **Lexend** is utilized for body text and labels. Specifically designed to reduce visual stress and improve reading proficiency, it reinforces the clinic's commitment to accessibility and clear communication of medical information.
 
+**Bodoni Moda (italic, 600)** is an accent only: one or two words per block ("mejor.", "minuto."), pack taglines, team roles, non-numeric prices ("presupuesto personalizado") and FAQ numbers. Never use it for body text or full headings. No other display fonts (the former Anton/Cormorant editorial titles are retired).
+
 ## Layout & Spacing
 
 The design system employs a **Fixed Grid** model for desktop to maintain a boutique, curated feel, transitioning to a fluid model for mobile devices. 
@@ -154,4 +166,9 @@ The components within this design system are designed to be tactile and easy to 
 - **Input Fields:** Large tap targets with a 16px internal padding. Focus states use a 2px Forest Green ring.
 - **Chips/Badges:** Used for pet categories (e.g., "Canine", "Feline") with low-saturation versions of the primary green and gold.
 - **Lists:** Icon-led lists using friendly, simplified animal glyphs or medical icons in the accent gold.
-- **Specialty Component - "Quick Action Dial":** A floating action button for "Emergency Contact" or "Book Appointment" that stays accessible at the bottom right of mobile views.
+- **Price list:** Services are rows in one white card (two columns on desktop): name, dotted leader, price. Numeric prices in Plus Jakarta Sans 800; non-numeric ones in the Bodoni accent.
+- **Featured pack:** The recommended pack is a solid Forest Green card with a gold (`#e9c349`) button; the others are white cards with an outline button.
+- **Info strip:** A Forest Green band right below the hero with hours, address and phone. The Google rating appears there only when it comes live from Google.
+- **Section header:** Small uppercase eyebrow (`surface-tint`), then the Plus Jakarta Sans heading, then one line of supporting text.
+- **Specialty Component - Mobile action bar:** A fixed bottom bar on mobile with Call, WhatsApp and "Reservar cita". It replaces floating buttons; there is no separate WhatsApp bubble.
+- **Reviews:** Only real Google data (rating, count and one featured quote with author and "Reseña de Google"). Never hardcode reviews or ratings.
