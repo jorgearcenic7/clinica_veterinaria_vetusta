@@ -397,8 +397,9 @@ async function submitBooking(event) {
     const response = await createReservation(payload);
 
     if (response.status === 409) {
-      setStatus(translate("booking.slotTaken"));
+      // Primero se recarga el calendario: loadAvailability limpia el estado al terminar.
       await loadAvailability();
+      setStatus(translate("booking.slotTaken"));
       return;
     }
 

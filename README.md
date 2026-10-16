@@ -127,6 +127,8 @@ npm run build:css      Compila Tailwind a public/tailwind.css (necesario antes d
 npm run build:css:watch  Compila Tailwind en modo observador (para desarrollo)
 npm test               Ejecuta la suite de tests unitarios con Vitest
 npm run test:watch     Ejecuta tests en modo observador
+npm run test:e2e       Tests de navegador con Playwright: reserva completa en escritorio y movil
+                       (la primera vez: npx playwright install chromium)
 npm run type-check     Verifica tipos con tsc (noEmit, sobre types/ y el cliente API compartido)
 ```
 
@@ -402,6 +404,9 @@ tests/
   availability.test.js          Tests unitarios de logica de disponibilidad (Vitest)
   reservations.test.js          Tests unitarios de validacion de reservas y comportamiento de email (Vitest)
   reservations-overlap.test.js  Tests del mapeo de errores 23505/23P01 de Postgres a 409 (creacion y update admin)
+
+e2e/
+  booking.spec.js               Reserva de punta a punta en el navegador (Playwright). La API se intercepta: no toca Supabase
 ```
 
 ## Despliegue En Vercel

@@ -6,7 +6,7 @@ Web de la Clínica Veterinaria Vetusta (Oviedo): Express + HTML/JS vanilla + Sup
 
 - `npm run dev` — servidor con recarga en `http://127.0.0.1:3000` (necesita `.env`, ver `.env.example`).
 - `npm run build:css` — recompila `frontend/public/tailwind.css`. Hazlo tras añadir clases Tailwind nuevas en HTML/JS: el CSS compilado está versionado y Vercel lo regenera en el build.
-- `npm test` (Vitest) y `npm run type-check` (tsc). CI ejecuta ambos en cada PR.
+- `npm test` (Vitest), `npm run type-check` (tsc) y `npm run test:e2e` (Playwright; la primera vez `npx playwright install chromium`). CI ejecuta los tres en cada PR.
 - Detrás del proxy corporativo: `npm install --strict-ssl=false`. En esa red las llamadas de Node a Supabase y Google fallan con `fetch failed`; no es un bug del código.
 
 ## Convenciones
