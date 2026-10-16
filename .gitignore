@@ -16,3 +16,7 @@ dist/
 # Claude Code: ajustes personales y capturas de Playwright
 .claude/settings.local.json
 .playwright-mcp/
+
+# Resultados de los tests e2e (Playwright)
+test-results/
+playwright-report/

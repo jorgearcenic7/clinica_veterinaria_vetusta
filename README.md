@@ -127,6 +127,8 @@ npm run build:css      Compila Tailwind a public/tailwind.css (necesario antes d
 npm run build:css:watch  Compila Tailwind en modo observador (para desarrollo)
 npm test               Ejecuta la suite de tests unitarios con Vitest
 npm run test:watch     Ejecuta tests en modo observador
+npm run test:e2e       Tests de navegador con Playwright: reserva completa en escritorio y movil
+                       (la primera vez: npx playwright install chromium)
 npm run type-check     Verifica tipos con tsc (noEmit, sobre types/ y el cliente API compartido)
 ```
 
@@ -214,33 +216,41 @@ Si no se define ningun identificador, `/analytics.js` devuelve un script vacio.
 
 ## Base De Datos
 
-El repositorio incluye tres scripts SQL principales:
+El esquema vive en `supabase/migrations/` y se aplica en orden con la CLI de Supabase (`npx supabase`):
 
-- `supabase-reservations.sql`: tabla de reservas, indices, estados, funciones de disponibilidad, vinculacion con perfiles y constraint de exclusion `reservations_no_overlap` que impide de forma atomica cualquier solapamiento entre reservas activas (ver seccion "Reservas").
-- `supabase-client-area.sql`: perfiles, mascotas, historiales, documentos, logs de subida, buckets privados y politicas RLS. Define tambien `public.is_admin()`, reutilizada por el script de auditoria.
-- `supabase-audit-log.sql`: tabla `admin_audit_logs` para la auditoria de acciones administrativas sobre reservas. Requiere haber ejecutado antes `supabase-client-area.sql`.
+1. `..._client_area.sql`: perfiles, mascotas, historiales, documentos, logs de subida, buckets privados `pet-images` y `pet-documents` y politicas RLS. Define `public.is_admin()`, que usan las demas migraciones.
+2. `..._reservations.sql`: tabla de reservas, indices, estados, funciones de disponibilidad, vinculacion con perfiles y constraint de exclusion `reservations_no_overlap` que impide de forma atomica cualquier solapamiento entre reservas activas (ver seccion "Reservas").
+3. `..._admin_audit_log.sql`: tabla `admin_audit_logs` para la auditoria de acciones administrativas sobre reservas.
 
-Pasos recomendados:
+El orden importa: las reservas referencian `profiles`, asi que el area de clientes va primero.
 
-1. Crear un proyecto en Supabase.
-2. Abrir SQL Editor.
-3. Ejecutar `supabase-reservations.sql`.
-4. Ejecutar `supabase-client-area.sql`.
-5. Ejecutar `supabase-audit-log.sql`.
-6. Revisar las politicas RLS y buckets `pet-images` y `pet-documents`.
-7. Configurar las URLs de autenticacion permitidas.
+Base de datos local desde cero (necesita Docker):
 
-Los tres scripts son idempotentes (usan `if not exists`, `drop policy if exists`, `create or replace`, etc.), por lo que se pueden volver a ejecutar sobre una base de datos ya existente para aplicar cambios posteriores — por ejemplo, si un proyecto ya desplegado necesita incorporar el constraint `reservations_no_overlap` añadido a `supabase-reservations.sql`.
+```bash
+npx supabase db start        # levanta Postgres y aplica todas las migraciones
+npx supabase db reset        # borra la base local y la reconstruye desde las migraciones
+npx supabase stop            # para los contenedores
+```
+
+Proyecto nuevo en Supabase:
+
+1. Crear el proyecto y enlazarlo: `npx supabase link --project-ref <ref>`.
+2. Aplicar las migraciones: `npx supabase db push`.
+3. Configurar las URLs de autenticacion permitidas.
+
+Proyecto ya existente creado con los antiguos scripts SQL sueltos: el esquema ya esta aplicado, asi que basta con marcar las migraciones como aplicadas para que `db push` no las repita: `npx supabase migration repair --status applied <version>` para cada una (la version es el prefijo numerico del archivo). Aunque se repitieran no romperian nada: son idempotentes (`if not exists`, `drop policy if exists`, `create or replace`).
+
+Cambios futuros del esquema: crear una migracion nueva con `npx supabase migration new <nombre>` en lugar de editar las ya aplicadas.
 
 ### Auditoria de acciones administrativas
 
 Cada `PATCH /api/admin/reservations/:id` registra una fila en `admin_audit_logs` con el admin que hizo el cambio (`admin_user_id`, `admin_email`), la accion (`update`, `status_change` o `cancel`), y el estado de la reserva antes y despues (`before_data`, `after_data`).
 
-El registro es best-effort: `backend/lib/auditLog.js` atrapa cualquier error de insercion y solo lo deja en el log del servidor, sin afectar a la actualizacion de la reserva. Si `supabase-audit-log.sql` no se ha ejecutado todavia, la reserva se actualiza igual y solo falta la auditoria hasta que se ejecute el script.
+El registro es best-effort: `backend/lib/auditLog.js` atrapa cualquier error de insercion y solo lo deja en el log del servidor, sin afectar a la actualizacion de la reserva. Si la migracion `..._admin_audit_log.sql` no se ha aplicado todavia, la reserva se actualiza igual y solo falta la auditoria hasta que se aplique.
 
 Por ahora la auditoria cubre unicamente reservas (unica entidad con accion admin implementada). No incluye historiales clinicos, documentos ni reseñas.
 
-`supabase-audit-log.sql` incluye grants explicitos (`select, insert` a `authenticated`) ademas de las politicas RLS: este proyecto no usa los privilegios por defecto del esquema `public`, asi que sin ese grant el INSERT falla con "permission denied for table admin_audit_logs" aunque la tabla y las politicas existan.
+La migracion `..._admin_audit_log.sql` incluye grants explicitos (`select, insert` a `authenticated`) ademas de las politicas RLS: este proyecto no usa los privilegios por defecto del esquema `public`, asi que sin ese grant el INSERT falla con "permission denied for table admin_audit_logs" aunque la tabla y las politicas existan.
 
 URLs habituales para desarrollo:
 
@@ -272,7 +282,7 @@ El horario implementado es:
 
 El sistema bloquea dias pasados, horas pasadas del dia actual, huecos ocupados y solapamientos. La validacion se realiza en frontend, en backend y, de forma atomica, en la propia base de datos. El frontend utiliza la zona horaria `Europe/Madrid` para el bloqueo de horas pasadas, consistente con el servidor. El backend valida ademas que el telefono tenga al menos 6 caracteres.
 
-**Prevencion de solapamientos.** La comprobacion en JavaScript (`reservationOverlaps`) evita en la mayoria de los casos que se muestre o se intente reservar un hueco ocupado, pero por si sola no es suficiente frente a dos peticiones concurrentes, ni cubre el caso de dos servicios de distinta duracion que se solapan sin compartir la misma hora de inicio (por ejemplo, una cirugia de 10:30-11:30 frente a una consulta de 11:00-11:30). Por eso la garantia real es un constraint de exclusion en Postgres (`reservations_no_overlap` en `supabase-reservations.sql`) sobre el rango `tstzrange(start_at, end_at, '[)')` de las reservas activas (`status <> 'cancelled'`): Postgres rechaza el `INSERT`/`UPDATE` de cualquier reserva cuyo rango se solape con otra ya existente, sin ventana de carrera. El rango es semiabierto, asi que dos citas consecutivas (10:00-10:30 y 10:30-11:00) no se consideran solapadas. Cuando la base de datos rechaza una reserva por este motivo (codigo `23P01`) o por coincidencia exacta de horario (codigo `23505`), el backend lo traduce a un `409` con el mensaje "Ese horario ya esta reservado. Elige otro hueco.", y el frontend lo muestra como aviso normal invitando a elegir otro hueco.
+**Prevencion de solapamientos.** La comprobacion en JavaScript (`reservationOverlaps`) evita en la mayoria de los casos que se muestre o se intente reservar un hueco ocupado, pero por si sola no es suficiente frente a dos peticiones concurrentes, ni cubre el caso de dos servicios de distinta duracion que se solapan sin compartir la misma hora de inicio (por ejemplo, una cirugia de 10:30-11:30 frente a una consulta de 11:00-11:30). Por eso la garantia real es un constraint de exclusion en Postgres (`reservations_no_overlap` en la migracion `..._reservations.sql`) sobre el rango `tstzrange(start_at, end_at, '[)')` de las reservas activas (`status <> 'cancelled'`): Postgres rechaza el `INSERT`/`UPDATE` de cualquier reserva cuyo rango se solape con otra ya existente, sin ventana de carrera. El rango es semiabierto, asi que dos citas consecutivas (10:00-10:30 y 10:30-11:00) no se consideran solapadas. Cuando la base de datos rechaza una reserva por este motivo (codigo `23P01`) o por coincidencia exacta de horario (codigo `23505`), el backend lo traduce a un `409` con el mensaje "Ese horario ya esta reservado. Elige otro hueco.", y el frontend lo muestra como aviso normal invitando a elegir otro hueco.
 
 ## Rutas
 
@@ -326,9 +336,8 @@ vercel.json                     Configuracion de despliegue en Vercel
 tailwind.config.js              Configuracion de Tailwind: tema, colores, fuentes y plugins
 tsconfig.json                   Configuracion de TypeScript (noEmit, allowJs, strict)
 DESIGN.md                       Tokens de diseño: paleta de color, tipografia y escalas
-supabase-reservations.sql       Modelo SQL de reservas
-supabase-client-area.sql        Modelo SQL de clientes, mascotas y documentos
-supabase-audit-log.sql          Modelo SQL de auditoria de acciones administrativas (reservas)
+supabase/config.toml            Configuracion de la CLI de Supabase (base local)
+supabase/migrations/            Esquema SQL versionado: clientes, reservas y auditoria
 reviews.local.json              (opcional, no versionado) reseñas reales de Google para desarrollo
 
 types/
@@ -365,7 +374,8 @@ frontend/
   booking.js                    Calendario y formulario de reservas (frontend)
   reviews.js                    Carga y renderizado de reseñas (frontend)
   image-sources.js              Fuentes y recursos visuales de la web
-  i18n.js                       Textos y traducciones de interfaz
+  i18n.js                       Logica de traduccion (idioma activo, data-i18n, evento vetusta:languagechange)
+  i18n/es.js, en.js, fr.js, pt.js  Textos de la interfaz, un archivo por idioma
   auth.html / auth.js           Registro, login y recuperacion de contraseña
   dashboard.html / dashboard.js Area privada del cliente
   pet-detail.html / pet-detail.js Ficha privada de mascota
@@ -395,6 +405,10 @@ tests/
   availability.test.js          Tests unitarios de logica de disponibilidad (Vitest)
   reservations.test.js          Tests unitarios de validacion de reservas y comportamiento de email (Vitest)
   reservations-overlap.test.js  Tests del mapeo de errores 23505/23P01 de Postgres a 409 (creacion y update admin)
+  classic-scripts.test.js       Los scripts clasicos no declaran globales y los 4 idiomas tienen las mismas claves
+
+e2e/
+  booking.spec.js               Reserva de punta a punta en el navegador (Playwright). La API se intercepta: no toca Supabase
 ```
 
 ## Despliegue En Vercel

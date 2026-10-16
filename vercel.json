@@ -24,6 +24,7 @@
           "frontend/reviews.js",
           "frontend/image-sources.js",
           "frontend/i18n.js",
+          "frontend/i18n/**",
           "frontend/supabase-client.js",
           "frontend/auth.js",
           "frontend/dashboard.js",

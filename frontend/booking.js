@@ -1,636 +1,640 @@
-const localeByLanguage = {
-  es: "es-ES",
-  en: "en-GB",
-  fr: "fr-FR",
-  pt: "pt-PT",
-};
+// Todo dentro de una función: los scripts clásicos de la home comparten ámbito global.
+(() => {
+  const localeByLanguage = {
+    es: "es-ES",
+    en: "en-GB",
+    fr: "fr-FR",
+    pt: "pt-PT",
+  };
 
-const bookingState = {
-  visibleMonth: startOfMonth(new Date()),
-  availability: null,
-  selectedDay: null,
-  selectedSlot: null,
-};
+  const bookingState = {
+    visibleMonth: startOfMonth(new Date()),
+    availability: null,
+    selectedDay: null,
+    selectedSlot: null,
+  };
 
-// Incrementar antes de cada carga para cancelar reintentos de cargas anteriores.
-let _availabilityLoadToken = 0;
+  // Incrementar antes de cada carga para cancelar reintentos de cargas anteriores.
+  let _availabilityLoadToken = 0;
 
-const bookingForm = document.querySelector("[data-booking-form]");
-const calendarTitle = document.querySelector("[data-calendar-title]");
-const calendarWeekdays = document.querySelector("[data-calendar-weekdays]");
-const calendarDays = document.querySelector("[data-calendar-days]");
-const previousButton = document.querySelector("[data-calendar-prev]");
-const nextButton = document.querySelector("[data-calendar-next]");
-const selectedDateTitle = document.querySelector("[data-selected-date-title]");
-const timeSlots = document.querySelector("[data-time-slots]");
-const bookingStatus = document.querySelector("[data-booking-status]");
-const hiddenDateInput = document.querySelector("#fecha");
-const selectedTimeStatus = document.querySelector("[data-selected-time-status]");
-const confirmationContainer = document.querySelector("[data-booking-confirmation]");
-const emailCopyToggle = document.querySelector("[data-email-copy-toggle]");
-const emailFieldWrapper = document.querySelector("[data-email-field-wrapper]");
-const emailInput = document.querySelector("[data-email-input]");
-const serviceSelect = document.querySelector("#servicio");
+  const bookingForm = document.querySelector("[data-booking-form]");
+  const calendarTitle = document.querySelector("[data-calendar-title]");
+  const calendarWeekdays = document.querySelector("[data-calendar-weekdays]");
+  const calendarDays = document.querySelector("[data-calendar-days]");
+  const previousButton = document.querySelector("[data-calendar-prev]");
+  const nextButton = document.querySelector("[data-calendar-next]");
+  const selectedDateTitle = document.querySelector("[data-selected-date-title]");
+  const timeSlots = document.querySelector("[data-time-slots]");
+  const bookingStatus = document.querySelector("[data-booking-status]");
+  const hiddenDateInput = document.querySelector("#fecha");
+  const selectedTimeStatus = document.querySelector("[data-selected-time-status]");
+  const confirmationContainer = document.querySelector("[data-booking-confirmation]");
+  const emailCopyToggle = document.querySelector("[data-email-copy-toggle]");
+  const emailFieldWrapper = document.querySelector("[data-email-field-wrapper]");
+  const emailInput = document.querySelector("[data-email-input]");
+  const serviceSelect = document.querySelector("#servicio");
 
-if (bookingForm) {
-  initBookingCalendar();
-}
+  if (bookingForm) {
+    initBookingCalendar();
+  }
 
-function initBookingCalendar() {
-  previousButton.addEventListener("click", () => changeMonth(-1));
-  nextButton.addEventListener("click", () => changeMonth(1));
-  bookingForm.addEventListener("submit", submitBooking);
-  emailCopyToggle?.addEventListener("change", updateEmailField);
-  serviceSelect?.addEventListener("change", handleServiceChange);
-  confirmationContainer?.addEventListener("click", handleConfirmationAction);
-  document.addEventListener("vetusta:languagechange", renderBookingTexts);
-  // Refresca disponibilidad cada 60s. Para sustituirlo por Supabase Realtime
-  // se necesita habilitar Realtime en el dashboard de Supabase y ejecutar:
-  // ALTER PUBLICATION supabase_realtime ADD TABLE reservations;
-  // Ambos cambios son externos al repositorio, por eso se mantiene el intervalo.
-  window.setInterval(refreshCurrentSlotAvailability, 60 * 1000);
-  updateEmailField();
-  loadAvailability();
-}
+  function initBookingCalendar() {
+    previousButton.addEventListener("click", () => changeMonth(-1));
+    nextButton.addEventListener("click", () => changeMonth(1));
+    bookingForm.addEventListener("submit", submitBooking);
+    emailCopyToggle?.addEventListener("change", updateEmailField);
+    serviceSelect?.addEventListener("change", handleServiceChange);
+    confirmationContainer?.addEventListener("click", handleConfirmationAction);
+    document.addEventListener("vetusta:languagechange", renderBookingTexts);
+    // Refresca disponibilidad cada 60s. Para sustituirlo por Supabase Realtime
+    // se necesita habilitar Realtime en el dashboard de Supabase y ejecutar:
+    // ALTER PUBLICATION supabase_realtime ADD TABLE reservations;
+    // Ambos cambios son externos al repositorio, por eso se mantiene el intervalo.
+    window.setInterval(refreshCurrentSlotAvailability, 60 * 1000);
+    updateEmailField();
+    loadAvailability();
+  }
 
-function currentLanguage() {
-  return window.VetustaI18n?.getLanguage?.() || "es";
-}
+  function currentLanguage() {
+    return window.VetustaI18n?.getLanguage?.() || "es";
+  }
 
-function translate(key) {
-  return window.VetustaI18n?.t?.(key) || key;
-}
+  function translate(key) {
+    return window.VetustaI18n?.t?.(key) || key;
+  }
 
-function currentLocale() {
-  return localeByLanguage[currentLanguage()] || localeByLanguage.es;
-}
+  function currentLocale() {
+    return localeByLanguage[currentLanguage()] || localeByLanguage.es;
+  }
 
-async function loadAvailability() {
-  const token = ++_availabilityLoadToken;
-  setLoadingStatus(translate("booking.loading"));
-  const monthKey = toMonthKey(bookingState.visibleMonth);
+  async function loadAvailability() {
+    const token = ++_availabilityLoadToken;
+    setLoadingStatus(translate("booking.loading"));
+    const monthKey = toMonthKey(bookingState.visibleMonth);
 
-  // Hasta 3 reintentos con backoff: inmediato → 1s → 2s → 4s.
-  const retryDelays = [0, 1000, 2000, 4000];
+    // Hasta 3 reintentos con backoff: inmediato → 1s → 2s → 4s.
+    const retryDelays = [0, 1000, 2000, 4000];
 
-  for (const delay of retryDelays) {
-    if (token !== _availabilityLoadToken) return;
-
-    if (delay > 0) {
-      await new Promise((resolve) => setTimeout(resolve, delay));
-      if (token !== _availabilityLoadToken) return;
-    }
-
-    try {
-      const { fetchAvailability } = await import("/modules/shared/api.js");
-      const response = await fetchAvailability(monthKey);
-
+    for (const delay of retryDelays) {
       if (token !== _availabilityLoadToken) return;
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `Error ${response.status}`);
+      if (delay > 0) {
+        await new Promise((resolve) => setTimeout(resolve, delay));
+        if (token !== _availabilityLoadToken) return;
       }
 
-      bookingState.availability = await response.json();
+      try {
+        const { fetchAvailability } = await import("/modules/shared/api.js");
+        const response = await fetchAvailability(monthKey);
 
-      if (token !== _availabilityLoadToken) return;
+        if (token !== _availabilityLoadToken) return;
 
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || `Error ${response.status}`);
+        }
+
+        bookingState.availability = await response.json();
+
+        if (token !== _availabilityLoadToken) return;
+
+        bookingState.selectedDay = null;
+        bookingState.selectedSlot = null;
+        hiddenDateInput.value = "";
+        renderCalendar();
+        renderSlots();
+        setStatus("");
+        return;
+      } catch (error) {
+        console.error("Availability load error:", error);
+      }
+    }
+
+    if (token === _availabilityLoadToken) {
+      setStatus(translate("booking.loadError"));
+    }
+  }
+
+  function renderCalendar() {
+    renderWeekdays();
+
+    const year = bookingState.visibleMonth.getFullYear();
+    const month = bookingState.visibleMonth.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const mondayOffset = (firstDay.getDay() + 6) % 7;
+    const cells = [];
+
+    calendarTitle.textContent = capitalize(new Intl.DateTimeFormat(currentLocale(), {
+      month: "long",
+      year: "numeric",
+    }).format(bookingState.visibleMonth));
+
+    for (let index = 0; index < mondayOffset; index += 1) {
+      cells.push(createEmptyDay());
+    }
+
+    bookingState.availability.days.forEach((day) => {
+      cells.push(createDayButton(day));
+    });
+
+    while (cells.length % 7 !== 0) {
+      cells.push(createEmptyDay());
+    }
+
+    calendarDays.replaceChildren(...cells);
+  }
+
+  function createEmptyDay() {
+    const item = document.createElement("div");
+    item.className = "min-h-[48px] rounded-xl bg-surface-container-low opacity-60 sm:min-h-[72px]";
+    return item;
+  }
+
+  function createDayButton(day) {
+    const button = document.createElement("button");
+    const isDisabled = day.isPast || !day.isOpen;
+    const isSelected = bookingState.selectedDay?.date === day.date;
+    const isToday = day.date === toDateKey(new Date());
+
+    button.type = "button";
+    button.disabled = isDisabled;
+    button.className = [
+      "min-h-[48px] rounded-xl border p-1.5 transition-all flex flex-col items-center justify-center gap-1 sm:min-h-[72px] sm:items-start sm:justify-between sm:p-2.5",
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-container focus-visible:ring-offset-2",
+      isSelected ? "border-primary-container bg-primary-container text-white shadow-md shadow-primary/20" : "",
+      !isSelected && !isDisabled && !day.fullyBooked ? "border-outline-variant bg-white text-on-background hover:border-primary-container hover:bg-mint" : "",
+      isDisabled ? "border-surface-container bg-surface-container text-outline cursor-not-allowed" : "",
+      day.fullyBooked && !isDisabled && !isSelected ? "border-error/40 bg-error-container text-on-error-container" : "",
+    ].join(" ");
+
+    const number = document.createElement("span");
+    number.className = [
+      "font-display text-base leading-none font-bold sm:text-xl",
+      isToday && !isSelected ? "text-primary-container" : "",
+    ].join(" ");
+    number.textContent = day.day;
+
+    // La etiqueta (Libre, Completo…) no cabe en una celda de móvil: allí el estado lo dan los colores.
+    const label = document.createElement("span");
+    label.className = [
+      "hidden w-fit rounded-full px-2 py-0.5 text-[11px] font-semibold sm:inline-block",
+      isSelected ? "bg-white/15 text-white" : "",
+      !isSelected && !isDisabled && !day.fullyBooked ? "bg-mint text-primary-container" : "",
+      !isSelected && isDisabled ? "bg-white/60 text-outline" : "",
+      !isSelected && day.fullyBooked && !isDisabled ? "bg-error text-white" : "",
+    ].join(" ");
+    label.textContent = day.isPast
+      ? translate("booking.past")
+      : day.fullyBooked
+        ? translate("booking.full")
+        : day.isOpen
+          ? translate("booking.free")
+          : translate("booking.closed");
+
+    button.append(number, label);
+    button.addEventListener("click", () => {
+      bookingState.selectedDay = day;
+      bookingState.selectedSlot = null;
+      hiddenDateInput.value = "";
+      renderCalendar();
+      renderSlots();
+    });
+
+    return button;
+  }
+
+  function renderSlots() {
+    timeSlots.replaceChildren();
+    renderSelectedTimeStatus();
+
+    if (!bookingState.selectedDay) {
+      selectedDateTitle.textContent = translate("booking.chooseDay");
+      timeSlots.append(createMessage(translate("booking.selectAvailable")));
+      return;
+    }
+
+    selectedDateTitle.textContent = capitalize(new Intl.DateTimeFormat(currentLocale(), {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+    }).format(parseDateKey(bookingState.selectedDay.date)));
+
+    if (bookingState.selectedDay.slots.length === 0) {
+      timeSlots.append(createMessage(translate("booking.clinicClosed")));
+      return;
+    }
+
+    bookingState.selectedDay.slots.forEach((slot) => {
+      const button = document.createElement("button");
+      const isSelected = bookingState.selectedSlot?.datetime === slot.datetime;
+      const availability = slotAvailabilityForSelectedService(slot);
+      const isAvailable = availability === "available";
+      const slotLabel = formatSlotLabel(slot);
+
+      button.type = "button";
+      button.disabled = !isAvailable;
+      button.setAttribute("aria-pressed", String(isSelected));
+      // aria-pressed ya anuncia la hora seleccionada.
+      button.setAttribute("aria-label", isAvailable
+        ? slotLabel
+        : `${slotLabel}, ${translate(availability === "reserved" ? "booking.reserved" : "booking.unavailable")}`);
+      button.className = [
+        "min-h-[44px] rounded-xl border px-3 py-2.5 text-[15px] font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-container focus-visible:ring-offset-2",
+        !isAvailable ? "bg-error-container border-error/40 text-on-error-container cursor-not-allowed" : "bg-white border-outline-variant text-primary hover:border-primary-container hover:bg-mint",
+        isSelected ? "!bg-mint !border-primary-container border-2 text-primary" : "",
+      ].join(" ");
+      button.textContent = isAvailable
+        ? slotLabel
+        : `${slotLabel} ${translate(availability === "reserved" ? "booking.reserved" : "booking.unavailable")}`;
+
+      button.addEventListener("click", () => {
+        bookingState.selectedSlot = slot;
+        hiddenDateInput.value = slot.datetime;
+        renderSlots();
+        setStatus("");
+      });
+
+      timeSlots.append(button);
+    });
+  }
+
+  function renderSelectedTimeStatus() {
+    if (!selectedTimeStatus) {
+      return;
+    }
+
+    if (!bookingState.selectedSlot) {
+      selectedTimeStatus.textContent = translate("booking.selectTimeStatus");
+      selectedTimeStatus.className = "rounded-xl bg-surface-container-low p-4 text-sm font-semibold text-primary";
+      return;
+    }
+
+    selectedTimeStatus.textContent = `${translate("booking.selectedTime")} ${formatSlotLabel(bookingState.selectedSlot)}`;
+    selectedTimeStatus.className = "rounded-xl bg-primary-container p-4 text-sm font-semibold text-white";
+  }
+
+  function handleServiceChange() {
+    if (
+      bookingState.selectedSlot
+      && slotAvailabilityForSelectedService(bookingState.selectedSlot) !== "available"
+    ) {
+      bookingState.selectedSlot = null;
+      hiddenDateInput.value = "";
+    }
+
+    renderSlots();
+  }
+
+  function refreshCurrentSlotAvailability() {
+    if (!bookingState.availability) {
+      return;
+    }
+
+    if (
+      bookingState.selectedSlot
+      && slotAvailabilityForSelectedService(bookingState.selectedSlot) !== "available"
+    ) {
+      bookingState.selectedSlot = null;
+      hiddenDateInput.value = "";
+    }
+
+    renderCalendar();
+    renderSlots();
+  }
+
+  function selectedServiceDurationMinutes() {
+    return serviceSelect?.value === "cirugia" ? 60 : 30;
+  }
+
+  function slotAvailabilityForSelectedService(slot) {
+    if (!bookingState.selectedDay || slot.reserved) {
+      return "reserved";
+    }
+
+    if (slot.isPast || isPastSlot(slot)) {
+      return "unavailable";
+    }
+
+    const neededSlots = selectedServiceDurationMinutes() / 30;
+    const slotIndex = bookingState.selectedDay.slots.findIndex((item) => item.datetime === slot.datetime);
+
+    if (slotIndex < 0) {
+      return "unavailable";
+    }
+
+    const requiredSlots = bookingState.selectedDay.slots.slice(slotIndex, slotIndex + neededSlots);
+    const hasEnoughConsecutiveSlots = requiredSlots.length === neededSlots
+      && requiredSlots.every((item, index) => item.time === addMinutesToTime(slot.time, index * 30));
+
+    if (!hasEnoughConsecutiveSlots) {
+      return "unavailable";
+    }
+
+    return requiredSlots.some((item) => item.reserved)
+      ? "reserved"
+      : requiredSlots.some((item) => item.isPast || isPastSlot(item))
+        ? "unavailable"
+        : "available";
+  }
+
+  function formatSlotLabel(slot) {
+    if (selectedServiceDurationMinutes() === 30) {
+      return slot.time;
+    }
+
+    return `${slot.time} - ${addMinutesToTime(slot.time, selectedServiceDurationMinutes())}`;
+  }
+
+  function createMessage(text) {
+    const message = document.createElement("p");
+    message.className = "col-span-full rounded-xl bg-surface-container-low p-4 text-sm text-on-surface-variant";
+    message.textContent = text;
+    return message;
+  }
+
+  async function submitBooking(event) {
+    event.preventDefault();
+
+    if (!bookingState.selectedSlot) {
+      setStatus(translate("booking.selectSlot"));
+      return;
+    }
+
+    if (slotAvailabilityForSelectedService(bookingState.selectedSlot) !== "available") {
+      bookingState.selectedSlot = null;
+      hiddenDateInput.value = "";
+      renderSlots();
+      setStatus(translate("booking.selectSlot"));
+      return;
+    }
+
+    const formData = new FormData(bookingForm);
+
+    const phoneDigits = (formData.get("telefono") || "").replace(/\D/g, "");
+    if (phoneDigits.length < 6) {
+      const phoneEl = bookingForm.querySelector("#telefono");
+      if (phoneEl) {
+        phoneEl.setCustomValidity("Indica un teléfono con al menos 6 dígitos.");
+        phoneEl.reportValidity();
+        phoneEl.setCustomValidity("");
+      }
+      return;
+    }
+
+    const payload = {
+      nombre: formData.get("nombre"),
+      telefono: formData.get("telefono"),
+      email: formData.get("email"),
+      emailCopy: formData.get("email_copy") === "on",
+      mascota: formData.get("mascota"),
+      servicio: formData.get("servicio"),
+      notes: formData.get("motivo"),
+      datetime: bookingState.selectedSlot.datetime,
+    };
+
+    setLoadingStatus(translate("booking.saving"));
+
+    try {
+      const { createReservation } = await import("/modules/shared/api.js");
+      const response = await createReservation(payload);
+
+      if (response.status === 409) {
+        // Primero se recarga el calendario: loadAvailability limpia el estado al terminar.
+        await loadAvailability();
+        setStatus(translate("booking.slotTaken"));
+        return;
+      }
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        const isClientError = response.status >= 400 && response.status < 500;
+        setStatus(isClientError && data.error ? data.error : translate("booking.saveError"));
+        return;
+      }
+
+      const data = await response.json();
+      showBookingConfirmation(data.reservation, data.email);
+      bookingForm.reset();
+      updateEmailField();
+      await loadAvailability();
+    } catch (error) {
+      console.error("Reservation submit error:", error);
+      setStatus(translate("booking.saveError"));
+    }
+  }
+
+  function updateEmailField() {
+    if (!emailCopyToggle || !emailFieldWrapper || !emailInput) {
+      return;
+    }
+
+    emailFieldWrapper.classList.remove("hidden");
+    emailFieldWrapper.classList.add("flex");
+    emailInput.required = emailCopyToggle.checked;
+    if (!emailCopyToggle.checked) {
+      emailInput.setCustomValidity("");
+    }
+  }
+
+  function showBookingConfirmation(reservation, emailResult = {}) {
+    if (!confirmationContainer) {
+      setStatus(translate("booking.saved"));
+      return;
+    }
+
+    const code = reservation?.code || String(reservation?.id || "").slice(0, 8).toUpperCase();
+    const emailMessage = emailResult?.pending
+      ? `<p class="rounded-lg bg-tertiary-fixed/40 p-3 text-sm text-on-surface-variant">${emailResult.message || "Reserva creada. El envío por email está pendiente de configuración."}</p>`
+      : "";
+
+    confirmationContainer.innerHTML = `
+      <article class="mx-auto max-w-[720px] overflow-hidden rounded-2xl border border-outline-variant bg-white soft-shadow">
+        <div class="bg-primary px-8 py-7 text-white">
+          <p class="font-label-caps text-label-caps text-white/80">Clínica Veterinaria Vetusta</p>
+          <h3 class="mt-2 font-h2 text-[32px] leading-tight">Reserva registrada</h3>
+        </div>
+        <div class="grid gap-5 p-8">
+          <div class="rounded-xl bg-primary-fixed/60 p-4">
+            <p class="text-sm font-label-caps text-primary">Código de reserva</p>
+            <p class="font-h3 text-[28px] text-primary">${escapeHtml(code)}</p>
+          </div>
+          <dl class="grid gap-3 text-on-surface-variant sm:grid-cols-2">
+            <div><dt class="font-label-caps text-primary">Fecha y hora</dt><dd>${escapeHtml(formatSelectedDateTime(reservation?.datetime))}</dd></div>
+            <div><dt class="font-label-caps text-primary">Mascota</dt><dd>${escapeHtml(formatPetType(reservation?.mascota))}</dd></div>
+            <div><dt class="font-label-caps text-primary">Servicio</dt><dd>${escapeHtml(formatService(reservation?.servicio))}</dd></div>
+            <div><dt class="font-label-caps text-primary">Teléfono clínica</dt><dd>985 20 65 58</dd></div>
+          </dl>
+          <p class="text-on-surface-variant">Tu solicitud de cita se ha recibido correctamente. Te contactaremos si necesitamos ajustar algún detalle.</p>
+          ${emailMessage}
+          <div class="flex flex-col gap-3 sm:flex-row">
+            <a class="button-like flex-1 rounded-lg bg-primary px-6 py-4 text-center font-label-caps text-white" href="#inicio" data-confirmation-home>Volver a la web</a>
+            <button class="flex-1 rounded-lg border border-primary bg-white px-6 py-4 font-label-caps text-primary" type="button" data-new-booking>Nueva reserva</button>
+          </div>
+        </div>
+      </article>
+    `;
+    confirmationContainer.classList.remove("hidden");
+    bookingForm.classList.add("hidden");
+    setStatus("");
+    confirmationContainer.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function handleConfirmationAction(event) {
+    if (event.target.closest("[data-new-booking]")) {
+      confirmationContainer.classList.add("hidden");
+      confirmationContainer.replaceChildren();
+      bookingForm.classList.remove("hidden");
       bookingState.selectedDay = null;
       bookingState.selectedSlot = null;
       hiddenDateInput.value = "";
       renderCalendar();
       renderSlots();
-      setStatus("");
-      return;
-    } catch (error) {
-      console.error("Availability load error:", error);
+      bookingForm.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }
 
-  if (token === _availabilityLoadToken) {
-    setStatus(translate("booking.loadError"));
-  }
-}
-
-function renderCalendar() {
-  renderWeekdays();
-
-  const year = bookingState.visibleMonth.getFullYear();
-  const month = bookingState.visibleMonth.getMonth();
-  const firstDay = new Date(year, month, 1);
-  const mondayOffset = (firstDay.getDay() + 6) % 7;
-  const cells = [];
-
-  calendarTitle.textContent = capitalize(new Intl.DateTimeFormat(currentLocale(), {
-    month: "long",
-    year: "numeric",
-  }).format(bookingState.visibleMonth));
-
-  for (let index = 0; index < mondayOffset; index += 1) {
-    cells.push(createEmptyDay());
+  function changeMonth(offset) {
+    bookingState.visibleMonth = new Date(
+      bookingState.visibleMonth.getFullYear(),
+      bookingState.visibleMonth.getMonth() + offset,
+      1,
+    );
+    loadAvailability();
   }
 
-  bookingState.availability.days.forEach((day) => {
-    cells.push(createDayButton(day));
-  });
-
-  while (cells.length % 7 !== 0) {
-    cells.push(createEmptyDay());
+  function renderWeekdays() {
+    const weekdayLabels = translate("booking.weekdays");
+    calendarWeekdays.replaceChildren(...weekdayLabels.map((label) => {
+      const item = document.createElement("div");
+      item.className = "rounded-lg bg-surface-container-low py-2";
+      item.textContent = label;
+      return item;
+    }));
   }
 
-  calendarDays.replaceChildren(...cells);
-}
+  function renderBookingTexts() {
+    if (!bookingState.availability) {
+      return;
+    }
 
-function createEmptyDay() {
-  const item = document.createElement("div");
-  item.className = "min-h-[48px] rounded-xl bg-surface-container-low opacity-60 sm:min-h-[72px]";
-  return item;
-}
-
-function createDayButton(day) {
-  const button = document.createElement("button");
-  const isDisabled = day.isPast || !day.isOpen;
-  const isSelected = bookingState.selectedDay?.date === day.date;
-  const isToday = day.date === toDateKey(new Date());
-
-  button.type = "button";
-  button.disabled = isDisabled;
-  button.className = [
-    "min-h-[48px] rounded-xl border p-1.5 transition-all flex flex-col items-center justify-center gap-1 sm:min-h-[72px] sm:items-start sm:justify-between sm:p-2.5",
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-container focus-visible:ring-offset-2",
-    isSelected ? "border-primary-container bg-primary-container text-white shadow-md shadow-primary/20" : "",
-    !isSelected && !isDisabled && !day.fullyBooked ? "border-outline-variant bg-white text-on-background hover:border-primary-container hover:bg-mint" : "",
-    isDisabled ? "border-surface-container bg-surface-container text-outline cursor-not-allowed" : "",
-    day.fullyBooked && !isDisabled && !isSelected ? "border-error/40 bg-error-container text-on-error-container" : "",
-  ].join(" ");
-
-  const number = document.createElement("span");
-  number.className = [
-    "font-display text-base leading-none font-bold sm:text-xl",
-    isToday && !isSelected ? "text-primary-container" : "",
-  ].join(" ");
-  number.textContent = day.day;
-
-  // La etiqueta (Libre, Completo…) no cabe en una celda de móvil: allí el estado lo dan los colores.
-  const label = document.createElement("span");
-  label.className = [
-    "hidden w-fit rounded-full px-2 py-0.5 text-[11px] font-semibold sm:inline-block",
-    isSelected ? "bg-white/15 text-white" : "",
-    !isSelected && !isDisabled && !day.fullyBooked ? "bg-mint text-primary-container" : "",
-    !isSelected && isDisabled ? "bg-white/60 text-outline" : "",
-    !isSelected && day.fullyBooked && !isDisabled ? "bg-error text-white" : "",
-  ].join(" ");
-  label.textContent = day.isPast
-    ? translate("booking.past")
-    : day.fullyBooked
-      ? translate("booking.full")
-      : day.isOpen
-        ? translate("booking.free")
-        : translate("booking.closed");
-
-  button.append(number, label);
-  button.addEventListener("click", () => {
-    bookingState.selectedDay = day;
-    bookingState.selectedSlot = null;
-    hiddenDateInput.value = "";
     renderCalendar();
     renderSlots();
-  });
-
-  return button;
-}
-
-function renderSlots() {
-  timeSlots.replaceChildren();
-  renderSelectedTimeStatus();
-
-  if (!bookingState.selectedDay) {
-    selectedDateTitle.textContent = translate("booking.chooseDay");
-    timeSlots.append(createMessage(translate("booking.selectAvailable")));
-    return;
   }
 
-  selectedDateTitle.textContent = capitalize(new Intl.DateTimeFormat(currentLocale(), {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-  }).format(parseDateKey(bookingState.selectedDay.date)));
-
-  if (bookingState.selectedDay.slots.length === 0) {
-    timeSlots.append(createMessage(translate("booking.clinicClosed")));
-    return;
+  function setStatus(message) {
+    bookingStatus.textContent = message;
+    bookingStatus.className = "text-sm text-on-surface-variant";
+    const submitBtn = bookingForm?.querySelector("button[type='submit']");
+    if (submitBtn) submitBtn.disabled = false;
   }
 
-  bookingState.selectedDay.slots.forEach((slot) => {
-    const button = document.createElement("button");
-    const isSelected = bookingState.selectedSlot?.datetime === slot.datetime;
-    const availability = slotAvailabilityForSelectedService(slot);
-    const isAvailable = availability === "available";
-    const slotLabel = formatSlotLabel(slot);
-
-    button.type = "button";
-    button.disabled = !isAvailable;
-    button.setAttribute("aria-pressed", String(isSelected));
-    // aria-pressed ya anuncia la hora seleccionada.
-    button.setAttribute("aria-label", isAvailable
-      ? slotLabel
-      : `${slotLabel}, ${translate(availability === "reserved" ? "booking.reserved" : "booking.unavailable")}`);
-    button.className = [
-      "min-h-[44px] rounded-xl border px-3 py-2.5 text-[15px] font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-container focus-visible:ring-offset-2",
-      !isAvailable ? "bg-error-container border-error/40 text-on-error-container cursor-not-allowed" : "bg-white border-outline-variant text-primary hover:border-primary-container hover:bg-mint",
-      isSelected ? "!bg-mint !border-primary-container border-2 text-primary" : "",
-    ].join(" ");
-    button.textContent = isAvailable
-      ? slotLabel
-      : `${slotLabel} ${translate(availability === "reserved" ? "booking.reserved" : "booking.unavailable")}`;
-
-    button.addEventListener("click", () => {
-      bookingState.selectedSlot = slot;
-      hiddenDateInput.value = slot.datetime;
-      renderSlots();
-      setStatus("");
-    });
-
-    timeSlots.append(button);
-  });
-}
-
-function renderSelectedTimeStatus() {
-  if (!selectedTimeStatus) {
-    return;
+  function setLoadingStatus(message) {
+    const spinner = document.createElement("span");
+    spinner.className = "booking-spinner";
+    const text = document.createTextNode(" " + message);
+    bookingStatus.replaceChildren(spinner, text);
+    bookingStatus.className = "booking-status-loading text-sm";
+    const submitBtn = bookingForm?.querySelector("button[type='submit']");
+    if (submitBtn) submitBtn.disabled = true;
   }
 
-  if (!bookingState.selectedSlot) {
-    selectedTimeStatus.textContent = translate("booking.selectTimeStatus");
-    selectedTimeStatus.className = "rounded-xl bg-surface-container-low p-4 text-sm font-semibold text-primary";
-    return;
+  function startOfMonth(date) {
+    return new Date(date.getFullYear(), date.getMonth(), 1);
   }
 
-  selectedTimeStatus.textContent = `${translate("booking.selectedTime")} ${formatSlotLabel(bookingState.selectedSlot)}`;
-  selectedTimeStatus.className = "rounded-xl bg-primary-container p-4 text-sm font-semibold text-white";
-}
-
-function handleServiceChange() {
-  if (
-    bookingState.selectedSlot
-    && slotAvailabilityForSelectedService(bookingState.selectedSlot) !== "available"
-  ) {
-    bookingState.selectedSlot = null;
-    hiddenDateInput.value = "";
+  function toMonthKey(date) {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
   }
 
-  renderSlots();
-}
-
-function refreshCurrentSlotAvailability() {
-  if (!bookingState.availability) {
-    return;
+  function toDateKey(date) {
+    return [
+      date.getFullYear(),
+      String(date.getMonth() + 1).padStart(2, "0"),
+      String(date.getDate()).padStart(2, "0"),
+    ].join("-");
   }
 
-  if (
-    bookingState.selectedSlot
-    && slotAvailabilityForSelectedService(bookingState.selectedSlot) !== "available"
-  ) {
-    bookingState.selectedSlot = null;
-    hiddenDateInput.value = "";
+  function parseDateKey(dateKey) {
+    const [year, month, day] = dateKey.split("-").map(Number);
+    return new Date(year, month - 1, day);
   }
 
-  renderCalendar();
-  renderSlots();
-}
-
-function selectedServiceDurationMinutes() {
-  return serviceSelect?.value === "cirugia" ? 60 : 30;
-}
-
-function slotAvailabilityForSelectedService(slot) {
-  if (!bookingState.selectedDay || slot.reserved) {
-    return "reserved";
-  }
-
-  if (slot.isPast || isPastSlot(slot)) {
-    return "unavailable";
-  }
-
-  const neededSlots = selectedServiceDurationMinutes() / 30;
-  const slotIndex = bookingState.selectedDay.slots.findIndex((item) => item.datetime === slot.datetime);
-
-  if (slotIndex < 0) {
-    return "unavailable";
-  }
-
-  const requiredSlots = bookingState.selectedDay.slots.slice(slotIndex, slotIndex + neededSlots);
-  const hasEnoughConsecutiveSlots = requiredSlots.length === neededSlots
-    && requiredSlots.every((item, index) => item.time === addMinutesToTime(slot.time, index * 30));
-
-  if (!hasEnoughConsecutiveSlots) {
-    return "unavailable";
-  }
-
-  return requiredSlots.some((item) => item.reserved)
-    ? "reserved"
-    : requiredSlots.some((item) => item.isPast || isPastSlot(item))
-      ? "unavailable"
-      : "available";
-}
-
-function formatSlotLabel(slot) {
-  if (selectedServiceDurationMinutes() === 30) {
-    return slot.time;
-  }
-
-  return `${slot.time} - ${addMinutesToTime(slot.time, selectedServiceDurationMinutes())}`;
-}
-
-function createMessage(text) {
-  const message = document.createElement("p");
-  message.className = "col-span-full rounded-xl bg-surface-container-low p-4 text-sm text-on-surface-variant";
-  message.textContent = text;
-  return message;
-}
-
-async function submitBooking(event) {
-  event.preventDefault();
-
-  if (!bookingState.selectedSlot) {
-    setStatus(translate("booking.selectSlot"));
-    return;
-  }
-
-  if (slotAvailabilityForSelectedService(bookingState.selectedSlot) !== "available") {
-    bookingState.selectedSlot = null;
-    hiddenDateInput.value = "";
-    renderSlots();
-    setStatus(translate("booking.selectSlot"));
-    return;
-  }
-
-  const formData = new FormData(bookingForm);
-
-  const phoneDigits = (formData.get("telefono") || "").replace(/\D/g, "");
-  if (phoneDigits.length < 6) {
-    const phoneEl = bookingForm.querySelector("#telefono");
-    if (phoneEl) {
-      phoneEl.setCustomValidity("Indica un teléfono con al menos 6 dígitos.");
-      phoneEl.reportValidity();
-      phoneEl.setCustomValidity("");
-    }
-    return;
-  }
-
-  const payload = {
-    nombre: formData.get("nombre"),
-    telefono: formData.get("telefono"),
-    email: formData.get("email"),
-    emailCopy: formData.get("email_copy") === "on",
-    mascota: formData.get("mascota"),
-    servicio: formData.get("servicio"),
-    notes: formData.get("motivo"),
-    datetime: bookingState.selectedSlot.datetime,
-  };
-
-  setLoadingStatus(translate("booking.saving"));
-
-  try {
-    const { createReservation } = await import("/modules/shared/api.js");
-    const response = await createReservation(payload);
-
-    if (response.status === 409) {
-      setStatus(translate("booking.slotTaken"));
-      await loadAvailability();
-      return;
+  function isPastSlot(slot) {
+    if (!slot?.datetime) {
+      return false;
     }
 
-    if (!response.ok) {
-      const data = await response.json().catch(() => ({}));
-      const isClientError = response.status >= 400 && response.status < 500;
-      setStatus(isClientError && data.error ? data.error : translate("booking.saveError"));
-      return;
+    return slot.datetime <= toMadridDateTimeKey(new Date());
+  }
+
+  function toMadridDateTimeKey(date) {
+    const parts = new Intl.DateTimeFormat("en-GB", {
+      timeZone: "Europe/Madrid",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hourCycle: "h23",
+    }).formatToParts(date);
+    const v = Object.fromEntries(parts.map((p) => [p.type, p.value]));
+    return `${v.year}-${v.month}-${v.day}T${v.hour}:${v.minute}`;
+  }
+
+  function capitalize(text) {
+    return text.charAt(0).toUpperCase() + text.slice(1);
+  }
+
+  function addMinutesToTime(time, minutesToAdd) {
+    const [hours, minutes] = time.split(":").map(Number);
+    const total = (hours || 0) * 60 + (minutes || 0) + minutesToAdd;
+    return `${String(Math.floor(total / 60)).padStart(2, "0")}:${String(total % 60).padStart(2, "0")}`;
+  }
+
+  function formatSelectedDateTime(datetime) {
+    if (!datetime) {
+      return "Sin fecha";
     }
 
-    const data = await response.json();
-    showBookingConfirmation(data.reservation, data.email);
-    bookingForm.reset();
-    updateEmailField();
-    await loadAvailability();
-  } catch (error) {
-    console.error("Reservation submit error:", error);
-    setStatus(translate("booking.saveError"));
-  }
-}
+    const [dateKey, time] = datetime.split("T");
+    const date = parseDateKey(dateKey);
+    const dateLabel = new Intl.DateTimeFormat(currentLocale(), {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }).format(date);
 
-function updateEmailField() {
-  if (!emailCopyToggle || !emailFieldWrapper || !emailInput) {
-    return;
+    return `${capitalize(dateLabel)} · ${time}`;
   }
 
-  emailFieldWrapper.classList.remove("hidden");
-  emailFieldWrapper.classList.add("flex");
-  emailInput.required = emailCopyToggle.checked;
-  if (!emailCopyToggle.checked) {
-    emailInput.setCustomValidity("");
-  }
-}
+  function formatPetType(value) {
+    const labels = {
+      perro: "Perro",
+      gato: "Gato",
+      otro: "Otro",
+    };
 
-function showBookingConfirmation(reservation, emailResult = {}) {
-  if (!confirmationContainer) {
-    setStatus(translate("booking.saved"));
-    return;
+    return labels[value] || value || "Sin indicar";
   }
 
-  const code = reservation?.code || String(reservation?.id || "").slice(0, 8).toUpperCase();
-  const emailMessage = emailResult?.pending
-    ? `<p class="rounded-lg bg-tertiary-fixed/40 p-3 text-sm text-on-surface-variant">${emailResult.message || "Reserva creada. El envío por email está pendiente de configuración."}</p>`
-    : "";
+  function formatService(value) {
+    const labels = {
+      consulta: "Consulta general",
+      vacunacion: "Vacunación",
+      cirugia: "Cirugía",
+      peluqueria: "Peluquería",
+    };
 
-  confirmationContainer.innerHTML = `
-    <article class="mx-auto max-w-[720px] overflow-hidden rounded-2xl border border-outline-variant bg-white soft-shadow">
-      <div class="bg-primary px-8 py-7 text-white">
-        <p class="font-label-caps text-label-caps text-white/80">Clínica Veterinaria Vetusta</p>
-        <h3 class="mt-2 font-h2 text-[32px] leading-tight">Reserva registrada</h3>
-      </div>
-      <div class="grid gap-5 p-8">
-        <div class="rounded-xl bg-primary-fixed/60 p-4">
-          <p class="text-sm font-label-caps text-primary">Código de reserva</p>
-          <p class="font-h3 text-[28px] text-primary">${escapeHtml(code)}</p>
-        </div>
-        <dl class="grid gap-3 text-on-surface-variant sm:grid-cols-2">
-          <div><dt class="font-label-caps text-primary">Fecha y hora</dt><dd>${escapeHtml(formatSelectedDateTime(reservation?.datetime))}</dd></div>
-          <div><dt class="font-label-caps text-primary">Mascota</dt><dd>${escapeHtml(formatPetType(reservation?.mascota))}</dd></div>
-          <div><dt class="font-label-caps text-primary">Servicio</dt><dd>${escapeHtml(formatService(reservation?.servicio))}</dd></div>
-          <div><dt class="font-label-caps text-primary">Teléfono clínica</dt><dd>985 20 65 58</dd></div>
-        </dl>
-        <p class="text-on-surface-variant">Tu solicitud de cita se ha recibido correctamente. Te contactaremos si necesitamos ajustar algún detalle.</p>
-        ${emailMessage}
-        <div class="flex flex-col gap-3 sm:flex-row">
-          <a class="button-like flex-1 rounded-lg bg-primary px-6 py-4 text-center font-label-caps text-white" href="#inicio" data-confirmation-home>Volver a la web</a>
-          <button class="flex-1 rounded-lg border border-primary bg-white px-6 py-4 font-label-caps text-primary" type="button" data-new-booking>Nueva reserva</button>
-        </div>
-      </div>
-    </article>
-  `;
-  confirmationContainer.classList.remove("hidden");
-  bookingForm.classList.add("hidden");
-  setStatus("");
-  confirmationContainer.scrollIntoView({ behavior: "smooth", block: "start" });
-}
-
-function handleConfirmationAction(event) {
-  if (event.target.closest("[data-new-booking]")) {
-    confirmationContainer.classList.add("hidden");
-    confirmationContainer.replaceChildren();
-    bookingForm.classList.remove("hidden");
-    bookingState.selectedDay = null;
-    bookingState.selectedSlot = null;
-    hiddenDateInput.value = "";
-    renderCalendar();
-    renderSlots();
-    bookingForm.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-}
-
-function changeMonth(offset) {
-  bookingState.visibleMonth = new Date(
-    bookingState.visibleMonth.getFullYear(),
-    bookingState.visibleMonth.getMonth() + offset,
-    1,
-  );
-  loadAvailability();
-}
-
-function renderWeekdays() {
-  const weekdayLabels = translate("booking.weekdays");
-  calendarWeekdays.replaceChildren(...weekdayLabels.map((label) => {
-    const item = document.createElement("div");
-    item.className = "rounded-lg bg-surface-container-low py-2";
-    item.textContent = label;
-    return item;
-  }));
-}
-
-function renderBookingTexts() {
-  if (!bookingState.availability) {
-    return;
+    return labels[value] || value || "Sin indicar";
   }
 
-  renderCalendar();
-  renderSlots();
-}
-
-function setStatus(message) {
-  bookingStatus.textContent = message;
-  bookingStatus.className = "text-sm text-on-surface-variant";
-  const submitBtn = bookingForm?.querySelector("button[type='submit']");
-  if (submitBtn) submitBtn.disabled = false;
-}
-
-function setLoadingStatus(message) {
-  const spinner = document.createElement("span");
-  spinner.className = "booking-spinner";
-  const text = document.createTextNode(" " + message);
-  bookingStatus.replaceChildren(spinner, text);
-  bookingStatus.className = "booking-status-loading text-sm";
-  const submitBtn = bookingForm?.querySelector("button[type='submit']");
-  if (submitBtn) submitBtn.disabled = true;
-}
-
-function startOfMonth(date) {
-  return new Date(date.getFullYear(), date.getMonth(), 1);
-}
-
-function toMonthKey(date) {
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
-}
-
-function toDateKey(date) {
-  return [
-    date.getFullYear(),
-    String(date.getMonth() + 1).padStart(2, "0"),
-    String(date.getDate()).padStart(2, "0"),
-  ].join("-");
-}
-
-function parseDateKey(dateKey) {
-  const [year, month, day] = dateKey.split("-").map(Number);
-  return new Date(year, month - 1, day);
-}
-
-function isPastSlot(slot) {
-  if (!slot?.datetime) {
-    return false;
+  function escapeHtml(value) {
+    return String(value || "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
   }
-
-  return slot.datetime <= toMadridDateTimeKey(new Date());
-}
-
-function toMadridDateTimeKey(date) {
-  const parts = new Intl.DateTimeFormat("en-GB", {
-    timeZone: "Europe/Madrid",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23",
-  }).formatToParts(date);
-  const v = Object.fromEntries(parts.map((p) => [p.type, p.value]));
-  return `${v.year}-${v.month}-${v.day}T${v.hour}:${v.minute}`;
-}
-
-function capitalize(text) {
-  return text.charAt(0).toUpperCase() + text.slice(1);
-}
-
-function addMinutesToTime(time, minutesToAdd) {
-  const [hours, minutes] = time.split(":").map(Number);
-  const total = (hours || 0) * 60 + (minutes || 0) + minutesToAdd;
-  return `${String(Math.floor(total / 60)).padStart(2, "0")}:${String(total % 60).padStart(2, "0")}`;
-}
-
-function formatSelectedDateTime(datetime) {
-  if (!datetime) {
-    return "Sin fecha";
-  }
-
-  const [dateKey, time] = datetime.split("T");
-  const date = parseDateKey(dateKey);
-  const dateLabel = new Intl.DateTimeFormat(currentLocale(), {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  }).format(date);
-
-  return `${capitalize(dateLabel)} · ${time}`;
-}
-
-function formatPetType(value) {
-  const labels = {
-    perro: "Perro",
-    gato: "Gato",
-    otro: "Otro",
-  };
-
-  return labels[value] || value || "Sin indicar";
-}
-
-function formatService(value) {
-  const labels = {
-    consulta: "Consulta general",
-    vacunacion: "Vacunación",
-    cirugia: "Cirugía",
-    peluqueria: "Peluquería",
-  };
-
-  return labels[value] || value || "Sin indicar";
-}
-
-function escapeHtml(value) {
-  return String(value || "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
+})();

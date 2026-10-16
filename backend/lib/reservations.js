@@ -177,7 +177,7 @@ async function readPublicSupabaseReservationSlots(month) {
 
   if (error) {
     throw new Error(
-      "Supabase no pudo leer reservas. Añade SUPABASE_SERVICE_ROLE_KEY al backend/Vercel o vuelve a ejecutar supabase-reservations.sql para crear la función pública de disponibilidad: "
+      "Supabase no pudo leer reservas. Añade SUPABASE_SERVICE_ROLE_KEY al backend/Vercel o aplica las migraciones de supabase/migrations para crear la función pública de disponibilidad: "
         + error.message,
     );
   }
