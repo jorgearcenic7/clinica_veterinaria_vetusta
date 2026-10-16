@@ -1,6 +1,6 @@
 import { state, cb, statusEl, documentForm, documentsTitleEl, documentsListEl } from "./state.js";
-import { escapeHtml, emptyMessage } from "./utils.js";
-import { setStatus, friendlyError, formToObject, uploadPetDocumentFile, validateUploadFile, signedPetDocumentUrl, logDocumentUpload, removePetDocumentFile } from "../../supabase-client.js";
+import { emptyMessage } from "./utils.js";
+import { escapeHtml, setStatus, friendlyError, formToObject, uploadPetDocumentFile, validateUploadFile, signedPetDocumentUrl, logDocumentUpload, removePetDocumentFile } from "../../supabase-client.js";
 
 export async function renderDocuments() {
   documentsListEl.replaceChildren();

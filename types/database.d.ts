@@ -7,7 +7,7 @@
  * and supabase-audit-log.sql at the repo root — every field here is taken
  * directly from those `create table` statements or from the exact object
  * literals built in backend/lib/reservations.js, backend/lib/auditLog.js and
- * frontend/modules/shared/storage.js (duplicated in frontend/supabase-client.js).
+ * frontend/supabase-client.js.
  */
 
 import type { PetDocumentSource, ReservationStatus } from "./models";
@@ -139,8 +139,7 @@ export interface AdminAuditLogInsert {
 
 /**
  * Insert payload for "document_upload_logs"
- * (frontend/modules/shared/storage.js `logDocumentUpload`, duplicated in
- * frontend/supabase-client.js). `id` and `created_at` are DB-generated
+ * (frontend/supabase-client.js `logDocumentUpload`). `id` and `created_at` are DB-generated
  * defaults. `pet_id` and `uploaded_by` are nullable at the schema level
  * (`on delete cascade` / `on delete set null` FKs), even though the app
  * always populates them from an already-inserted `pet_documents` row.

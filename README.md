@@ -377,9 +377,6 @@ frontend/
       reservations.js             Calendario semanal y render de reservas
     shared/
       api.js                     Cliente centralizado de llamadas a la API (fetch)
-      auth.js                    Helpers de sesion/roles con Supabase Auth
-      storage.js                 Helpers de subida a Supabase Storage
-      utils.js                   Utilidades compartidas de frontend
 
   src/
     input.css                    Directivas de Tailwind (@tailwind base/components/utilities)

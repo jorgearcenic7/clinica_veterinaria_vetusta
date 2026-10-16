@@ -13,7 +13,6 @@ validateEnv();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
-const publicRoot = process.cwd();
 const port = Number(process.env.PORT || 3000);
 
 // Necesario para que req.ip sea la IP real del cliente detrás de Vercel/proxy.

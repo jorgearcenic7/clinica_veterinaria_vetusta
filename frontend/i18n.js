@@ -10,37 +10,12 @@
       "nav.reviews": "Opiniones",
       "nav.contact": "Contacto",
       "nav.clientArea": "Área clientes",
-      "nav.appointment": "Reservar cita",
       "nav.booking": "Reserva",
-    "hero.title": "Tu mascota merece lo mejor. Y en Vetusta lo saben.",
       "hero.lineOne": "Tu mascota",
       "hero.lineTwo": "merece",
       "hero.lineThreePrefix": "lo",
       "hero.lineThreeAccent": "mejor.",
       "hero.reviewCount": "· {count} reseñas en Google",
-      "hero.prefix": "Clínica veterinaria en Oviedo con",
-      "hero.suffix": "Trato humano, honesto y a precios justos.",
-      "hero.call": "Llámanos ahora",
-      "hero.services": "Ver servicios",
-      "trust.care": "Trato cercano y sin rodeos",
-      "trust.prices": "Precios transparentes",
-      "trust.location": "En Oviedo desde hace años",
-      "services.title": "¿Qué podemos hacer por tu mascota?",
-      "services.subtitle": "Cuidado integral para asegurar la salud y felicidad de tu compañero de vida.",
-      "services.general.title": "Consulta médica general",
-      "services.general.text": "Revisiones completas para mantener la salud de tu mascota en óptimas condiciones, detectando problemas a tiempo.",
-      "services.vaccine.title": "Vacunación y desparasitación",
-      "services.vaccine.text": "Planes preventivos personalizados para proteger a tu animal de enfermedades comunes y parásitos.",
-      "services.surgery.title": "Cirugía",
-      "services.surgery.text": "Intervenciones quirúrgicas seguras con monitorización constante y quirófano equipado.",
-      "services.lab.title": "Análisis de laboratorio",
-      "services.lab.text": "Diagnósticos rápidos y precisos gracias a nuestro equipamiento de laboratorio in situ.",
-      "services.grooming.title": "Peluquería canina y felina",
-      "services.grooming.text": "Servicios de higiene y estética adaptados a las necesidades de cada raza y tipo de pelo.",
-      "services.emergency.title": "Urgencias veterinarias",
-      "services.emergency.text": "Atención rápida para casos críticos, priorizando siempre el bienestar inmediato del animal.",
-      "services.notFound": "¿No encuentras lo que buscas?",
-      "services.call": "Llámanos",
       "pricing.servicesTitle": "Servicios",
       "pricing.packsTitleOne": "Packs",
       "pricing.packsTitleTwo": "Premium",
@@ -222,7 +197,6 @@
       "faq.five.a": "Sí, contamos con servicio de peluquería canina y felina con cita previa, adaptándonos al tipo de pelo y necesidades de cada raza.",
       "faq.five.extra": "Puedes solicitarlo desde el formulario de reserva seleccionando peluquería.",
       "contact.title": "Dónde encontrarnos",
-      "contact.subtitle": "Estamos en una zona accesible y céntrica de Oviedo para que sea cómodo visitarnos.",
       "contact.address": "Dirección",
       "contact.addressHelp": "Zona de Oviedo con acceso cómodo para consulta veterinaria, revisiones y vacunas.",
       "contact.phone": "Teléfono",
@@ -236,7 +210,6 @@
       "footer.legal": "Aviso Legal",
       "footer.privacy": "Privacidad",
       "footer.cookies": "Cookies",
-      "footer.call": "Llamar ahora",
       "footer.manageCookies": "Gestionar cookies",
       "footer.sitemap": "Sitemap",
       "legal.common.info": "Información legal",
@@ -339,37 +312,12 @@
       "nav.reviews": "Reviews",
       "nav.contact": "Contact",
       "nav.clientArea": "Client area",
-      "nav.appointment": "Book appointment",
       "nav.booking": "Booking",
-      "hero.title": "Your pet deserves the best. Vetusta knows it.",
       "hero.lineOne": "Your pet",
       "hero.lineTwo": "deserves",
       "hero.lineThreePrefix": "the",
       "hero.lineThreeAccent": "best.",
       "hero.reviewCount": "· {count} reviews on Google",
-      "hero.prefix": "Veterinary clinic in Oviedo with",
-      "hero.suffix": "Kind, honest care at fair prices.",
-      "hero.call": "Call us now",
-      "hero.services": "View services",
-      "trust.care": "Warm, straightforward care",
-      "trust.prices": "Transparent prices",
-      "trust.location": "In Oviedo for years",
-      "services.title": "What can we do for your pet?",
-      "services.subtitle": "Comprehensive care to protect your companion's health and happiness.",
-      "services.general.title": "General veterinary consultation",
-      "services.general.text": "Complete check-ups to keep your pet healthy and detect problems early.",
-      "services.vaccine.title": "Vaccination and parasite prevention",
-      "services.vaccine.text": "Personalized preventive plans to protect your pet from common diseases and parasites.",
-      "services.surgery.title": "Surgery",
-      "services.surgery.text": "Safe surgical procedures with constant monitoring and a fully equipped operating room.",
-      "services.lab.title": "Laboratory testing",
-      "services.lab.text": "Fast, accurate diagnostics thanks to our in-house laboratory equipment.",
-      "services.grooming.title": "Dog and cat grooming",
-      "services.grooming.text": "Hygiene and grooming services adapted to each breed and coat type.",
-      "services.emergency.title": "Veterinary emergencies",
-      "services.emergency.text": "Fast care for critical cases, always prioritizing the animal's immediate wellbeing.",
-      "services.notFound": "Can't find what you need?",
-      "services.call": "Call us",
       "pricing.servicesTitle": "Services",
       "pricing.packsTitleOne": "Premium",
       "pricing.packsTitleTwo": "Packs",
@@ -551,7 +499,6 @@
       "faq.five.a": "Yes, we offer dog and cat grooming by appointment, adapting to each breed's coat type and needs.",
       "faq.five.extra": "You can request it from the booking form by selecting grooming.",
       "contact.title": "Where to find us",
-      "contact.subtitle": "We are in an accessible, central area of Oviedo so visiting us is easy.",
       "contact.address": "Address",
       "contact.addressHelp": "A convenient area of Oviedo for consultations, check-ups and vaccinations.",
       "contact.phone": "Phone",
@@ -565,7 +512,6 @@
       "footer.legal": "Legal Notice",
       "footer.privacy": "Privacy",
       "footer.cookies": "Cookies",
-      "footer.call": "Call now",
       "footer.manageCookies": "Manage cookies",
       "footer.sitemap": "Sitemap",
       "legal.common.info": "Legal information",
@@ -668,37 +614,12 @@
       "nav.reviews": "Avis",
       "nav.contact": "Contact",
       "nav.clientArea": "Espace client",
-      "nav.appointment": "Prendre rendez-vous",
       "nav.booking": "Réservation",
-      "hero.title": "Votre animal mérite le meilleur. Vetusta le sait.",
       "hero.lineOne": "Votre animal",
       "hero.lineTwo": "mérite",
       "hero.lineThreePrefix": "le",
       "hero.lineThreeAccent": "meilleur.",
       "hero.reviewCount": "· {count} avis sur Google",
-      "hero.prefix": "Clinique vétérinaire à Oviedo avec",
-      "hero.suffix": "Un accompagnement humain, honnête et à prix justes.",
-      "hero.call": "Appelez-nous",
-      "hero.services": "Voir les services",
-      "trust.care": "Un accueil proche et direct",
-      "trust.prices": "Prix transparents",
-      "trust.location": "À Oviedo depuis des années",
-      "services.title": "Que pouvons-nous faire pour votre animal ?",
-      "services.subtitle": "Des soins complets pour préserver la santé et le bonheur de votre compagnon.",
-      "services.general.title": "Consultation vétérinaire générale",
-      "services.general.text": "Bilans complets pour maintenir votre animal en bonne santé et détecter les problèmes à temps.",
-      "services.vaccine.title": "Vaccination et vermifugation",
-      "services.vaccine.text": "Plans préventifs personnalisés pour protéger votre animal des maladies courantes et des parasites.",
-      "services.surgery.title": "Chirurgie",
-      "services.surgery.text": "Interventions chirurgicales sûres avec surveillance constante et bloc opératoire équipé.",
-      "services.lab.title": "Analyses de laboratoire",
-      "services.lab.text": "Diagnostics rapides et précis grâce à notre équipement de laboratoire sur place.",
-      "services.grooming.title": "Toilettage chien et chat",
-      "services.grooming.text": "Services d'hygiène et d'esthétique adaptés à chaque race et type de pelage.",
-      "services.emergency.title": "Urgences vétérinaires",
-      "services.emergency.text": "Prise en charge rapide des cas critiques, en donnant toujours la priorité au bien-être immédiat de l'animal.",
-      "services.notFound": "Vous ne trouvez pas ce dont vous avez besoin ?",
-      "services.call": "Appelez-nous",
       "pricing.servicesTitle": "Services",
       "pricing.packsTitleOne": "Packs",
       "pricing.packsTitleTwo": "Premium",
@@ -880,7 +801,6 @@
       "faq.five.a": "Oui, nous proposons le toilettage canin et félin sur rendez-vous, adapté au type de poil et aux besoins de chaque race.",
       "faq.five.extra": "Vous pouvez le demander depuis le formulaire de réservation en sélectionnant toilettage.",
       "contact.title": "Où nous trouver",
-      "contact.subtitle": "Nous sommes situés dans une zone accessible et centrale d'Oviedo pour faciliter votre visite.",
       "contact.address": "Adresse",
       "contact.addressHelp": "Zone pratique d'Oviedo pour consultations, bilans et vaccinations.",
       "contact.phone": "Téléphone",
@@ -894,7 +814,6 @@
       "footer.legal": "Mentions légales",
       "footer.privacy": "Confidentialité",
       "footer.cookies": "Cookies",
-      "footer.call": "Appeler",
       "footer.manageCookies": "Gérer les cookies",
       "footer.sitemap": "Sitemap",
       "legal.common.info": "Information légale",
@@ -997,37 +916,12 @@
       "nav.reviews": "Opiniões",
       "nav.contact": "Contacto",
       "nav.clientArea": "Área de clientes",
-      "nav.appointment": "Marcar consulta",
       "nav.booking": "Reserva",
-      "hero.title": "O seu animal merece o melhor. A Vetusta sabe disso.",
       "hero.lineOne": "O seu animal",
       "hero.lineTwo": "merece",
       "hero.lineThreePrefix": "o",
       "hero.lineThreeAccent": "melhor.",
       "hero.reviewCount": "· {count} avaliações no Google",
-      "hero.prefix": "Clínica veterinária em Oviedo com",
-      "hero.suffix": "Atendimento humano, honesto e a preços justos.",
-      "hero.call": "Ligue agora",
-      "hero.services": "Ver serviços",
-      "trust.care": "Atendimento próximo e direto",
-      "trust.prices": "Preços transparentes",
-      "trust.location": "Em Oviedo há anos",
-      "services.title": "O que podemos fazer pelo seu animal?",
-      "services.subtitle": "Cuidados integrais para garantir a saúde e felicidade do seu companheiro.",
-      "services.general.title": "Consulta veterinária geral",
-      "services.general.text": "Check-ups completos para manter o seu animal saudável e detetar problemas a tempo.",
-      "services.vaccine.title": "Vacinação e desparasitação",
-      "services.vaccine.text": "Planos preventivos personalizados para proteger o seu animal de doenças comuns e parasitas.",
-      "services.surgery.title": "Cirurgia",
-      "services.surgery.text": "Intervenções cirúrgicas seguras com monitorização constante e bloco operatório equipado.",
-      "services.lab.title": "Análises laboratoriais",
-      "services.lab.text": "Diagnósticos rápidos e precisos graças ao nosso equipamento laboratorial no local.",
-      "services.grooming.title": "Tosquia e grooming canino e felino",
-      "services.grooming.text": "Serviços de higiene e estética adaptados a cada raça e tipo de pelo.",
-      "services.emergency.title": "Urgências veterinárias",
-      "services.emergency.text": "Atendimento rápido para casos críticos, priorizando sempre o bem-estar imediato do animal.",
-      "services.notFound": "Não encontra o que procura?",
-      "services.call": "Ligue-nos",
       "pricing.servicesTitle": "Serviços",
       "pricing.packsTitleOne": "Packs",
       "pricing.packsTitleTwo": "Premium",
@@ -1209,7 +1103,6 @@
       "faq.five.a": "Sim, temos serviço de grooming canino e felino com marcação, adaptado ao tipo de pelo e às necessidades de cada raça.",
       "faq.five.extra": "Pode solicitá-lo no formulário de reserva selecionando grooming.",
       "contact.title": "Onde encontrar-nos",
-      "contact.subtitle": "Estamos numa zona acessível e central de Oviedo para que seja fácil visitar-nos.",
       "contact.address": "Morada",
       "contact.addressHelp": "Zona cómoda de Oviedo para consulta veterinária, revisões e vacinas.",
       "contact.phone": "Telefone",
@@ -1223,7 +1116,6 @@
       "footer.legal": "Aviso Legal",
       "footer.privacy": "Privacidade",
       "footer.cookies": "Cookies",
-      "footer.call": "Ligar agora",
       "footer.manageCookies": "Gerir cookies",
       "footer.sitemap": "Sitemap",
       "legal.common.info": "Informação legal",
@@ -1332,36 +1224,31 @@
   }
 
   function applyLanguage(language) {
-    const dictionary = translations[language] || translations[defaultLanguage];
     document.documentElement.lang = language;
 
     document.querySelectorAll("[data-i18n]").forEach((element) => {
-      const key = element.dataset.i18n;
-      const value = dictionary[key] ?? translations.en?.[key] ?? translations[defaultLanguage][key];
+      const value = t(element.dataset.i18n, language);
       if (value) {
         element.textContent = value;
       }
     });
 
     document.querySelectorAll("[data-i18n-html]").forEach((element) => {
-      const key = element.dataset.i18nHtml;
-      const value = dictionary[key] ?? translations.en?.[key] ?? translations[defaultLanguage][key];
+      const value = t(element.dataset.i18nHtml, language);
       if (value) {
         element.innerHTML = value;
       }
     });
 
     document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
-      const key = element.dataset.i18nPlaceholder;
-      const value = dictionary[key] ?? translations.en?.[key] ?? translations[defaultLanguage][key];
+      const value = t(element.dataset.i18nPlaceholder, language);
       if (value) {
         element.setAttribute("placeholder", value);
       }
     });
 
     document.querySelectorAll("[data-i18n-aria-label]").forEach((element) => {
-      const key = element.dataset.i18nAriaLabel;
-      const value = dictionary[key] ?? translations.en?.[key] ?? translations[defaultLanguage][key];
+      const value = t(element.dataset.i18nAriaLabel, language);
       if (value) {
         element.setAttribute("aria-label", value);
       }

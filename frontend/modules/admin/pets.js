@@ -1,6 +1,6 @@
 import { state, cb, statusEl, petsListEl, petForm, getSelectedClient } from "./state.js";
-import { escapeHtml, emptyMessage, normalizeEmptyDates } from "./utils.js";
-import { setStatus, friendlyError, formToObject, formatDate, signedPetImageUrl, uploadPetImage, validateUploadFile } from "../../supabase-client.js";
+import { emptyMessage, normalizeEmptyDates } from "./utils.js";
+import { escapeHtml, setStatus, friendlyError, formToObject, formatDate, signedPetImageUrl, uploadPetImage } from "../../supabase-client.js";
 import { resetRecordForm } from "./records.js";
 import { resetDocumentForm } from "./documents.js";
 
@@ -110,7 +110,6 @@ export async function savePet(event) {
     }
 
     if (imageFile) {
-      validateUploadFile(imageFile, "image");
       const petId = values.id || data.id;
       const imagePath = await uploadPetImage(state.supabase, selectedClient.id, petId, imageFile);
       const { error: imageError } = await state.supabase
@@ -123,7 +122,6 @@ export async function savePet(event) {
         throw imageError;
       }
 
-      console.log("saved image_url", imagePath);
       state.selectedPetId = petId;
     }
 

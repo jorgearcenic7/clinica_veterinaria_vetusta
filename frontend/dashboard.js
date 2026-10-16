@@ -67,10 +67,6 @@ async function loadDashboardData() {
   await renderPets();
 }
 
-async function loadPets() {
-  await loadDashboardData();
-}
-
 function renderReservations() {
   reservationsListEl.replaceChildren();
 
@@ -173,7 +169,7 @@ async function changeImage(input) {
       throw error;
     }
 
-    await loadPets();
+    await loadDashboardData();
     setStatus(statusEl, "Imagen actualizada.");
   } catch (error) {
     setStatus(statusEl, friendlyError(error) || "No se pudo subir la imagen.", true);

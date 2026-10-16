@@ -41,29 +41,16 @@ router.patch("/reservations/:id", async (request, response) => {
 router.get("/clients", async (request, response) => {
   try {
     const auth = await requireAdminRequest(request);
-    const { page, limit, from, to } = parsePagination(request.query);
+    const pagination = parsePagination(request.query);
 
-    const { data, error, count } = await auth.supabase
+    const result = await auth.supabase
       .from("profiles")
       .select("id,full_name,phone,role,created_at", { count: "exact" })
       .eq("role", "client")
       .order("created_at", { ascending: false })
-      .range(from, to);
+      .range(pagination.from, pagination.to);
 
-    if (error) {
-      throw Object.assign(new Error(`Supabase error: ${error.message}`), {
-        statusCode: 500,
-      });
-    }
-
-    const total = count || 0;
-    response.json({
-      data,
-      page,
-      limit,
-      total,
-      totalPages: Math.ceil(total / limit) || 1,
-    });
+    sendPage(response, result, pagination);
   } catch (error) {
     console.error("Admin clients error:", error);
     response
@@ -75,7 +62,7 @@ router.get("/clients", async (request, response) => {
 router.get("/pets", async (request, response) => {
   try {
     const auth = await requireAdminRequest(request);
-    const { page, limit, from, to } = parsePagination(request.query);
+    const pagination = parsePagination(request.query);
     const clientId = safeString(request.query.client_id, 80) || null;
 
     let query = auth.supabase
@@ -89,22 +76,9 @@ router.get("/pets", async (request, response) => {
       query = query.eq("owner_id", clientId);
     }
 
-    const { data, error, count } = await query.range(from, to);
+    const result = await query.range(pagination.from, pagination.to);
 
-    if (error) {
-      throw Object.assign(new Error(`Supabase error: ${error.message}`), {
-        statusCode: 500,
-      });
-    }
-
-    const total = count || 0;
-    response.json({
-      data,
-      page,
-      limit,
-      total,
-      totalPages: Math.ceil(total / limit) || 1,
-    });
+    sendPage(response, result, pagination);
   } catch (error) {
     console.error("Admin pets error:", error);
     response
@@ -116,28 +90,15 @@ router.get("/pets", async (request, response) => {
 router.get("/reservations", async (request, response) => {
   try {
     const auth = await requireAdminRequest(request);
-    const { page, limit, from, to } = parsePagination(request.query);
+    const pagination = parsePagination(request.query);
 
-    const { data, error, count } = await auth.supabase
+    const result = await auth.supabase
       .from("reservations")
       .select("*", { count: "exact" })
       .order("datetime", { ascending: false })
-      .range(from, to);
+      .range(pagination.from, pagination.to);
 
-    if (error) {
-      throw Object.assign(new Error(`Supabase error: ${error.message}`), {
-        statusCode: 500,
-      });
-    }
-
-    const total = count || 0;
-    response.json({
-      data,
-      page,
-      limit,
-      total,
-      totalPages: Math.ceil(total / limit) || 1,
-    });
+    sendPage(response, result, pagination);
   } catch (error) {
     console.error("Admin reservations error:", error);
     response
@@ -152,6 +113,23 @@ function parsePagination(query) {
   const from = (page - 1) * limit;
   const to = from + limit - 1;
   return { page, limit, from, to };
+}
+
+function sendPage(response, { data, error, count }, { page, limit }) {
+  if (error) {
+    throw Object.assign(new Error(`Supabase error: ${error.message}`), {
+      statusCode: 500,
+    });
+  }
+
+  const total = count || 0;
+  response.json({
+    data,
+    page,
+    limit,
+    total,
+    totalPages: Math.ceil(total / limit) || 1,
+  });
 }
 
 export default router;

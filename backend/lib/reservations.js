@@ -166,26 +166,7 @@ async function readSupabaseReservations(month) {
     throw new Error(`Supabase no pudo leer reservas: ${error.message}`);
   }
 
-  return data.map((reservation) => ({
-    id: reservation.id,
-    nombre: reservation.nombre,
-    telefono: reservation.telefono,
-    email: reservation.email,
-    mascota: reservation.mascota,
-    servicio: reservation.servicio,
-    datetime: reservation.datetime,
-    status: reservation.status || "confirmed",
-    notes: reservation.notes,
-    workerId: reservation.worker_id,
-    googleEventId: reservation.google_event_id,
-    googleSyncError: reservation.google_sync_error,
-    googleSyncedAt: reservation.google_synced_at,
-    startAt: reservation.start_at,
-    endAt: reservation.end_at,
-    clientId: reservation.client_id,
-    updatedAt: reservation.updated_at,
-    createdAt: reservation.created_at,
-  }));
+  return data.map(mapReservationRow);
 }
 
 async function readPublicSupabaseReservationSlots(month) {
@@ -222,7 +203,6 @@ export async function saveReservation(reservation) {
   );
   const savedReservation = {
     ...reservation,
-    id: reservation.id,
     status: "confirmed",
     ...buildReservationTimestamps(reservation.datetime, reservation.servicio),
     createdAt: new Date().toISOString(),

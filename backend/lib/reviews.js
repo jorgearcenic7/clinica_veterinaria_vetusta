@@ -26,7 +26,7 @@ const usageFilePath = process.env.VERCEL
 const localReviewsFilePath = path.join(projectRoot, "reviews.local.json");
 
 let reviewsCache = null;
-let resolvedPlaceCache = null;
+let resolvedPlaceId = null;
 
 export async function getGoogleReviews() {
   const now = Date.now();
@@ -49,14 +49,6 @@ async function fetchGoogleReviews() {
   const languageCode = cleanEnvValue(
     process.env.GOOGLE_LANGUAGE_CODE || "es",
   );
-
-  if (!apiKey) {
-    const error = new Error(
-      "Falta GOOGLE_PLACES_API_KEY en el archivo .env.",
-    );
-    error.statusCode = 500;
-    throw error;
-  }
 
   const url = new URL(
     `https://places.googleapis.com/v1/places/${encodeURIComponent(placeId)}`,
@@ -157,8 +149,8 @@ async function getPlaceId(apiKey) {
     return process.env.GOOGLE_PLACE_ID;
   }
 
-  if (resolvedPlaceCache) {
-    return resolvedPlaceCache.id;
+  if (resolvedPlaceId) {
+    return resolvedPlaceId;
   }
 
   const latitude = Number(
@@ -230,23 +222,11 @@ async function getPlaceId(apiKey) {
     throw error;
   }
 
-  resolvedPlaceCache = {
-    id: place.id,
-    name: place.displayName?.text || null,
-  };
-
-  return resolvedPlaceCache.id;
+  resolvedPlaceId = place.id;
+  return resolvedPlaceId;
 }
 
 async function registerGoogleRequest(type) {
-  if (!liveReviewsEnabled) {
-    const error = new Error(
-      "Las consultas reales a Google estan desactivadas con GOOGLE_ENABLE_LIVE_REVIEWS=false.",
-    );
-    error.statusCode = 503;
-    throw error;
-  }
-
   const usage = await readUsage();
   const today = new Date().toISOString().slice(0, 10);
 

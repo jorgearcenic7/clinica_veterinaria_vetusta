@@ -1,4 +1,4 @@
-import { formatDate } from "../shared/utils.js";
+import { escapeHtml, formatDate } from "../../supabase-client.js";
 
 export function formatReservationDateTime(value) {
   if (!value) {
@@ -169,15 +169,6 @@ export function tableMessage(text, colSpan = 6) {
   cell.textContent = text;
   row.append(cell);
   return row;
-}
-
-export function escapeHtml(value) {
-  return String(value || "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
 }
 
 export function normalizeEmptyDates(values) {
